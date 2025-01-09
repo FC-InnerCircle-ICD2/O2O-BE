@@ -1,0 +1,16 @@
+name: Pull Request Execute Test
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  build:
+    uses: ./.github/workflows/pull-request-test-v1.yml
+    name: "ci"
+    secrets: inherit
