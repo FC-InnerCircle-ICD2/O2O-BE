@@ -1,9 +1,12 @@
+@file:Suppress("LABEL_NAME_CLASH")
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.springframework.boot") version "3.2.1" apply false
     id("io.spring.dependency-management") version "1.1.4" apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.0.3"
+    id("jacoco")
     kotlin("jvm") version "1.9.21"
     kotlin("plugin.spring") version "1.9.21" apply false
 }
@@ -23,6 +26,10 @@ allprojects {
         mavenCentral()
     }
 
+    apply {
+        plugin("org.jlleitschuh.gradle.ktlint")
+    }
+
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs += "-Xjsr305=strict"
@@ -39,6 +46,7 @@ subprojects {
         plugin("org.jetbrains.kotlin.plugin.spring")
         plugin("kotlin")
         plugin("kotlin-spring")
+        plugin("jacoco")
     }
 
     dependencies {
@@ -49,6 +57,39 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        finalizedBy("jacocoTestReport")
+    }
+
+    tasks.register<JacocoReport>("jacocoRootReport") {
+        subprojects {
+            this@subprojects.plugins.withType<JacocoPlugin>().configureEach {
+                this@subprojects.tasks.matching {
+                    it.extensions.findByType<JacocoTaskExtension>() != null
+                }
+                    .configureEach {
+                        sourceSets(this@subprojects.the<SourceSetContainer>().named("main").get())
+                        executionData(this)
+                    }
+            }
+        }
+
+        reports {
+            xml.outputLocation.set(File("${rootProject.projectDir}/build/reports/jacoco/jacocoTestReport.xml"))
+            xml.required.set(true)
+            html.required.set(false)
+        }
+    }
+
+    tasks.jacocoTestCoverageVerification {
+        dependsOn(tasks.jacocoTestReport)
+
+        violationRules {
+            rule {
+                limit {
+                    minimum = "0.60".toBigDecimal()
+                }
+            }
+        }
     }
 
     tasks.getByName("bootJar") {
