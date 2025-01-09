@@ -1,0 +1,112 @@
+on:
+  workflow_call:
+
+jobs:
+  changed-files:
+    runs-on: ubuntu-latest
+
+    outputs:
+      modified_modules: ${{ steps.determine_modules.outputs.modules }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set Up Modules
+        run: |
+          echo "MODULES=application-admin application-client common domains/member domains/order domains/review domains/store infrastructure/store-redis" >> $GITHUB_ENV
+
+      - name: Fetch Base Branch
+        run: git fetch origin +refs/heads/${{ github.event.pull_request.base.ref }}:refs/remotes/origin/${{ github.event.pull_request.base.ref }}
+
+      - name: Get Modified Files
+        run: |
+          BASE_SHA=$(git rev-parse origin/${{ github.event.pull_request.base.ref }})
+          MODIFIED_FILES=$(git diff --name-only $BASE_SHA ${{ github.sha }} | tr '\n' ' ')
+          echo "MODIFIED_FILES=$MODIFIED_FILES" >> $GITHUB_ENV
+
+      - name: Determine Modified Modules
+        id: determine_modules
+        run: |
+          # 문자열을 배열로 전환
+          IFS=' ' read -r -a MODIFIED_FILES_ARRAY <<< "${{ env.MODIFIED_FILES }}"
+          IFS=' ' read -r -a MODULES_ARRAY <<< "${{ env.MODULES }}"
+
+          MODIFIED_MODULES=()
+          for FILE in "${MODIFIED_FILES_ARRAY[@]}"; do
+            for MODULE in "${MODULES_ARRAY[@]}"; do
+              # 모듈 경로가 파일에 포함되는지 확인
+              if [[ "$FILE" == "$MODULE"* ]]; then
+                # 수정된 파일이 특정 모듈에 속하는 경우 그 모듈이 이미 배열에 추가되었는지 확인
+                if ! [[ " ${MODIFIED_MODULES[@]} " =~ " ${MODULE} " ]]; then
+                  echo "Add Module($MODULE)"
+                  MODIFIED_MODULES+=("$MODULE")
+                  break
+                fi
+              fi
+            done
+          done
+
+          # 변경 모듈 MATRIX 문자열 변환
+          MODULE_MATRIX=""
+          for MODULE in "${MODIFIED_MODULES[@]}"; do
+            if [ -n "$MODULE_MATRIX" ]; then
+              MODULE_MATRIX+=",\"${MODULE}\""
+            else
+              MODULE_MATRIX+="\"${MODULE}\""
+            fi
+          done
+
+          MODULE_MATRIX="[$MODULE_MATRIX]"
+          echo "MODIFIED_MODULE_MATRIX=$MODULE_MATRIX"
+          echo "modules=$(echo $MODULE_MATRIX)" >> $GITHUB_OUTPUT
+
+  execute-test:
+    needs: changed-files
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        module: ${{ fromJSON(needs.changed-files.outputs.modified_modules) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Cache Gradle Package
+        uses: actions/cache@v3
+        id: gradle-cache
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Execute Gradle Test
+        run: |
+          # domains/member -> domains:member 변환
+          TARGET_MODULE=$(echo "${{ matrix.module }}" | sed 's/\//:/g')
+          echo "TARGET : $TARGET_MODULE"
+          chmod +x ./gradlew
+          ./gradlew :$TARGET_MODULE:clean :$TARGET_MODULE:test --parallel
+
+      - name: Create jacoco Test Report
+        run: |
+          chmod +x ./gradlew
+          ./gradlew jacocoRootReport
+
+      - name: Add Test Coverage Report as Comment to the PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.2
+        with:
+          title: 📝 테스트 커버리지 리포트
+          paths: ${{ github.workspace }}/build/reports/jacoco/jacocoTestReport.xml
+          token: ${{ github.token }}
+          min-coverage-overall: 60
+          min-coverage-changed-files: 60
