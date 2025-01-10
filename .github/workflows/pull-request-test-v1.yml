@@ -89,24 +89,26 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle-
 
       - name: Execute Gradle Test
+        if: ${{ matrix.module && matrix.module != '' }}
         run: |
           # domains/member -> domains:member 변환
           TARGET_MODULE=$(echo "${{ matrix.module }}" | sed 's/\//:/g')
           echo "TARGET : $TARGET_MODULE"
           chmod +x ./gradlew
-          ./gradlew :$TARGET_MODULE:clean :$TARGET_MODULE:test --parallel
+          ./gradlew :$TARGET_MODULE:test --parallel
 
       - name: Create jacoco Test Report
         run: |
           chmod +x ./gradlew
           ./gradlew jacocoRootReport
 
-      - name: Add Test Coverage Report as Comment to the PR
-        id: jacoco
-        uses: madrapps/jacoco-report@v1.2
+      - name: Coverage Report as Comment to the PR
+        uses: madrapps/jacoco-report@v1.6.1
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           title: 📝 테스트 커버리지 리포트
-          paths: ${{ github.workspace }}/build/reports/jacoco/jacocoTestReport.xml
-          token: ${{ github.token }}
+          update-comment: true
           min-coverage-overall: 60
           min-coverage-changed-files: 60
+          paths: |
+            ${{ github.workspace }}/**/build/reports/jacoco/jacocoTestReport.xml
