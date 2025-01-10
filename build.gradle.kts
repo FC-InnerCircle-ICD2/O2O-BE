@@ -36,6 +36,11 @@ allprojects {
             jvmTarget = JavaVersion.VERSION_21.toString()
         }
     }
+
+    tasks.register("addGitPreCommitHook", Copy::class) {
+        from(file("script/pre-commit"))
+        into(file(".git/hooks"))
+    }
 }
 
 subprojects {
