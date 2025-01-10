@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      modified_modules: ${{ steps.determine_modules.outputs.modules }}
+      modified_modules: ${{ steps.determine_modules.outputs.modules || '[]' }}
 
     steps:
       - name: Checkout
