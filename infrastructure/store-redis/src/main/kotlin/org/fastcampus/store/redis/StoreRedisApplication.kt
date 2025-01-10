@@ -7,5 +7,9 @@ import org.springframework.boot.runApplication
 class StoreRedisApplication
 
 fun main(args: Array<String>) {
+
+
+
+
     runApplication<StoreRedisApplication>(*args)
 }
