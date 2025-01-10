@@ -64,6 +64,7 @@ jobs:
   execute-test:
     needs: changed-files
     runs-on: ubuntu-latest
+    if: ${{ needs.changed-files.outputs.modified_modules != '[]' }}
 
     strategy:
       matrix:
