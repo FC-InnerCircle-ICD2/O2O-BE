@@ -6,5 +6,5 @@ package org.fastcampus.common.dto
 data class APIResponseDTO<T>(
     val status: Int,
     val message: String?,
-    val data: T?
+    val data: T?,
 )

@@ -8,6 +8,4 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 @RequestMapping("/store")
-class StoreController {
-
-}
+class StoreController

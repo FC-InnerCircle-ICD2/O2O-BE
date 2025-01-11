@@ -14,22 +14,16 @@ class OrderDetail(
     @Id
     @Column(name = "ID")
     val id: String,
-
     @Column(name = "ORDER_ID")
     val orderId: String?,
-
     @Column(name = "PRICE")
     val price: String?,
-
     @Column(name = "PRODUCT_ID")
     val productId: String?,
-
     @Column(name = "PRODUCT_NAME")
     val productName: String?,
-
     @Column(name = "PRODUCT_QUANTITY")
     val productQuantity: String?,
-
     @Column(name = "PRODUCT_PRICE")
-    val productPrice: String?
+    val productPrice: String?,
 )

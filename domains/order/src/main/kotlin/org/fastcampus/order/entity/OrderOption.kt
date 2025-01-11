@@ -15,13 +15,10 @@ class OrderOption(
     @Id
     @Column(name = "ID")
     val id: String,
-
     @Column(name = "PRODUCT_OPTION_ID")
     val productOptionId: String?,
-
     @Column(name = "PRODUCT_OPTION_NAME")
     val productOptionName: String?,
-
     @Column(name = "PRODUCT_OPTION_PRICE")
-    val productOptionPrice: String?
+    val productOptionPrice: String?,
 ) : BaseEntity()

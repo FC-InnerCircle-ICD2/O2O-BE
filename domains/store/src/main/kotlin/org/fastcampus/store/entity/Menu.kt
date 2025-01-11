@@ -17,28 +17,20 @@ class Menu(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     val id: Long? = null,
-
     @Column(name = "NAME")
     val name: String?,
-
     @Column(name = "PRICE")
     val price: String?,
-
     @Column(name = "DESC")
     val desc: String?,
-
     @Column(name = "IMG_URL")
     val imgUrl: String?,
-
     @Column(name = "IS_SOLDED_OUT")
     val isSoldOut: String?,
-
     @Column(name = "IS_HIDED")
     val isHided: String?,
-
     @Column(name = "STORE_ID")
     val storeId: String?,
-
     @Column(name = "Field")
-    val field: String?
+    val field: String?,
 )

@@ -9,6 +9,4 @@ import org.springframework.stereotype.Service
 @Service
 class StoreFacadeService(
     private val service: StoreReaderService,
-) {
-
-}
+)

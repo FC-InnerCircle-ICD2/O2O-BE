@@ -17,19 +17,14 @@ class MenuOption(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     val id: Long? = null,
-
     @Column(name = "NAME")
     val name: String?,
-
     @Column(name = "PRICE")
     val price: String?,
-
     @Column(name = "MENU_OPTION_ID")
     val menuOptionId: String?,
-
     @Column(name = "IS_SOLD_OUT")
     val isSoldOut: String?,
-
     @Column(name = "ORDER")
-    val order: String?
+    val order: String?,
 )

@@ -17,19 +17,14 @@ class MenuOptionGroup(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     val id: Long? = null,
-
     @Column(name = "NAME")
     val name: String?,
-
     @Column(name = "MENU_ID")
     val menuId: String?,
-
     @Column(name = "MIN_SEL")
     val minSel: String?,
-
     @Column(name = "MAX_SEL")
     val maxSel: String?,
-
     @Column(name = "ORDER")
-    val order: String?
+    val order: String?,
 )
