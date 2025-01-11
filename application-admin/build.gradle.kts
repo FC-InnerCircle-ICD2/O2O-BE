@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation ("domains:store")
+    implementation (project(":domains:store"))
 }
