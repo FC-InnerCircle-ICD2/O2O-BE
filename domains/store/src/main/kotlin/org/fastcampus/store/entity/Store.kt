@@ -39,7 +39,7 @@ class Store(
     @Column(name = "TEL")
     val tel: String?,
 
-    @Column(name = "IMAGE_THUMNAIL")
+    @Column(name = "IMAGE_THUMBNAIL")
     val imageThumbnail: String?,
 
     @Column(name = "IMAGE_MAIN")

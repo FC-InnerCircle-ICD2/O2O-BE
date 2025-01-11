@@ -10,7 +10,7 @@ import jakarta.persistence.Table
  */
 @Entity
 @Table(name = "주문내역")
-data class OrderDetail(
+class OrderDetail(
     @Id
     @Column(name = "ID")
     val id: String,

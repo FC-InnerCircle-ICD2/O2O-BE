@@ -11,7 +11,7 @@ import org.fastcampus.common.entity.BaseEntity
  */
 @Entity
 @Table(name = "주문옵션")
-data class OrderOption(
+class OrderOption(
     @Id
     @Column(name = "ID")
     val id: String,

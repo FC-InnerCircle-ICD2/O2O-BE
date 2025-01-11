@@ -12,7 +12,7 @@ import jakarta.persistence.Table
  */
 @Entity
 @Table(name = "TB_MENU")
-data class Menu(
+class Menu(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")

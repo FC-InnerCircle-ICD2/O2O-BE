@@ -14,7 +14,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan
  */
 @Entity
 @Table(name = "TB_ORDER")
-data class Order(
+class Order(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
