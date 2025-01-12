@@ -14,7 +14,53 @@ jobs:
 
       - name: Set Up Modules
         run: |
-          echo "MODULES=application-admin application-client common domains/member domains/order domains/review domains/store infrastructure/store-redis" >> $GITHUB_ENV
+          # Project root path
+          project_root=$(pwd)
+
+          # Initialize modules array
+          modules_to_format=()
+
+          # Function to identify module
+          function find_module() {
+            dir="$1"
+            while [[ "$dir" != "$project_root" && "$dir" != "/" ]]; do
+            # Module criteria: check build.gradle or build.gradle.kts file
+            if [[ -f "$dir/build.gradle.kts" || -f "$dir/build.gradle" ]]; then
+            # Return the directory as a module
+            echo "$(realpath --relative-to="$project_root" "$dir")"
+            return
+            fi
+            # Move to parent directory
+            dir=$(dirname "$dir")
+            done
+          }
+
+          # Fetch changed files (customize as needed)
+          changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+
+          # Identify modules in changed files
+          for file in $changed_files; do
+          # Directory where the file belongs
+          file_dir=$(dirname "$file")
+          # Find the module path
+          module=$(find_module "$project_root/$file_dir")
+          build_module=$(echo "$module" | tr '/' ':')
+          # Remove unnecessary spaces
+          build_module=$(echo "$build_module" | xargs)
+          # Exclude "." modules
+          if [[ "$build_module" == "." ]]; then
+          continue
+          fi
+          # Add unique modules to the list
+          if [[ -n "$build_module" && ! " ${modules_to_format[*]} " =~ " ${build_module} " ]]; then
+          modules_to_format+=("$build_module")
+          fi
+          done
+
+          # Export modules as a single string
+          echo "modules=$(IFS=' '; echo "${modules_to_format[*]}")" >> $GITHUB_ENV
+        env:
+          GITHUB_ENV: $GITHUB_ENV
 
       - name: Fetch Base Branch
         run: git fetch origin +refs/heads/${{ github.event.pull_request.base.ref }}:refs/remotes/origin/${{ github.event.pull_request.base.ref }}
@@ -93,7 +139,7 @@ jobs:
         if: ${{ matrix.module && matrix.module != '' }}
         run: |
           # domains/member -> domains:member 변환
-          TARGET_MODULE=$(echo "${{ matrix.module }}" | sed 's/\//:/g')
+          TARGET_MODULE=$(echo "${{ matrix.module }}")
           echo "TARGET : $TARGET_MODULE"
           chmod +x ./gradlew
           ./gradlew :$TARGET_MODULE:test --parallel
