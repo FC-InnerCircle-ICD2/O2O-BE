@@ -1,10 +1,10 @@
-package org.fastcampus.store.redis
+package org.fastcampus.order.postgres
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class StoreRedisApplicationTests {
+class OrderPostgresApplicationTests {
     @Test
     fun contextLoads() {
     }
