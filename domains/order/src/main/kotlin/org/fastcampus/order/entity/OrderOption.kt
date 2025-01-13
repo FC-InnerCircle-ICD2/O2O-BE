@@ -10,7 +10,7 @@ import org.fastcampus.common.entity.BaseEntity
  * Created by brinst07 on 25. 1. 11..
  */
 @Entity
-@Table(name = "주문옵션")
+@Table(name = "TB_ORDER_OPTION")
 class OrderOption(
     @Id
     @Column(name = "ID")

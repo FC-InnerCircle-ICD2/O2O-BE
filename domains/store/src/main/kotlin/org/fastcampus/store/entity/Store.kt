@@ -45,6 +45,4 @@ class Store(
     val jibunAddress: String?,
     @Column(name = "CATEGORY")
     val category: String?,
-    @Column(name = "Field")
-    val field: String?,
 )

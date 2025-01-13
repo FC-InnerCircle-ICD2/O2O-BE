@@ -19,7 +19,7 @@ class Order(
     @Column(name = "ID")
     val id: Long? = null,
     @Column(name = "STORE_ID")
-    val storeId: String?,
+    val storeId: Long?,
     @Column(name = "ROAD_ADDRESS")
     val roadAddress: String?,
     @Column(name = "JIBUN_ADDRESS")

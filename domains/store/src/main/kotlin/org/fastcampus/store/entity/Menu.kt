@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import org.fastcampus.common.entity.BaseEntity
 
 /**
  * Created by brinst07 on 25. 1. 11..
@@ -30,7 +31,5 @@ class Menu(
     @Column(name = "IS_HIDED")
     val isHided: String?,
     @Column(name = "STORE_ID")
-    val storeId: String?,
-    @Column(name = "Field")
-    val field: String?,
-)
+    val storeId: Long?,
+) : BaseEntity()

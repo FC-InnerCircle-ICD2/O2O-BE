@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import org.fastcampus.common.entity.BaseEntity
 
 /**
  * Created by brinst07 on 25. 1. 11..
@@ -21,10 +22,10 @@ class MenuOption(
     val name: String?,
     @Column(name = "PRICE")
     val price: String?,
-    @Column(name = "MENU_OPTION_ID")
-    val menuOptionId: String?,
+    @Column(name = "MENU_OPTION_GROUP_ID")
+    val menuOptionGroupId: Long?,
     @Column(name = "IS_SOLD_OUT")
     val isSoldOut: String?,
     @Column(name = "ORDER")
     val order: String?,
-)
+) : BaseEntity()
