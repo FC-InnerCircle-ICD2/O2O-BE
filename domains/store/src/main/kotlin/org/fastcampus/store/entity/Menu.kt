@@ -31,5 +31,5 @@ class Menu(
     @Column(name = "IS_HIDED")
     val isHided: String?,
     @Column(name = "STORE_ID")
-    val storeId: Long?,
+    val storeId: String?,
 ) : BaseEntity()

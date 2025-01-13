@@ -23,7 +23,7 @@ class MenuOption(
     @Column(name = "PRICE")
     val price: String?,
     @Column(name = "MENU_OPTION_GROUP_ID")
-    val menuOptionGroupId: Long?,
+    val menuOptionGroupId: String?,
     @Column(name = "IS_SOLD_OUT")
     val isSoldOut: String?,
     @Column(name = "ORDER")

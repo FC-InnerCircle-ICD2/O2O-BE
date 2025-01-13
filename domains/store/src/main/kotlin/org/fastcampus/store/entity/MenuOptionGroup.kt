@@ -21,7 +21,7 @@ class MenuOptionGroup(
     @Column(name = "NAME")
     val name: String?,
     @Column(name = "MENU_ID")
-    val menuId: Long?,
+    val menuId: String?,
     @Column(name = "MIN_SEL")
     val minSel: String?,
     @Column(name = "MAX_SEL")

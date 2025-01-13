@@ -18,5 +18,5 @@ class StoreMenuCategory(
     @Column(name = "NAME")
     val name: String?,
     @Column(name = "STORE_ID")
-    val storeId: Long?,
+    val storeId: String?,
 ) : BaseEntity()
