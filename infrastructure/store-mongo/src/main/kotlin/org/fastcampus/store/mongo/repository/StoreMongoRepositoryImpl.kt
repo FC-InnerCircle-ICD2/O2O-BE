@@ -10,4 +10,8 @@ class StoreMongoRepositoryImpl(
     override fun findByCategory(category: String): List<Store> {
         return storeMongoRepository.findByCategory(category).map { it.toModel() }
     }
+
+    override fun findById(storeId: String): List<Store> {
+        TODO("Not yet implemented")
+    }
 }
