@@ -1,20 +1,13 @@
 package org.fastcampus.order.postgres.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import org.fastcampus.common.entity.BaseEntity
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderStatus
 import org.fastcampus.order.entity.OrderType
 import org.fastcampus.order.entity.PaymentType
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 /**
  * Created by brinst07 on 25. 1. 11..
@@ -25,7 +18,7 @@ class OrderJpaEntity(
     @Column(name = "ID")
     val id: String = UUID.randomUUID().toString(),
     @Column(name = "STORE_ID")
-    val storeId: Long?,
+    val storeId: String?,
     @Column(name = "USER_ID")
     val userId: Long?,
     @Column(name = "ROAD_ADDRESS")

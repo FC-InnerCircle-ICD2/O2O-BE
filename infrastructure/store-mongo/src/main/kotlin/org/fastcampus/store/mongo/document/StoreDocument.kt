@@ -8,24 +8,25 @@ import org.springframework.data.mongodb.core.mapping.Document
  * Created by brinst07 on 25. 1. 11..
  */
 
-@Document(collection = "TB_STORE")
+@Document(collection = "STORE")
 class StoreDocument(
     @Id
-    val id: Long? = null,
+    val id: String? = null,
     val name: String?,
     val address: String?,
-    val latitude: String?,
-    val longitude: String?,
-    val border: String?,
+    val latitude: Double,
+    val longitude: Double,
+    val border: Int?,
     val ownerId: String?,
     val tel: String?,
     val imageThumbnail: String?,
     val imageMain: String?,
-    val status: String?,
-    val breakTime: String?,
+    val status: Store.Status,
+    val breakTime: String,
     val roadAddress: String?,
     val jibunAddress: String?,
-    val category: String?,
+    val category: Store.Category?,
+    val storeMenuCategoryDocument: List<StoreMenuCategoryDocument>?,
 )
 
 fun StoreDocument.toModel() =
@@ -45,4 +46,5 @@ fun StoreDocument.toModel() =
         roadAddress,
         jibunAddress,
         category,
+        storeMenuCategoryDocument?.map { it.toModel() }
     )

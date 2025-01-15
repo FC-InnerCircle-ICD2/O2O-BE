@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import org.fastcampus.common.entity.BaseEntity
 import org.fastcampus.order.entity.OrderOption
 import org.fastcampus.order.entity.OrderOptionGroup
 
@@ -18,20 +19,20 @@ class OrderOptionGroupJpaEntity(
     val id: Long? = null,
     @Column(name = "ORDER_DETAIL_ID")
     val orderDetailId: Long?,
-    @Column(name = "PRODUCT_OPTION_GROUP_NM")
-    val productOptionGroupNm: String?
-)
+    @Column(name = "MENU_OPTION_GROUP_NM")
+    val menuOptionGroupNm: String?
+) : BaseEntity()
 
 fun OrderOptionGroup.toJpaEntity() =
     OrderOptionGroupJpaEntity(
         id,
         orderDetailId,
-        productOptionGroupNm
+        menuOptionGroupNm
     )
 
 fun OrderOptionGroupJpaEntity.toModel() =
     OrderOptionGroup(
         id,
         orderDetailId,
-        productOptionGroupNm
+        menuOptionGroupNm
     )

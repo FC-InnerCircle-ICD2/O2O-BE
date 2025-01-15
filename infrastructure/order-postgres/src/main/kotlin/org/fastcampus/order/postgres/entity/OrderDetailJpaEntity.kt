@@ -24,12 +24,12 @@ class OrderDetailJpaEntity(
     val orderId: String?,
     @Column(name = "PRICE")
     val price: Long?,
-    @Column(name = "PRODUCT_NAME")
-    val productName: String?,
-    @Column(name = "PRODUCT_QUANTITY")
-    val productQuantity: Long?,
-    @Column(name = "PRODUCT_PRICE")
-    val productPrice: Long?,
+    @Column(name = "MENU_NAME")
+    val menuName: String?,
+    @Column(name = "MENU_QUANTITY")
+    val menuQuantity: Long?,
+    @Column(name = "MENU_PRICE")
+    val menuPrice: Long?,
 ) : BaseEntity()
 
 fun OrderDetail.toJpaEntity() =
@@ -37,9 +37,9 @@ fun OrderDetail.toJpaEntity() =
         id,
         orderId,
         price,
-        productName,
-        productQuantity,
-        productPrice
+        menuName,
+        menuQuantity,
+        menuPrice
     )
 
 fun OrderDetailJpaEntity.toModel() =
@@ -47,7 +47,7 @@ fun OrderDetailJpaEntity.toModel() =
         id,
         orderId,
         price,
-        productName,
-        productQuantity,
-        productPrice
+        menuName,
+        menuQuantity,
+        menuPrice
     )

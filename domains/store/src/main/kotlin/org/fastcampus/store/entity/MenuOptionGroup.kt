@@ -5,10 +5,11 @@ package org.fastcampus.store.entity
  */
 
 data class MenuOptionGroup(
-    val id: Long? = null,
+    val id: String? = null,
     val name: String?,
     val menuId: String?,
-    val minSel: String?,
-    val maxSel: String?,
-    val order: String?,
+    val minSel: Int?,
+    val maxSel: Int?,
+    val menuOption: List<MenuOption>?,
+    val order: Long?,
 )

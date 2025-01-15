@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 
 data class Order(
     val id: String,
-    val storeId: Long?,
+    val storeId: String?,
     val userId: Long?,
     val roadAddress: String?,
     val jibunAddress: String?,
