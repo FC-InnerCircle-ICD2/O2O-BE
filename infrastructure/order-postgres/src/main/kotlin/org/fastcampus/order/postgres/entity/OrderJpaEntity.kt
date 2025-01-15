@@ -3,9 +3,6 @@ package org.fastcampus.order.postgres.entity
 import jakarta.persistence.*
 import org.fastcampus.common.entity.BaseEntity
 import org.fastcampus.order.entity.Order
-import org.fastcampus.order.entity.OrderStatus
-import org.fastcampus.order.entity.OrderType
-import org.fastcampus.order.entity.PaymentType
 import java.time.LocalDateTime
 import java.util.*
 
@@ -13,14 +10,14 @@ import java.util.*
  * Created by brinst07 on 25. 1. 11..
  */
 @Entity
-@Table(name = "TB_ORDER")
+@Table(name = "ORDER")
 class OrderJpaEntity(
     @Column(name = "ID")
     val id: String = UUID.randomUUID().toString(),
     @Column(name = "STORE_ID")
-    val storeId: String?,
+    val storeId: String,
     @Column(name = "USER_ID")
-    val userId: Long?,
+    val userId: Long,
     @Column(name = "ROAD_ADDRESS")
     val roadAddress: String?,
     @Column(name = "JIBUN_ADDRESS")
@@ -30,22 +27,25 @@ class OrderJpaEntity(
     @Column(name = "TEL")
     val tel: String?,
     @Enumerated(EnumType.STRING)
-    @Column(name = "ORDER_STATUS")
-    val orderStatus: OrderStatus?,
+    @Column(name = "STATUS")
+    val status: Order.Status,
     @Column(name = "ORDER_TIME")
-    val orderTime: LocalDateTime?,
+    val orderTime: LocalDateTime,
     @Enumerated(EnumType.STRING)
-    @Column(name = "ORDER_TYPE")
-    val orderType: OrderType?,
-    @Enumerated(EnumType.STRING)
-    @Column(name = "PAYMENT_TYPE")
-    val paymentType: PaymentType?,
+    @Column(name = "TYPE")
+    val type: Order.Type,
+    @Column(name = "PAYMENT_ID")
+    val paymentId: Long,
     @Column(name = "IS_DELETED")
     val isDeleted: Boolean,
-    @Column(name = "DELIVERY_TIME")
-    val deliveryTime: LocalDateTime?,
+    @Column(name = "DELIVERY_COMPLETE_TIME")
+    val deliveryCompleteTime: LocalDateTime?,
+    @Column(name = "ORDER_PRICE")
+    val orderPrice: Long?,
     @Column(name = "DELIVERY_PRICE")
-    val deliveryPrice: Long?
+    val deliveryPrice: Long?,
+    @Column(name = "PAYMENT_PRICE")
+    val paymentPrice: Long?,
 ) : BaseEntity()
 
 fun Order.toJpaEntity() =
@@ -57,13 +57,15 @@ fun Order.toJpaEntity() =
         jibunAddress,
         detailAddress,
         tel,
-        orderStatus,
+        status,
         orderTime,
-        orderType,
-        paymentType,
+        type,
+        paymentId,
         isDeleted,
-        deliveryTime,
-        deliveryPrice
+        deliveryCompleteTime,
+        orderPrice,
+        deliveryPrice,
+        paymentPrice,
     )
 
 fun OrderJpaEntity.toModel() =
@@ -75,11 +77,13 @@ fun OrderJpaEntity.toModel() =
         jibunAddress,
         detailAddress,
         tel,
-        orderStatus,
+        status,
         orderTime,
-        orderType,
-        paymentType,
+        type,
+        paymentId,
         isDeleted,
-        deliveryTime,
-        deliveryPrice
+        deliveryCompleteTime,
+        orderPrice,
+        deliveryPrice,
+        paymentPrice,
     )

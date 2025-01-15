@@ -7,39 +7,38 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.fastcampus.common.entity.BaseEntity
-import org.fastcampus.order.entity.Order
-import org.fastcampus.order.entity.OrderOption
+import org.fastcampus.order.entity.OrderMenuOption
 
 /**
  * Created by brinst07 on 25. 1. 11..
  */
 @Entity
-@Table(name = "TB_ORDER_OPTION")
-class OrderOptionJpaEntity(
+@Table(name = "ORDER_MENU_OPTION")
+class OrderMenuOptionJpaEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     val id: Long? = null,
     @Column(name = "ORDER_OPTION_GROUP_ID")
-    val orderOptionGroupId: Long?,
+    val orderMenuOptionGroupId: Long,
     @Column(name = "MENU_OPTION_NAME")
-    val menuOptionName: String?,
+    val menuOptionName: String,
     @Column(name = "MENU_OPTION_PRICE")
-    val menuOptionPrice: Long?,
+    val menuOptionPrice: Long,
 ) : BaseEntity()
 
-fun OrderOption.toJpaEntity() =
-    OrderOptionJpaEntity(
+fun OrderMenuOption.toJpaEntity() =
+    OrderMenuOptionJpaEntity(
         id,
-        orderOptionGroupId,
+        orderMenuOptionGroupId,
         menuOptionName,
-        menuOptionPrice
+        menuOptionPrice,
     )
 
-fun OrderOptionJpaEntity.toModel() =
-    OrderOption(
+fun OrderMenuOptionJpaEntity.toModel() =
+    OrderMenuOption(
         id,
-        orderOptionGroupId,
+        orderMenuOptionGroupId,
         menuOptionName,
-        menuOptionPrice
+        menuOptionPrice,
     )
