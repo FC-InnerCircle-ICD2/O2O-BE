@@ -1,10 +1,10 @@
-package org.fastcampus.order.postgres
+package org.fastcampus.store.mongo
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class OrderPostgresApplicationTests {
+class StoreDocumentMongoApplicationTests {
     @Test
     fun contextLoads() {
     }

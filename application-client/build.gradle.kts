@@ -4,5 +4,7 @@ plugins {
 dependencies {
     implementation(project(":domains:member"))
     implementation(project(":domains:store"))
-    implementation("org.springframework:spring-web")
+    implementation(project(":domains:order"))
+    implementation("org.springframework.boot:spring-boot-starter-web")
+
 }
