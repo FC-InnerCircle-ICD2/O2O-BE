@@ -1,13 +1,20 @@
 package org.fastcampus.store.mongo.document
 
-import org.fastcampus.common.entity.BaseEntity
-import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.Document
+import org.fastcampus.store.entity.StoreMenuCategory
 
-@Document(collection = "TB_STORE_MENU_CATEGORY")
 class StoreMenuCategoryDocument(
-    @Id
-    val id: Long? = null,
+    val id: String? = null,
     val name: String?,
     val storeId: String?,
-) : BaseEntity()
+    val menuDocument: List<MenuDocument>?,
+    val order: Long,
+)
+
+fun StoreMenuCategoryDocument.toModel() =
+    StoreMenuCategory(
+        id,
+        name,
+        storeId,
+        menuDocument?.map { it.toModel() },
+        order,
+    )

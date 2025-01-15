@@ -22,24 +22,24 @@ class OrderOptionJpaEntity(
     val id: Long? = null,
     @Column(name = "ORDER_OPTION_GROUP_ID")
     val orderOptionGroupId: Long?,
-    @Column(name = "PRODUCT_OPTION_NAME")
-    val productOptionName: String?,
-    @Column(name = "PRODUCT_OPTION_PRICE")
-    val productOptionPrice: Long?,
+    @Column(name = "MENU_OPTION_NAME")
+    val menuOptionName: String?,
+    @Column(name = "MENU_OPTION_PRICE")
+    val menuOptionPrice: Long?,
 ) : BaseEntity()
 
 fun OrderOption.toJpaEntity() =
     OrderOptionJpaEntity(
         id,
         orderOptionGroupId,
-        productOptionName,
-        productOptionPrice
+        menuOptionName,
+        menuOptionPrice
     )
 
 fun OrderOptionJpaEntity.toModel() =
     OrderOption(
         id,
         orderOptionGroupId,
-        productOptionName,
-        productOptionPrice
+        menuOptionName,
+        menuOptionPrice
     )

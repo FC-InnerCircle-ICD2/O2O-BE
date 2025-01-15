@@ -7,6 +7,6 @@ package org.fastcampus.order.entity
 data class OrderOption(
     val id: Long? = null,
     val orderOptionGroupId: Long?,
-    val productOptionName: String?,
-    val productOptionPrice: Long?
+    val menuOptionName: String?,
+    val menuOptionPrice: Long?
 )

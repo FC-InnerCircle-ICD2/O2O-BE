@@ -8,7 +8,7 @@ data class OrderDetail(
     val id: Long? = null,
     val orderId: String?,
     val price: Long?,
-    val productName: String?,
-    val productQuantity: Long?,
-    val productPrice: Long?,
+    val menuName: String?,
+    val menuQuantity: Long?,
+    val menuPrice: Long?,
 )
