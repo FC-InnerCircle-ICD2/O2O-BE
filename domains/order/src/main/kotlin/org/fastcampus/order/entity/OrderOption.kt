@@ -5,8 +5,8 @@ package org.fastcampus.order.entity
  */
 
 data class OrderOption(
-    val id: String,
-    val productOptionId: String?,
+    val id: Long? = null,
+    val orderOptionGroupId: Long?,
     val productOptionName: String?,
-    val productOptionPrice: String?,
+    val productOptionPrice: Long?
 )
