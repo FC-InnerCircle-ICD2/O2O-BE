@@ -6,7 +6,7 @@ import org.fastcampus.store.repository.StoreRepository
 
 class StoreMongoRepositoryImpl(
     private val storeMongoRepository: StoreMongoRepository,
-): StoreRepository {
+) : StoreRepository {
     override fun findByCategory(category: String): List<Store> {
         return storeMongoRepository.findByCategory(category).map { it.toModel() }
     }

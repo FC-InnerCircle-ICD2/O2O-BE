@@ -1,14 +1,11 @@
 package org.fastcampus.order.entity
 
-
 /**
  * Created by brinst07 on 25. 1. 11..
  */
 
 data class Order(
-
     val id: Long? = null,
-
     val storeId: Long?,
     val roadAddress: String?,
     val jibunAddress: String?,
@@ -18,4 +15,3 @@ data class Order(
     val isDeleted: String?,
     val deliveryTime: String?,
 )
-

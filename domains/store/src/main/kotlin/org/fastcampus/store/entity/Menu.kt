@@ -5,7 +5,6 @@ package org.fastcampus.store.entity
  */
 
 data class Menu(
-
     val id: Long? = null,
     val name: String?,
     val price: String?,

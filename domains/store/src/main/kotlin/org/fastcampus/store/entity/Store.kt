@@ -21,5 +21,3 @@ data class Store(
     val jibunAddress: String?,
     val category: String?,
 )
-
-

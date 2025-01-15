@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class OrderJpaRepositoryImpl(
     private val orderJpaRepository: OrderJpaRepository,
-): OrderRepository {
+) : OrderRepository {
     override fun save(order: Order): Order {
         return orderJpaRepository.save(order.toJpaEntity()).toModel()
     }
@@ -31,6 +31,4 @@ class OrderJpaRepositoryImpl(
     override fun update(id: Long): Order {
         TODO("Not yet implemented")
     }
-
-
 }

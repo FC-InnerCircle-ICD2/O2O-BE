@@ -28,21 +28,21 @@ class StoreDocument(
     val category: String?,
 )
 
-
-fun StoreDocument.toModel() = Store(
-    id,
-    name,
-    address,
-    latitude,
-    longitude,
-    border,
-    ownerId,
-    tel,
-    imageThumbnail,
-    imageMain,
-    status,
-    breakTime,
-    roadAddress,
-    jibunAddress,
-    category
-)
+fun StoreDocument.toModel() =
+    Store(
+        id,
+        name,
+        address,
+        latitude,
+        longitude,
+        border,
+        ownerId,
+        tel,
+        imageThumbnail,
+        imageMain,
+        status,
+        breakTime,
+        roadAddress,
+        jibunAddress,
+        category,
+    )

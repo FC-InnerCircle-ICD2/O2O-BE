@@ -35,31 +35,30 @@ class OrderJpaEntity(
     val isDeleted: String?,
     @Column(name = "DELIVERY_TIME")
     val deliveryTime: String?,
-) : BaseEntity() {
+) : BaseEntity()
 
-}
+fun Order.toJpaEntity() =
+    OrderJpaEntity(
+        id,
+        storeId,
+        roadAddress,
+        jibunAddress,
+        status,
+        orderTime,
+        type,
+        isDeleted,
+        deliveryTime,
+    )
 
-fun Order.toJpaEntity() = OrderJpaEntity(
-    id,
-    storeId,
-    roadAddress,
-    jibunAddress,
-    status,
-    orderTime,
-    type,
-    isDeleted,
-    deliveryTime
-)
-
-fun OrderJpaEntity.toModel() =  Order(
-    id,
-    storeId,
-    roadAddress,
-    jibunAddress,
-    status,
-    orderTime,
-    type,
-    isDeleted,
-    deliveryTime
-)
-
+fun OrderJpaEntity.toModel() =
+    Order(
+        id,
+        storeId,
+        roadAddress,
+        jibunAddress,
+        status,
+        orderTime,
+        type,
+        isDeleted,
+        deliveryTime,
+    )
