@@ -58,6 +58,7 @@ subprojects {
         implementation("org.springframework.boot:spring-boot-starter")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("io.strikt:strikt-core:0.34.0")
     }
 
     tasks.withType<Test> {
