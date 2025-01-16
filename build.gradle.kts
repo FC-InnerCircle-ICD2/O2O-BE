@@ -18,6 +18,10 @@ java {
     sourceCompatibility = JavaVersion.VERSION_21
 }
 
+tasks.withType<JavaCompile> {
+    options.release.set(21) // compileJava 타겟 설정
+}
+
 allprojects {
     group = "org.fastcampus"
     version = "1.0-SNAPSHOT"
@@ -58,6 +62,7 @@ subprojects {
         implementation("org.springframework.boot:spring-boot-starter")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("io.strikt:strikt-core:0.34.0")
     }
 
     tasks.withType<Test> {

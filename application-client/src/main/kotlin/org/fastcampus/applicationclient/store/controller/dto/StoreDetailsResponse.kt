@@ -1,11 +1,11 @@
 package org.fastcampus.applicationclient.store.controller.dto
 
-data class StoreDetailsResponse (
+data class StoreDetailsResponse(
     val store: StoreInfo,
-    val categories: List<CategoryInfo>
+    val categories: List<CategoryInfo>,
 )
 
-data class StoreInfo (
+data class StoreInfo(
     val id: String,
     val name: String,
     val imageMain: String?,
@@ -15,9 +15,14 @@ data class StoreInfo (
     val freeDelivery: Boolean,
 )
 
-data class CategoryInfo (
+data class CategoryInfo(
+    val categoryId: Int,
     val categoryName: String,
     val menus: List<MenuInfo>,
+    val page: Int,
+    val size: Int,
+    val totalPages: Int,
+    val totalElements: Long,
 )
 
 data class MenuInfo(

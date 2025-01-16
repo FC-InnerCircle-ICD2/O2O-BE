@@ -20,47 +20,55 @@ class StoreService(
     private val storeRepository: StoreRepository,
     private val storeRedisRepository: StoreRedisRepository,
 ) {
-
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(StoreService::class.java)
     }
 
     @Transactional(readOnly = true)
-    fun getStoreDetails(storeId: String, userCoordinates: Coordinates): StoreDetailsResponse {
+    fun getStoreDetails(storeId: String, page: Int, size: Int, userCoordinates: Coordinates): StoreDetailsResponse {
         logger.info("Fetching store details for storeId: $storeId, userCoordinates: $userCoordinates")
         val store = storeRepository.findById(storeId)
             ?: throw IllegalArgumentException("Store not found: $storeId")
-        logger.info("Store found: ${store.name}")
-        // 거리 및 배달 시간 계산
         val deliveryInfo = calculateDeliveryTime(storeId, userCoordinates)
 
-        // 응답 데이터 변환
+        // 페이징 처리
+        val categories = store.storeMenuCategory?.mapIndexed { index, category ->
+            val totalElements = category.menu?.size?.toLong() ?: 0L
+            val totalPages = if (totalElements > 0) ((totalElements + size - 1) / size).toInt() else 0
+            val startIndex = page * size
+            val endIndex = (startIndex + size).coerceAtMost(category.menu?.size ?: 0)
+
+            CategoryInfo(
+                categoryId = index + 1,
+                categoryName = category.name ?: "Unknown",
+                menus = category.menu?.subList(startIndex, endIndex)?.map { menu ->
+                    MenuInfo(
+                        id = menu.id ?: "",
+                        name = menu.name ?: "Unknown",
+                        price = "${menu.price ?: 0}원",
+                        description = menu.desc ?: "",
+                        imageUrl = menu.imgUrl ?: "",
+                        isSoldOut = menu.isSoldOut,
+                    )
+                } ?: emptyList(),
+                page = page,
+                size = size,
+                totalPages = totalPages,
+                totalElements = totalElements,
+            )
+        } ?: emptyList()
+
         return StoreDetailsResponse(
             store = StoreInfo(
                 id = store._id ?: "",
                 name = store.name ?: "",
                 imageMain = store.imageMain ?: "",
-                rating = 4.5, // 예시: 평점 데이터 추가 로직 필요
-                reviewCount = 150, // 예시: 리뷰 개수 데이터 추가 로직 필요
+                rating = 4.5,
+                reviewCount = 150,
                 deliveryTime = deliveryInfo["deliveryTime"] as String,
-                freeDelivery = (store.border ?: 0) > 5000 // 예시: 무료 배달 여부
+                freeDelivery = (store.border ?: 0) > 5000,
             ),
-            categories = store.storeMenuCategory?.map { category ->
-                logger.info("Mapping category: $category")
-                CategoryInfo(
-                    categoryName = category.name ?: "Unknown",
-                    menus = category.menu?.map { menu ->
-                        MenuInfo(
-                            id = menu.id ?: "",
-                            name = menu.name ?: "Unknown",
-                            price = "${menu.price ?: 0}원",
-                            description = menu.desc ?: "",
-                            imageUrl = menu.imgUrl ?: "",
-                            isSoldOut = menu.isSoldOut
-                        )
-                    } ?: emptyList()
-                )
-            } ?: emptyList()
+            categories = categories,
         ).also {
             logger.info("StoreDetailsResponse created: ${it.store.name}")
         }
@@ -80,7 +88,7 @@ class StoreService(
         // 거리 계산
         val distance = storeRedisRepository.getDistanceBetweenUserByStore(
             userKey = "user:${userCoordinates.latitude},${userCoordinates.longitude}",
-            storeKey = storeId
+            storeKey = storeId,
         )
 
         logger.info("Calculated distance: $distance km")
@@ -98,12 +106,11 @@ class StoreService(
         return mapOf(
             "storeId" to storeId,
             "distance" to String.format("%.2f km", distance),
-            "deliveryTime" to "$deliveryTime 분"
+            "deliveryTime" to "$deliveryTime 분",
         ).also {
             logger.info("Delivery time calculation result: $it")
         }
     }
-
 
     private fun getStoreCoordinates(storeId: String): Coordinates? {
         logger.info("Getting store coordinates for storeId: $storeId")

@@ -12,29 +12,32 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 /**
  * Created by brinst07 on 25. 1. 11..
  */
 @RestController
-@RequestMapping("/stores")
+@RequestMapping("/api/stores")
 class StoreController(
     private val storeService: StoreService,
-
-    ) {
+) {
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(StoreController::class.java)
     }
+
     @GetMapping("/{id}")
     fun getStoreDetails(
         @PathVariable id: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
         @RequestHeader("X-User-Lat") userLat: Double,
         @RequestHeader("X-User-Lng") userLng: Double,
     ): ResponseEntity<APIResponseDTO<StoreDetailsResponse>> {
         logger.info("Received request for store details. ID: $id, Lat: $userLat, Lng: $userLng")
         return try {
-            val response = storeService.getStoreDetails(id, Coordinates(userLat, userLng))
+            val response = storeService.getStoreDetails(id, page, size, Coordinates(userLat, userLng))
             logger.info("Successfully retrieved store details for ID: $id")
             ResponseEntity.ok(APIResponseDTO(200, "ok", response))
         } catch (e: Exception) {
@@ -46,6 +49,6 @@ class StoreController(
 
     @GetMapping("/test")
     fun getTest(): String {
-        return "test";
+        return "test"
     }
 }
