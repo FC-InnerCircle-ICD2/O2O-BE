@@ -1,0 +1,4 @@
+### Get store details (within 500m)
+GET http://localhost:8080/api/stores/6788482e4a0ceab376c9aec8
+X-User-Lat: 37.71936226550588
+X-User-Lng: 126.69319553943058

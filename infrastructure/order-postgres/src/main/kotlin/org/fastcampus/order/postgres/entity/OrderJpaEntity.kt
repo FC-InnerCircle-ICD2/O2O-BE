@@ -1,10 +1,15 @@
 package org.fastcampus.order.postgres.entity
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.fastcampus.common.entity.BaseEntity
 import org.fastcampus.order.entity.Order
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 /**
  * Created by brinst07 on 25. 1. 11..

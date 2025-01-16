@@ -28,7 +28,7 @@ fun MenuDocument.toModel() =
         desc,
         imgUrl,
         isSoldOut = isSoldOut == "Y", // Y -> true, N -> false
-        isHided = isHided == "Y",     // Y -> true, N -> false
+        isHided = isHided == "Y", // Y -> true, N -> false
         storeId,
         menuOptionGroupDocument?.map { it.toModel() },
         order,
