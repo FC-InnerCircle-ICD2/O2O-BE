@@ -1,0 +1,13 @@
+spring:
+  data:
+    redis:
+      host: localhost # Redis 서버 주소
+      port: 6379      # Redis 포트
+    mongodb:
+      host: localhost
+      port: 27017
+      database: o2o
+      username: root
+      password: root
+      authentication-database: admin
+
