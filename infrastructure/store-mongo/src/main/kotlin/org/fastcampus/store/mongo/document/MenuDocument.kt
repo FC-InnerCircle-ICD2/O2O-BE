@@ -1,6 +1,7 @@
 package org.fastcampus.store.mongo.document
 
 import org.fastcampus.store.entity.Menu
+import org.springframework.data.mongodb.core.mapping.Field
 
 /**
  * Created by brinst07 on 25. 1. 11..
@@ -8,12 +9,13 @@ import org.fastcampus.store.entity.Menu
 class MenuDocument(
     val id: String? = null,
     val name: String?,
-    val price: Long?,
+    val price: String?,
     val desc: String?,
     val imgUrl: String?,
-    val isSoldOut: Boolean,
-    val isHided: Boolean,
+    val isSoldOut: String,
+    val isHided: String,
     val storeId: String?,
+    @Field(name = "menuOptionGroups")
     val menuOptionGroupDocument: List<MenuOptionGroupDocument>?,
     val order: Long,
 )
@@ -25,8 +27,8 @@ fun MenuDocument.toModel() =
         price,
         desc,
         imgUrl,
-        isSoldOut,
-        isHided,
+        isSoldOut = isSoldOut == "Y", // Y -> true, N -> false
+        isHided = isHided == "Y",     // Y -> true, N -> false
         storeId,
         menuOptionGroupDocument?.map { it.toModel() },
         order,
