@@ -18,20 +18,20 @@ class OrderMenuOptionGroupJpaEntity(
     val id: Long? = null,
     @Column(name = "ORDER_MENU_ID")
     val orderMenuId: Long,
-    @Column(name = "ORDER_MENU_OPTION_GROUP_NM")
-    val orderMenuOptionGroupNm: String
+    @Column(name = "ORDER_MENU_OPTION_GROUP_NAME")
+    val orderMenuOptionGroupName: String
 ) : BaseEntity()
 
 fun OrderMenuOptionGroup.toJpaEntity() =
     OrderMenuOptionGroupJpaEntity(
         id,
         orderMenuId,
-        orderMenuOptionGroupNm
+        orderMenuOptionGroupName
     )
 
 fun OrderMenuOptionGroupJpaEntity.toModel() =
     OrderMenuOptionGroup(
         id,
         orderMenuId,
-        orderMenuOptionGroupNm
+        orderMenuOptionGroupName
     )

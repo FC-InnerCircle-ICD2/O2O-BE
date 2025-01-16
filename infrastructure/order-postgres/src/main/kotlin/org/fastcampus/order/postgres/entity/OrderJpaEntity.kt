@@ -12,6 +12,7 @@ import java.util.*
 @Entity
 @Table(name = "ORDER")
 class OrderJpaEntity(
+    @Id
     @Column(name = "ID")
     val id: String = UUID.randomUUID().toString(),
     @Column(name = "STORE_ID")
