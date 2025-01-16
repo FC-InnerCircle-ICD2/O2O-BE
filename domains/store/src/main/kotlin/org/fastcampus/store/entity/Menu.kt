@@ -7,7 +7,7 @@ package org.fastcampus.store.entity
 data class Menu(
     val id: String? = null,
     val name: String?,
-    val price: Long?,
+    val price: String?,
     val desc: String?,
     val imgUrl: String?,
     val isSoldOut: Boolean,
