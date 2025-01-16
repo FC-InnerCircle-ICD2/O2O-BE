@@ -11,7 +11,7 @@ class MenuOptionDocument(
     val name: String?,
     val price: Long?,
     val menuOptionGroupId: String?,
-    val isSoldOut: Boolean,
+    val isSoldOut: String,
     val order: Long?,
 )
 
@@ -21,6 +21,6 @@ fun MenuOptionDocument.toModel() =
         name,
         price,
         menuOptionGroupId,
-        isSoldOut,
+        isSoldOut = isSoldOut == "Y",
         order
     )

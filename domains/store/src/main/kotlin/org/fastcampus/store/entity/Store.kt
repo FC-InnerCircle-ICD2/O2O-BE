@@ -5,7 +5,8 @@ package org.fastcampus.store.entity
  */
 
 data class Store(
-    val id: String? = null,
+    val _id: String? = null,
+    val id: String?,
     val name: String?,
     val address: String?,
     val latitude: Double,
@@ -20,11 +21,13 @@ data class Store(
     val roadAddress: String?,
     val jibunAddress: String?,
     val category: Category?,
-    val storeMenuCategoryDocument: List<StoreMenuCategory>?,
+    val storeMenuCategory: List<StoreMenuCategory>?,
 ) {
     enum class Status(
         val code: String,
         val desc: String,
+
+
     ) {
         OPEN("S1", "영업"),
         CLOSE("S2", "종료"),
@@ -50,5 +53,6 @@ data class Store(
         LUNCH_BOX("C14", "도시락/죽"),
         ASIAN_CUISINE("C15", "아시안"),
         CHINESE_CUISINE("C16", "중식"),
+        ETC("C17", "기타"),
     }
 }
