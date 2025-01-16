@@ -5,10 +5,10 @@ package org.fastcampus.store.entity
  */
 
 data class MenuOption(
-    val id: Long? = null,
+    val id: String? = null,
     val name: String?,
-    val price: String?,
+    val price: Long?,
     val menuOptionGroupId: String?,
-    val isSoldOut: String?,
-    val order: String?,
+    val isSoldOut: Boolean,
+    val order: Long?,
 )

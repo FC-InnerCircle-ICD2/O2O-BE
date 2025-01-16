@@ -1,41 +1,48 @@
 package org.fastcampus.store.mongo.document
 
+import org.bson.types.ObjectId
 import org.fastcampus.store.entity.Store
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.core.mapping.Field
 
 /**
  * Created by brinst07 on 25. 1. 11..
  */
 
-@Document(collection = "TB_STORE")
+@Document(collection = "stores")
 class StoreDocument(
     @Id
-    val id: Long? = null,
+    @Field(name = "_id")
+    val _id: ObjectId? = null,
+    val id: String?,
     val name: String?,
     val address: String?,
-    val latitude: String?,
-    val longitude: String?,
+    val latitude: String,
+    val longitude: String,
     val border: String?,
     val ownerId: String?,
     val tel: String?,
     val imageThumbnail: String?,
     val imageMain: String?,
-    val status: String?,
-    val breakTime: String?,
+    val status: Store.Status,
+    val breakTime: String,
     val roadAddress: String?,
     val jibunAddress: String?,
-    val category: String?,
+    val category: Store.Category?,
+    @Field(name = "storeMenuCategory")
+    val storeMenuCategoryDocument: List<StoreMenuCategoryDocument>?,
 )
 
 fun StoreDocument.toModel() =
     Store(
+        _id.toString(),
         id,
         name,
         address,
-        latitude,
-        longitude,
-        border,
+        latitude.toDouble(),
+        longitude.toDouble(),
+        border?.toInt(),
         ownerId,
         tel,
         imageThumbnail,
@@ -45,4 +52,5 @@ fun StoreDocument.toModel() =
         roadAddress,
         jibunAddress,
         category,
+        storeMenuCategoryDocument?.map { it.toModel() },
     )

@@ -5,12 +5,14 @@ package org.fastcampus.store.entity
  */
 
 data class Menu(
-    val id: Long? = null,
+    val id: String? = null,
     val name: String?,
     val price: String?,
     val desc: String?,
     val imgUrl: String?,
-    val isSoldOut: String?,
-    val isHided: String?,
+    val isSoldOut: Boolean,
+    val isHided: Boolean,
     val storeId: String?,
+    val menuOptionGroup: List<MenuOptionGroup>?,
+    val order: Long,
 )

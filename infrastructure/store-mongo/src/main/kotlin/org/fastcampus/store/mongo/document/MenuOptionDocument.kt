@@ -1,20 +1,26 @@
 package org.fastcampus.store.mongo.document
 
-import org.fastcampus.common.entity.BaseEntity
-import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.Document
+import org.fastcampus.store.entity.MenuOption
 
 /**
  * Created by brinst07 on 25. 1. 11..
  */
 
-@Document(collection = "TB_MENU_OPTION")
 class MenuOptionDocument(
-    @Id
-    val id: Long? = null,
+    val id: String? = null,
     val name: String?,
-    val price: String?,
+    val price: Long?,
     val menuOptionGroupId: String?,
-    val isSoldOut: String?,
-    val order: String?,
-) : BaseEntity()
+    val isSoldOut: String,
+    val order: Long?,
+)
+
+fun MenuOptionDocument.toModel() =
+    MenuOption(
+        id,
+        name,
+        price,
+        menuOptionGroupId,
+        isSoldOut = isSoldOut == "Y",
+        order
+    )

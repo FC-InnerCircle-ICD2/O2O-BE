@@ -1,7 +1,9 @@
 package org.fastcampus.store.entity
 
 data class StoreMenuCategory(
-    val id: Long? = null,
+    val id: String? = null,
     val name: String?,
     val storeId: String?,
+    val menu: List<Menu>?,
+    val order: Long,
 )
