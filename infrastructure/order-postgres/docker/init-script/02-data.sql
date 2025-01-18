@@ -26,3 +26,30 @@ INSERT INTO orders (
     'client',                                -- created_by (작성자)
     'client'                                 -- updated_by (수정자)
 );
+
+INSERT INTO order_menu (
+    menu_price, menu_quantity, total_price, created_at, updated_at, created_by, updated_by,
+    menu_id, menu_name, order_id
+) VALUES
+(12400, 1, 12900, now(), now(), 'client', 'client', 'd5010526-60ac-4656-b105-f591a2013435', '[주문폭주] 투움바 파스타 1', 'c735a637-621d-4926-9811-909dc2584cf9'),
+(13000, 2, 26000, now(), now(), 'client', 'client', 'd5010526-60ac-4656-b105-f591a2011235', '[주문폭주] 감바스', 'c735a637-621d-4926-9811-909dc2584cf9');
+
+INSERT INTO order_menu_option_group (
+    created_at, updated_at, created_by, updated_by,
+    order_menu_id, order_menu_option_group_name
+) VALUES
+(now(), now(), 'client', 'client', 1, '피클 선택'),
+(now(), now(), 'client', 'client', 2, '빵 선택');
+
+INSERT INTO order_menu_option (
+    created_at, updated_at, created_by, updated_by,
+    menu_option_price, order_option_group_id, menu_option_name
+) VALUES
+(now(), now(), 'client', 'client', 500, 1, '상큼한 피클'),
+(now(), now(), 'client', 'client', 500, 2, '마늘빵');
+
+INSERT INTO payment (
+    type, created_at, updated_at, created_by, updated_by,
+    payment_price
+) VALUES
+('KAKAO_PAY', now(), now(), 'client', 'client', 39400);
