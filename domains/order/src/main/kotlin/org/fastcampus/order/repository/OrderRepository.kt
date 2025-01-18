@@ -1,5 +1,6 @@
 package org.fastcampus.order.repository
 
+import org.fastcampus.common.dto.CursorBasedDTO
 import org.fastcampus.order.entity.Order
 
 /**
@@ -8,11 +9,13 @@ import org.fastcampus.order.entity.Order
 interface OrderRepository {
     fun save(order: Order): Order
 
-    fun findById(id: Long): Order?
+    fun findById(id: String): Order?
 
     fun findAll(): List<Order>
 
     fun delete(id: Long): Boolean
 
     fun update(id: Long): Order
+
+    fun findByUserId(userId: Long, page: Int, size: Int): CursorBasedDTO<Order>
 }

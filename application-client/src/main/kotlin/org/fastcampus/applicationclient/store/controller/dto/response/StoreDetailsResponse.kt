@@ -1,4 +1,4 @@
-package org.fastcampus.applicationclient.store.controller.dto
+package org.fastcampus.applicationclient.store.controller.dto.response
 
 data class StoreDetailsResponse(
     val store: StoreInfo,

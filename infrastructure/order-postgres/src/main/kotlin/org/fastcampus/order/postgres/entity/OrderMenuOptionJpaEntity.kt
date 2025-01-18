@@ -15,8 +15,8 @@ import org.fastcampus.order.entity.OrderMenuOption
 @Entity
 @Table(name = "ORDER_MENU_OPTION")
 class OrderMenuOptionJpaEntity(
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     @Column(name = "ID")
     val id: Long? = null,
     @Column(name = "ORDER_OPTION_GROUP_ID")

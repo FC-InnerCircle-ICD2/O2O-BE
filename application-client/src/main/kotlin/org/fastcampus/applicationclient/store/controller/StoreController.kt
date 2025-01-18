@@ -1,6 +1,6 @@
 package org.fastcampus.applicationclient.store.controller
 
-import org.fastcampus.applicationclient.store.controller.dto.StoreDetailsResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.StoreDetailsResponse
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.store.redis.Coordinates
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
  * Created by brinst07 on 25. 1. 11..
  */
 @RestController
-@RequestMapping("/api/stores")
+@RequestMapping("/api/v1/stores")
 class StoreController(
     private val storeService: StoreService,
 ) {

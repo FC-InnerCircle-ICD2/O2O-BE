@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  store-mongo:
+    container_name: store-mongo
+    image: brinst07/mongo-o2o:latest
+    ports:
+      - "27017:27017"
+  store-redis:
+    container_name: store-redis
+    image: redis:7.0.15
+    ports:
+      - '6379:6379'
+  order-postgres:
+    container_name: order-postgres
+    image: yong7317/postgres-o2o:latest
+    ports:
+      - '5432:5432'
