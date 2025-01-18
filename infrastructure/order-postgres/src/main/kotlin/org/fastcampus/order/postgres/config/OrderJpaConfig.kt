@@ -5,4 +5,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @Configuration
 @EnableJpaRepositories(basePackages = ["org.fastcampus.order.postgres.repository"])
-class JpaConfig
+class OrderJpaConfig
