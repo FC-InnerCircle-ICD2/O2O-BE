@@ -26,6 +26,8 @@ data class Store(
     enum class Status(
         val code: String,
         val desc: String,
+
+
     ) {
         OPEN("S1", "영업"),
         CLOSE("S2", "종료"),

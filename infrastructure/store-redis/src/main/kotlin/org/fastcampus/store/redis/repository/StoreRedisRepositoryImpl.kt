@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component
 @Component
 class StoreRedisRepositoryImpl(
     val redisTemplate: RedisTemplate<String, Any>,
+
 ) : StoreRedisRepository {
+
     companion object {
         const val GEO_KEY = "geo:store:location"
         const val DISTANCE_KEY = "distance:user:store"
@@ -19,7 +21,9 @@ class StoreRedisRepositoryImpl(
         redisTemplate.opsForGeo().add(
             GEO_KEY,
             Point(coordinates.longitude, coordinates.latitude),
+
             storeId,
+
         )
     }
 
@@ -43,7 +47,9 @@ class StoreRedisRepositoryImpl(
         redisTemplate.opsForGeo().add(
             GEO_KEY,
             Point(coordinates.longitude, coordinates.latitude),
+
             userKey,
+
         )
     }
 }

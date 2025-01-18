@@ -32,3 +32,5 @@ fun MenuOptionGroupDocument.toModel() =
 private fun String.toIntWithoutUnit(): Int? {
     return this.replace("개", "").toIntOrNull() // 기본 확장 함수 호출
 }
+
+
