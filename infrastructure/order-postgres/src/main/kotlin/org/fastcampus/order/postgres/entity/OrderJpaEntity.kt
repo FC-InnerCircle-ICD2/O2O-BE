@@ -9,34 +9,36 @@ import jakarta.persistence.Table
 import org.fastcampus.common.entity.BaseEntity
 import org.fastcampus.order.entity.Order
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 /**
  * Created by brinst07 on 25. 1. 11..
  */
 @Entity
-@Table(name = "ORDER")
+@Table(name = "ORDERS")
 class OrderJpaEntity(
     @Id
     @Column(name = "ID")
     val id: String = UUID.randomUUID().toString(),
     @Column(name = "STORE_ID")
-    val storeId: String,
+    val storeId: String? = null,
     @Column(name = "USER_ID")
-    val userId: Long,
+    val userId: Long? = null,
     @Column(name = "ROAD_ADDRESS")
-    val roadAddress: String?,
+    val roadAddress: String? = null,
     @Column(name = "JIBUN_ADDRESS")
-    val jibunAddress: String?,
+    val jibunAddress: String? = null,
     @Column(name = "DETAIL_ADDRESS")
-    val detailAddress: String?,
+    val detailAddress: String? = null,
     @Column(name = "TEL")
-    val tel: String?,
+    val tel: String? = null,
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
     val status: Order.Status,
     @Column(name = "ORDER_TIME")
     val orderTime: LocalDateTime,
+    @Column(name = "ORDER_SUMMARY")
+    val orderSummary: String? = null,
     @Enumerated(EnumType.STRING)
     @Column(name = "TYPE")
     val type: Order.Type,
@@ -45,13 +47,13 @@ class OrderJpaEntity(
     @Column(name = "IS_DELETED")
     val isDeleted: Boolean,
     @Column(name = "DELIVERY_COMPLETE_TIME")
-    val deliveryCompleteTime: LocalDateTime?,
+    val deliveryCompleteTime: LocalDateTime? = null,
     @Column(name = "ORDER_PRICE")
-    val orderPrice: Long?,
+    val orderPrice: Long,
     @Column(name = "DELIVERY_PRICE")
-    val deliveryPrice: Long?,
+    val deliveryPrice: Long? = 0L,
     @Column(name = "PAYMENT_PRICE")
-    val paymentPrice: Long?,
+    val paymentPrice: Long,
 ) : BaseEntity()
 
 fun Order.toJpaEntity() =
@@ -65,6 +67,7 @@ fun Order.toJpaEntity() =
         tel,
         status,
         orderTime,
+        orderSummary,
         type,
         paymentId,
         isDeleted,
@@ -85,6 +88,7 @@ fun OrderJpaEntity.toModel() =
         tel,
         status,
         orderTime,
+        orderSummary,
         type,
         paymentId,
         isDeleted,

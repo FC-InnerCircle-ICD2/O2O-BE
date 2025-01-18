@@ -14,10 +14,12 @@
             <option value="$PROJECT_DIR$/domains" />
             <option value="$PROJECT_DIR$/domains/member" />
             <option value="$PROJECT_DIR$/domains/order" />
+            <option value="$PROJECT_DIR$/domains/payment" />
             <option value="$PROJECT_DIR$/domains/review" />
             <option value="$PROJECT_DIR$/domains/store" />
             <option value="$PROJECT_DIR$/infrastructure" />
             <option value="$PROJECT_DIR$/infrastructure/order-postgres" />
+            <option value="$PROJECT_DIR$/infrastructure/payment-postgres" />
             <option value="$PROJECT_DIR$/infrastructure/store-mongo" />
             <option value="$PROJECT_DIR$/infrastructure/store-redis" />
           </set>

@@ -6,4 +6,4 @@ spring:
       database: o2o
       username: root
       password: root
-
+      authentication-database: admin
