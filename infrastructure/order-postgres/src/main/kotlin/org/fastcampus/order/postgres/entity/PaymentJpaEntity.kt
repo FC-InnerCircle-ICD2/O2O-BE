@@ -23,12 +23,12 @@ fun Payment.toJpaEntity() =
     PaymentJpaEntity(
         id,
         type,
-        paymentPrice
+        paymentPrice,
     )
 
 fun PaymentJpaEntity.toModel() =
     Payment(
         id,
         type,
-        paymentPrice
+        paymentPrice,
     )

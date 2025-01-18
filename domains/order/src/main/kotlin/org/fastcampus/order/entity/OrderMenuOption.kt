@@ -8,5 +8,5 @@ data class OrderMenuOption(
     val id: Long? = null,
     val orderMenuOptionGroupId: Long,
     val menuOptionName: String,
-    val menuOptionPrice: Long
+    val menuOptionPrice: Long,
 )

@@ -14,7 +14,7 @@ class MenuDocument(
     val imgUrl: String?,
     val isSoldOut: String,
     val isHided: String,
-    val storeId: String?,
+    val menuCategoryId: String?,
     @Field(name = "menuOptionGroups")
     val menuOptionGroupDocument: List<MenuOptionGroupDocument>?,
     val order: Long,
@@ -28,8 +28,8 @@ fun MenuDocument.toModel() =
         desc,
         imgUrl,
         isSoldOut = isSoldOut == "Y", // Y -> true, N -> false
-        isHided = isHided == "Y",     // Y -> true, N -> false
-        storeId,
+        isHided = isHided == "Y", // Y -> true, N -> false
+        menuCategoryId,
         menuOptionGroupDocument?.map { it.toModel() },
         order,
     )

@@ -18,6 +18,10 @@ java {
     sourceCompatibility = JavaVersion.VERSION_21
 }
 
+tasks.withType<JavaCompile> {
+    options.release.set(21) // compileJava 타겟 설정
+}
+
 allprojects {
     group = "org.fastcampus"
     version = "1.0-SNAPSHOT"
