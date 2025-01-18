@@ -2,6 +2,7 @@ spring:
   profiles:
     include:
       - order-postgres
+      - payment-postgres
       - store-mongo
       - store-redis
 

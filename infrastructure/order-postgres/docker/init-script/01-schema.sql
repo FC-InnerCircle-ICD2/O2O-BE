@@ -62,7 +62,7 @@ create table orders (
 );
 
 create table payment (
-    type smallint check (type between 0 and 1),
+    type varchar(255) check (type in ('KAKAO_PAY','TOSS_PAY')),
     created_at timestamp(6) not null,
     id bigserial not null,
     payment_price bigint,
