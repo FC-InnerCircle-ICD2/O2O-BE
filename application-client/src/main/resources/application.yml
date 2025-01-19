@@ -1,5 +1,6 @@
 spring:
   profiles:
+    active: local
     include:
       - order-postgres
       - payment-postgres

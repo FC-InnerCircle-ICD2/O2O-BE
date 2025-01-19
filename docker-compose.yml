@@ -5,14 +5,35 @@ services:
     container_name: store-mongo
     image: brinst07/mongo-o2o:latest
     ports:
-      - "27017:27017"
+      - '27017:27017'
+    networks:
+      - o2o-network
   store-redis:
     container_name: store-redis
     image: redis:7.0.15
     ports:
       - '6379:6379'
+    networks:
+      - o2o-network
   order-postgres:
     container_name: order-postgres
     image: yong7317/postgres-o2o:latest
     ports:
       - '5432:5432'
+    networks:
+      - o2o-network
+  app-client:
+    container_name: app-client
+    image: yong7317/application-client:latest
+    ports:
+      - '8080:8080'
+    networks:
+      - o2o-network
+    depends_on:
+      - store-mongo
+      - store-redis
+      - order-postgres
+
+networks:
+  o2o-network:
+    driver: bridge
