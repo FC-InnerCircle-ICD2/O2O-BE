@@ -1,3 +1,6 @@
 package org.fastcampus.order.exception
 
-class OrderException
+class OrderException(
+    val status: Int,
+    override val message: String,
+) : RuntimeException(message)

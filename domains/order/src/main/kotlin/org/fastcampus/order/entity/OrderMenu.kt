@@ -12,4 +12,5 @@ data class OrderMenu(
     val menuQuantity: Long,
     val menuPrice: Long,
     val totalPrice: Long,
+    val orderMenuOptionGroups: List<OrderMenuOptionGroup>? = null, // 필요시 설정
 )

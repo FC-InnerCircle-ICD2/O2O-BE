@@ -11,15 +11,15 @@ data class OrderCreationRequest(
     val orderType: Order.Type,
     val paymentType: Payment.Type,
     val orderMenus: List<OrderMenu>,
-)
+) {
+    data class OrderMenu(
+        val id: String,
+        val quantity: Long,
+        val orderMenuOptionGroups: List<OrderMenuOptionGroup>,
+    )
 
-data class OrderMenu(
-    val id: String,
-    val quantity: Int,
-    val orderMenuOptionGroups: List<OrderMenuOptionGroup>,
-)
-
-data class OrderMenuOptionGroup(
-    val id: String,
-    val orderMenuOptionIds: List<String>,
-)
+    data class OrderMenuOptionGroup(
+        val id: String,
+        val orderMenuOptionIds: List<String>,
+    )
+}
