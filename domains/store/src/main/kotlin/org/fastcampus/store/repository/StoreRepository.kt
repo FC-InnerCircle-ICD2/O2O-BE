@@ -8,5 +8,8 @@ import org.fastcampus.store.entity.Store
 
 interface StoreRepository {
     fun findByCategory(category: String): List<Store>
+
     fun findById(storeId: String): Store?
+
+    fun existsByName(name: String): Boolean?
 }

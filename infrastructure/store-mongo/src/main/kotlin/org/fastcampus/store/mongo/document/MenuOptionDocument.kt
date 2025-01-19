@@ -22,5 +22,5 @@ fun MenuOptionDocument.toModel() =
         price,
         menuOptionGroupId,
         isSoldOut = isSoldOut == "Y",
-        order
+        order,
     )

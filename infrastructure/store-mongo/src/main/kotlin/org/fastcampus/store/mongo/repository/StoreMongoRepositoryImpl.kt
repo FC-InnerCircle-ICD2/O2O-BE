@@ -15,9 +15,13 @@ class StoreMongoRepositoryImpl(
         return storeMongoRepository.findByCategory(category).map { it.toModel() }
     }
 
-    override fun findById(storeId: String): Store?{
+    override fun findById(storeId: String): Store? {
         return storeMongoRepository.findById(ObjectId(storeId))
             .map { it.toModel() }
             .orElse(null)
+    }
+
+    override fun existsByName(name: String): Boolean? {
+        return storeMongoRepository.existsStoreDocumentByName(name)
     }
 }

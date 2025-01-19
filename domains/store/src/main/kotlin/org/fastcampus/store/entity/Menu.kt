@@ -12,7 +12,7 @@ data class Menu(
     val imgUrl: String?,
     val isSoldOut: Boolean,
     val isHided: Boolean,
-    val storeId: String?,
+    val menuCategoryId: String?,
     val menuOptionGroup: List<MenuOptionGroup>?,
     val order: Long,
 )

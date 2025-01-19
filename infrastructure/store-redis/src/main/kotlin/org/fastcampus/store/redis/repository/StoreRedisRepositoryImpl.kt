@@ -1,5 +1,6 @@
 package org.fastcampus.store.redis.repository
 
+import org.fastcampus.store.entity.TrendKeyword
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
 import org.springframework.data.geo.Point
@@ -9,18 +10,18 @@ import org.springframework.stereotype.Component
 @Component
 class StoreRedisRepositoryImpl(
     val redisTemplate: RedisTemplate<String, Any>,
-): StoreRedisRepository {
-
+) : StoreRedisRepository {
     companion object {
         const val GEO_KEY = "geo:store:location"
         const val DISTANCE_KEY = "distance:user:store"
+        const val TRENDING_KEY = "trending:keywords"
     }
 
     override fun saveStoreLocation(storeId: String, coordinates: Coordinates) {
         redisTemplate.opsForGeo().add(
             GEO_KEY,
             Point(coordinates.longitude, coordinates.latitude),
-            storeId
+            storeId,
         )
     }
 
@@ -44,7 +45,22 @@ class StoreRedisRepositoryImpl(
         redisTemplate.opsForGeo().add(
             GEO_KEY,
             Point(coordinates.longitude, coordinates.latitude),
-            userKey
+            userKey,
         )
+    }
+
+    override fun incrementSearchCount(keyword: String) {
+        redisTemplate.opsForZSet().incrementScore(TRENDING_KEY, keyword, 1.0)
+    }
+
+    override fun getTrendKeywords(): List<TrendKeyword>? {
+        return redisTemplate.opsForZSet()
+            .reverseRangeWithScores(TRENDING_KEY, 0, 9)
+            ?.mapIndexed { index, tuple ->
+                TrendKeyword(
+                    order = index + 1,
+                    keyword = tuple.value.toString(),
+                )
+            }
     }
 }

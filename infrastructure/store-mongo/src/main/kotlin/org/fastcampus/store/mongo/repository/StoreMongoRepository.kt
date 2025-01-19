@@ -6,4 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository
 
 interface StoreMongoRepository : MongoRepository<StoreDocument, ObjectId> {
     fun findByCategory(category: String): List<StoreDocument>
+
+    fun existsStoreDocumentByName(name: String): Boolean
 }
