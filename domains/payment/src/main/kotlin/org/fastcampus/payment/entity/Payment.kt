@@ -1,4 +1,4 @@
-package org.fastcampus.order.entity
+package org.fastcampus.payment.entity
 
 data class Payment(
     val id: Long? = null,

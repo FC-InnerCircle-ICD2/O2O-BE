@@ -1,9 +1,9 @@
 package org.fastcampus.applicationclient.store.service
 
-import org.fastcampus.applicationclient.store.controller.dto.CategoryInfo
-import org.fastcampus.applicationclient.store.controller.dto.MenuInfo
-import org.fastcampus.applicationclient.store.controller.dto.StoreDetailsResponse
-import org.fastcampus.applicationclient.store.controller.dto.StoreInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.StoreDetailsResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.store.entity.TrendKeyword
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository

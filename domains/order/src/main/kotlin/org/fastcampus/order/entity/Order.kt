@@ -8,21 +8,22 @@ import java.time.LocalDateTime
 
 data class Order(
     val id: String,
-    val storeId: String,
-    val userId: Long,
+    val storeId: String?,
+    val userId: Long?,
     val roadAddress: String?,
     val jibunAddress: String?,
     val detailAddress: String?,
     val tel: String?,
     val status: Status,
     val orderTime: LocalDateTime,
+    val orderSummary: String?,
     val type: Type,
     val paymentId: Long,
     val isDeleted: Boolean,
     val deliveryCompleteTime: LocalDateTime?,
-    val orderPrice: Long?,
+    val orderPrice: Long,
     val deliveryPrice: Long?,
-    val paymentPrice: Long?,
+    val paymentPrice: Long,
 ) {
     enum class Status(
         val code: String,
