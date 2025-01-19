@@ -9,13 +9,11 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import org.fastcampus.common.entity.BaseEntity
 import org.fastcampus.member.code.MemberState
 import org.fastcampus.member.code.Role
 import org.fastcampus.member.entity.Member
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.LocalDateTime
 
 /**
  * Created by kms0902 on 25. 1. 19..
@@ -44,17 +42,7 @@ class MemberJpaEntity(
     val nickname: String = "",
     @Column(name = "PHONE", nullable = false)
     val phone: String = "",
-    @CreatedDate
-    @Column(name = "CREATED_AT", updatable = false, nullable = false)
-    var createdAt: LocalDateTime? = null,
-    @LastModifiedDate
-    @Column(name = "UPDATED_AT", nullable = false)
-    var updatedAt: LocalDateTime? = null,
-    @Column(name = "CREATED_BY", updatable = false, nullable = false)
-    var createdBy: String? = null,
-    @Column(name = "UPDATED_BY", nullable = false)
-    var updatedBy: String? = null,
-)
+) : BaseEntity()
 
 fun Member.toJpaEntity() =
     MemberJpaEntity(
@@ -66,10 +54,6 @@ fun Member.toJpaEntity() =
         username,
         nickname,
         phone,
-        null,
-        null,
-        "system",
-        "system",
     )
 
 fun MemberJpaEntity.toModel() =

@@ -7,7 +7,6 @@ import org.fastcampus.member.code.Role
 import org.fastcampus.member.entity.Member
 import org.fastcampus.member.repository.MemberRepository
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 /**
  * Created by kms0902 on 25. 1. 19..
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional
 class MemberService(
     private val memberRepository: MemberRepository,
 ) {
-    @Transactional
     fun join(memberJoinRequest: MemberJoinRequest): MemberJoinResponse {
         val createMember =
             Member(
