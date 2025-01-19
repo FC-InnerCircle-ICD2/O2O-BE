@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.store.controller
 
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreDetailsResponse
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
@@ -45,6 +46,18 @@ class StoreController(
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(APIResponseDTO(500, "Error retrieving store details", null))
         }
+    }
+
+    @GetMapping("/{storeId}/menus/{menuId}/options")
+    fun getMenusOptions(
+        @PathVariable storeId: String,
+        @PathVariable menuId: String,
+    ): APIResponseDTO<List<MenuOptionGroupsResponse>> {
+        logger.info("Received request for menu options groups. storeId: $storeId menusId: $menuId")
+
+        val response = storeService.findAllMenuOptionGroup(storeId, menuId)
+        logger.info("Successfully retrieved all store option groups for storeId: $response")
+        return APIResponseDTO(HttpStatus.OK.value(), "스토어 메뉴 조회 성공", response)
     }
 
     @GetMapping("/test")

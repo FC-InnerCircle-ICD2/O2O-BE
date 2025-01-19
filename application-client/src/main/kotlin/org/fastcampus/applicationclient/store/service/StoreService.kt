@@ -2,6 +2,8 @@ package org.fastcampus.applicationclient.store.service
 
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreDetailsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.store.redis.Coordinates
@@ -60,7 +62,8 @@ class StoreService(
 
         return StoreDetailsResponse(
             store = StoreInfo(
-                id = store._id ?: "",
+                // id = store._id ?: "",
+                id = store.id ?: "",
                 name = store.name ?: "",
                 imageMain = store.imageMain ?: "",
                 rating = 4.5,
@@ -124,5 +127,46 @@ class StoreService(
             }.also {
                 if (it == null) logger.warn("Store coordinates not found for storeId: $storeId")
             }
+    }
+
+    fun findAllMenuOptionGroup(storeId: String, menuId: String): List<MenuOptionGroupsResponse> {
+        logger.info("call findAllMenuOptionGroup")
+        val menuOptionGroupInfo = storeRepository.findById(storeId)
+            ?.storeMenuCategory
+            ?.flatMap { it.menu ?: emptyList() }
+            ?.filter { it.id == menuId }
+            ?.flatMap { it.menuOptionGroup ?: emptyList() }
+        // logger.info(menuOptionGroupInfo.toString())
+        val storeInfo = storeRepository.findById(storeId)
+        logger.info("storeInfo: ${storeInfo.toString()}")
+        val storeMenuCateInfo = storeInfo?.storeMenuCategory ?: emptyList()
+        logger.info("storeMenuCateInfo: $storeMenuCateInfo")
+        val menuInfo = storeMenuCateInfo
+            .flatMap { it.menu ?: emptyList() }
+            .filter { it.id?.equals(menuId, ignoreCase = true) == true }
+        logger.info("Filtered menuInfo: $menuInfo")
+
+        val menuGroupInfo = menuInfo.flatMap { it.menuOptionGroup ?: emptyList() }
+        logger.info("menuGroupInfo: $menuGroupInfo")
+
+        val response = menuOptionGroupInfo?.map { menuOptionGroup ->
+            MenuOptionGroupsResponse(
+                id = menuOptionGroup.id ?: "",
+                name = menuOptionGroup.name ?: "",
+                minSel = menuOptionGroup.minSel?.toString() ?: "0",
+                maxSel = menuOptionGroup.maxSel?.toString() ?: "0",
+                order = menuOptionGroup.order ?: 0L,
+                menuOptions = menuOptionGroup.menuOption?.map { menu ->
+                    MenuOptionInfo(
+                        id = menu.id ?: "",
+                        name = menu.name ?: "",
+                        price = "${menu.price}원" ?: "0",
+                        isSoldOut = menu.isSoldOut,
+                        order = menu.order ?: 0L
+                    )
+                } ?: emptyList()
+            )
+        } ?: emptyList()
+        return response
     }
 }

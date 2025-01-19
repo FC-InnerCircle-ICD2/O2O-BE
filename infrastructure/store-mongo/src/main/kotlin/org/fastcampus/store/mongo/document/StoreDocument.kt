@@ -25,7 +25,7 @@ class StoreDocument(
     val tel: String?,
     val imageThumbnail: String?,
     val imageMain: String?,
-    val status: Store.Status,
+    val status: String,
     val breakTime: String,
     val roadAddress: String?,
     val jibunAddress: String?,

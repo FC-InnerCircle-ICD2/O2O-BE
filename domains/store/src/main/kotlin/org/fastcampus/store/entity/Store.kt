@@ -16,7 +16,7 @@ data class Store(
     val tel: String?,
     val imageThumbnail: String?,
     val imageMain: String?,
-    val status: Status,
+    val status: String,
     val breakTime: String,
     val roadAddress: String?,
     val jibunAddress: String?,

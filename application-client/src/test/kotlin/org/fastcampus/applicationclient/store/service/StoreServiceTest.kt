@@ -51,7 +51,7 @@ class StoreServiceTest {
                 ),
             ),
             imageThumbnail = "tst",
-            status = Store.Status.OPEN,
+            status = "영업", //Store.Status.OPEN,
             breakTime = "test",
             roadAddress = "test",
             jibunAddress = "test",
