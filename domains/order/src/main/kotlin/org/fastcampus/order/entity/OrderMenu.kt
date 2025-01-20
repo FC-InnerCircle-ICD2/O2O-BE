@@ -13,4 +13,10 @@ data class OrderMenu(
     val menuPrice: Long,
     val totalPrice: Long,
     val orderMenuOptionGroups: List<OrderMenuOptionGroup>? = null, // 필요시 설정
-)
+) {
+    fun calculateOptionTotalPricePerMenuUnit(): Long {
+        return orderMenuOptionGroups
+            ?.flatMap { tempOptionGroup -> tempOptionGroup.orderMenuOptions ?: emptyList() }
+            ?.sumOf { it.menuOptionPrice } ?: 0
+    }
+}

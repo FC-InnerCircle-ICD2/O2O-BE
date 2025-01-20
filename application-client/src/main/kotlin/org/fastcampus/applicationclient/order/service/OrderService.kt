@@ -121,14 +121,10 @@ class OrderService(
         // 여러개의 주문메뉴, 주문메뉴옵션그룹, 주문메뉴옵션을 생성한다.
         val tempOrderMenus = createTempOrderMenus(orderCreationRequest, targetMenuEntities)
 
-        // 메뉴 기본가격 합
-        val sumOfOrderMenuPrice = tempOrderMenus.sumOf { it.menuPrice }
-        // 옵션 가격 합
-        val sumOfOptionPrice = tempOrderMenus.sumOf { tempMenu ->
-            tempMenu.orderMenuOptionGroups!!
-                .flatMap { tempOptionGroup -> tempOptionGroup.orderMenuOptions!! }
-                .sumOf { it.menuOptionPrice }
-        }
+        // 메뉴 기본가격 전체 합
+        val sumOfOrderMenuPrice = tempOrderMenus.sumOf { it.menuPrice * it.menuQuantity }
+        // 옵션 가격 전체 합
+        val sumOfOptionPrice = tempOrderMenus.sumOf { it.calculateOptionTotalPricePerMenuUnit() * it.menuQuantity }
 
         // 결제 생성, 저장 - TODO 결제에 orderId 가 있어야 할 것 같다.
         val savedPayment = paymentRepository.save(
@@ -175,14 +171,11 @@ class OrderService(
     private fun createAssociatedEntitiesAndSave(tempOrderMenus: List<OrderMenu>, savedOrder: Order) {
         // 주문 메뉴 생성, 저장
         tempOrderMenus.forEach { tempOrderMenu ->
-            val priceOfOptions = tempOrderMenu.orderMenuOptionGroups!!
-                .flatMap { tempOptionGroup -> tempOptionGroup.orderMenuOptions!! }
-                .sumOf { it.menuOptionPrice }
-
             val savedOrderMenu = orderMenuRepository.save(
                 tempOrderMenu.copy(
                     orderId = savedOrder.id,
-                    totalPrice = tempOrderMenu.menuPrice + (priceOfOptions * tempOrderMenu.menuQuantity),
+                    totalPrice =
+                        tempOrderMenu.menuQuantity * (tempOrderMenu.menuPrice + tempOrderMenu.calculateOptionTotalPricePerMenuUnit()),
                 ),
             )
 
@@ -213,8 +206,8 @@ class OrderService(
                 menuId = menuEntity.id!!,
                 menuName = menuEntity.name!!,
                 menuQuantity = reqOrderMenu.quantity,
-                menuPrice = menuEntity.getLongTypePrice() * reqOrderMenu.quantity,
-                totalPrice = 0L,
+                menuPrice = menuEntity.getLongTypePrice(), // 주문시점 메뉴의 1개당 기본가격
+                totalPrice = 0L, // INSERT 시점에 설정
                 orderMenuOptionGroups = reqOrderMenu.orderMenuOptionGroups.map { reqOrderMenuOptionGroup ->
                     // 주문요청 메뉴의 옵션그룹 정보
                     val groupEntity = targetMenuEntities.flatMap { it.menuOptionGroup!! }.first { it.id == reqOrderMenuOptionGroup.id }
