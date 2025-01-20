@@ -182,7 +182,7 @@ class OrderService(
             val savedOrderMenu = orderMenuRepository.save(
                 tempOrderMenu.copy(
                     orderId = savedOrder.id,
-                    totalPrice = tempOrderMenu.menuPrice + priceOfOptions,
+                    totalPrice = tempOrderMenu.menuPrice + (priceOfOptions * tempOrderMenu.menuQuantity),
                 ),
             )
 
@@ -206,8 +206,6 @@ class OrderService(
         val tempOrderMenus = orderCreationRequest.orderMenus.map { reqOrderMenu ->
             // 주문 메뉴에 해당하는 메뉴 정보
             val menuEntity = targetMenuEntities.first { it.id == reqOrderMenu.id }
-            // 메뉴 기본가격
-            val menuPrice = reqOrderMenu.quantity * menuEntity.getLongTypePrice()
 
             // INSERT 위한 임시 객체 생성. INSERT 시점 copy 하여 값 재설정
             OrderMenu(
@@ -215,7 +213,7 @@ class OrderService(
                 menuId = menuEntity.id!!,
                 menuName = menuEntity.name!!,
                 menuQuantity = reqOrderMenu.quantity,
-                menuPrice = menuPrice,
+                menuPrice = menuEntity.getLongTypePrice() * reqOrderMenu.quantity,
                 totalPrice = 0L,
                 orderMenuOptionGroups = reqOrderMenu.orderMenuOptionGroups.map { reqOrderMenuOptionGroup ->
                     // 주문요청 메뉴의 옵션그룹 정보
