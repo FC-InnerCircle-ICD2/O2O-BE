@@ -136,7 +136,7 @@ class StoreService(
             ?.filter { it.id == menuId }
             ?.flatMap { it.menuOptionGroup ?: emptyList() }
             ?: throw IllegalArgumentException("Store id: $storeId menu id: $menuId not found")
-        val response = menuOptionGroupInfo?.map { menuOptionGroup ->
+        val response = menuOptionGroupInfo.map { menuOptionGroup ->
             MenuOptionGroupsResponse(
                 id = menuOptionGroup.id ?: "",
                 name = menuOptionGroup.name ?: "",
@@ -147,13 +147,13 @@ class StoreService(
                     MenuOptionInfo(
                         id = menu.id ?: "",
                         name = menu.name ?: "",
-                        price = "${menu.price}원" ?: "0",
+                        price = "${menu.price}원",
                         isSoldOut = menu.isSoldOut,
                         order = menu.order ?: 0L,
                     )
                 } ?: emptyList(),
             )
-        } ?: emptyList()
+        }
         return response
     }
 }
