@@ -1,6 +1,7 @@
 package org.fastcampus.applicationclient.payment.service
 
 import org.fastcampus.applicationclient.payment.controller.dto.request.OrderPaymentApproveRequest
+import org.fastcampus.order.entity.Order
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.payment.exception.PaymentException
 import org.fastcampus.payment.repository.PaymentRepository
@@ -27,5 +28,8 @@ class PaymentService(
         // TODO - Payment Status 추가, 결제완료시 상태 변경
         paymentRepository.findById(order.paymentId)
             ?: throw PaymentException(HttpStatus.BAD_REQUEST.value(), "결제 정보를 찾을 수 없습니다.")
+
+        // 주문접수 상태 변경
+        orderRepository.save(order.copy(status = Order.Status.RECEIVE))
     }
 }
