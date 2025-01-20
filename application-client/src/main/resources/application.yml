@@ -1,5 +1,6 @@
 spring:
   profiles:
+    active: local
     include:
       - member-postgres
       - order-postgres

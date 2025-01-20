@@ -53,6 +53,8 @@ class OrderService(
         val orderMenus = orderMenuRepository.findByOrderId(order.id)
         return OrderDetailResponse(
             orderId = order.id,
+            status = mapOf("code" to order.status.code, "desc" to order.status.desc),
+            orderTime = order.orderTime,
             isDeleted = order.isDeleted,
             tel = order.tel,
             roadAddress = order.roadAddress,
@@ -60,6 +62,7 @@ class OrderService(
             detailAddress = order.detailAddress,
             orderPrice = order.orderPrice,
             deliveryPrice = order.deliveryPrice,
+            deliveryCompleteTime = order.deliveryCompleteTime,
             paymentPrice = order.paymentPrice,
             paymentId = order.paymentId,
             paymentType = mapOf("code" to payment.type.code, "desc" to payment.type.desc),
