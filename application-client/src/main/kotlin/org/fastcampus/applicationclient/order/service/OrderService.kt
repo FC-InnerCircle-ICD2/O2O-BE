@@ -1,10 +1,6 @@
 package org.fastcampus.applicationclient.order.service
 
-import org.fastcampus.applicationclient.order.controller.dto.response.OrderDetailResponse
-import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuOptionGroupResponse
-import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuOptionResponse
-import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuResponse
-import org.fastcampus.applicationclient.order.controller.dto.response.OrderResponse
+import org.fastcampus.applicationclient.order.controller.dto.response.*
 import org.fastcampus.common.dto.CursorBasedDTO
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
@@ -26,7 +22,7 @@ class OrderService(
 ) {
     @Transactional(readOnly = true)
     fun getOrders(userId: Long, keyword: String, page: Int, size: Int): CursorBasedDTO<OrderResponse> {
-        val orders = orderRepository.findByUserId(userId, page, size)
+        val orders = orderRepository.findByUserId(userId, if (page == 0) 0 else page - 1, size)
         return CursorBasedDTO(
             isEnd = orders.isEnd,
             totalCount = orders.totalCount,
