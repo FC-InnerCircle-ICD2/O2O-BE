@@ -1,7 +1,7 @@
 package org.fastcampus.applicationclient.member.service
 
-import org.fastcampus.applicationclient.member.dto.MemberJoinRequest
-import org.fastcampus.applicationclient.member.dto.MemberJoinResponse
+import org.fastcampus.applicationclient.member.dto.request.MemberJoinRequest
+import org.fastcampus.applicationclient.member.dto.response.MemberJoinResponse
 import org.fastcampus.member.code.MemberState
 import org.fastcampus.member.code.Role
 import org.fastcampus.member.entity.Member

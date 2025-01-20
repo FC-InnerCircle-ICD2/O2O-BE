@@ -1,8 +1,8 @@
 package org.fastcampus.applicationclient.member.controller
 
 import jakarta.validation.Valid
-import org.fastcampus.applicationclient.member.dto.MemberJoinRequest
-import org.fastcampus.applicationclient.member.dto.MemberJoinResponse
+import org.fastcampus.applicationclient.member.dto.request.MemberJoinRequest
+import org.fastcampus.applicationclient.member.dto.response.MemberJoinResponse
 import org.fastcampus.applicationclient.member.service.MemberService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.springframework.web.bind.annotation.PostMapping

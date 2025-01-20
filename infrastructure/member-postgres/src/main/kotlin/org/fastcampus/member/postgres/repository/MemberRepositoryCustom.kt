@@ -16,4 +16,8 @@ class MemberRepositoryCustom(
     override fun save(member: Member): Member {
         return memberJpaRepository.save(member.toJpaEntity()).toModel()
     }
+
+    override fun findBySignname(signname: String): Member {
+        return memberJpaRepository.findBySignname(signname).map { it.toModel() }.orElse(null)
+    }
 }

@@ -7,4 +7,5 @@ import org.fastcampus.member.entity.Member
  */
 interface MemberRepository {
     fun save(member: Member): Member?
+    fun findBySignname(signname: String): Member
 }

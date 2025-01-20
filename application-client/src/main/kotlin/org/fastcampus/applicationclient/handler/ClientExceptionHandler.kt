@@ -22,6 +22,7 @@ class ClientExceptionHandler {
     @ExceptionHandler(RuntimeException::class)
     fun handlerRuntime(exception: RuntimeException): ResponseEntity<APIResponseDTO<Void>>? {
         logger.error(exception.message)
+
         return ResponseEntity.status(
             HttpStatus.INTERNAL_SERVER_ERROR,
         ).body(APIResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.message, null))
