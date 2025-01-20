@@ -4,6 +4,7 @@ import org.fastcampus.store.entity.StoreMenuCategory
 import org.springframework.data.mongodb.core.mapping.Field
 
 class StoreMenuCategoryDocument(
+    @Field("id")
     val id: String? = null,
     val name: String?,
     val storeId: String?,

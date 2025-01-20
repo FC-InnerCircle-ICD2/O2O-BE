@@ -112,7 +112,7 @@ class OrderService(
     fun createOrder(userId: Long, orderCreationRequest: OrderCreationRequest): OrderCreationResponse {
         // 스토어 검색
         val storeEntity = (storeRepository.findById(orderCreationRequest.storeId))
-            ?: throw OrderException(HttpStatus.NOT_FOUND.value(), "storeId [${orderCreationRequest.storeId}] 를 찾을 수 없습니다.")
+            ?: throw OrderException(HttpStatus.NOT_FOUND.value(), "가게를 찾을 수 없습니다.")
 
         // 주문내역 검사, 주문대상 정보 반환받기
         val targetMenuEntities = OrderCreationValidator.validate(storeEntity, orderCreationRequest)
@@ -130,7 +130,7 @@ class OrderService(
                 .sumOf { it.menuOptionPrice }
         }
 
-        // 결제 생성, 저장
+        // 결제 생성, 저장 - TODO 결제에 orderId 가 있어야 할 것 같다.
         val savedPayment = paymentRepository.save(
             Payment(
                 type = orderCreationRequest.paymentType,
@@ -144,7 +144,7 @@ class OrderService(
         val savedOrder = orderRepository.save(
             Order(
                 id = UUID.randomUUID().toString(),
-                storeId = storeEntity.id,
+                storeId = storeEntity._id,
                 userId = userId,
                 roadAddress = orderCreationRequest.roadAddress,
                 jibunAddress = orderCreationRequest.jibunAddress,
@@ -209,6 +209,7 @@ class OrderService(
             // 메뉴 기본가격
             val menuPrice = reqOrderMenu.quantity * menuEntity.getLongTypePrice()
 
+            // INSERT 위한 임시 객체 생성. INSERT 시점 copy 하여 값 재설정
             OrderMenu(
                 orderId = "",
                 menuId = menuEntity.id!!,

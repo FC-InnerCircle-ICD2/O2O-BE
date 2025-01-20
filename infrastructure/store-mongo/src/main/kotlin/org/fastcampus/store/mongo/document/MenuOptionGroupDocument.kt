@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field
  */
 
 class MenuOptionGroupDocument(
+    @Field("id")
     val id: String? = null,
     val name: String?,
     val menuId: String?,
