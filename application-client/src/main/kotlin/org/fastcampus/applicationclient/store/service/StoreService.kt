@@ -62,8 +62,7 @@ class StoreService(
 
         return StoreDetailsResponse(
             store = StoreInfo(
-                // id = store._id ?: "",
-                id = store.id ?: "",
+                id = store._id ?: "",
                 name = store.name ?: "",
                 imageMain = store.imageMain ?: "",
                 rating = 4.5,
@@ -129,26 +128,14 @@ class StoreService(
             }
     }
 
-    fun findAllMenuOptionGroup(storeId: String, menuId: String): List<MenuOptionGroupsResponse> {
-        logger.info("call findAllMenuOptionGroup")
+    fun getMenusOptions(storeId: String, menuId: String): List<MenuOptionGroupsResponse> {
+        logger.info("Call findAllMenuOptionGroup storeId: $storeId, menuId: $menuId")
         val menuOptionGroupInfo = storeRepository.findById(storeId)
             ?.storeMenuCategory
             ?.flatMap { it.menu ?: emptyList() }
             ?.filter { it.id == menuId }
             ?.flatMap { it.menuOptionGroup ?: emptyList() }
-        // logger.info(menuOptionGroupInfo.toString())
-        val storeInfo = storeRepository.findById(storeId)
-        logger.info("storeInfo: ${storeInfo.toString()}")
-        val storeMenuCateInfo = storeInfo?.storeMenuCategory ?: emptyList()
-        logger.info("storeMenuCateInfo: $storeMenuCateInfo")
-        val menuInfo = storeMenuCateInfo
-            .flatMap { it.menu ?: emptyList() }
-            .filter { it.id?.equals(menuId, ignoreCase = true) == true }
-        logger.info("Filtered menuInfo: $menuInfo")
-
-        val menuGroupInfo = menuInfo.flatMap { it.menuOptionGroup ?: emptyList() }
-        logger.info("menuGroupInfo: $menuGroupInfo")
-
+            ?: throw IllegalArgumentException("Store id: $storeId menu id: $menuId not found")
         val response = menuOptionGroupInfo?.map { menuOptionGroup ->
             MenuOptionGroupsResponse(
                 id = menuOptionGroup.id ?: "",
@@ -162,9 +149,9 @@ class StoreService(
                         name = menu.name ?: "",
                         price = "${menu.price}원" ?: "0",
                         isSoldOut = menu.isSoldOut,
-                        order = menu.order ?: 0L
+                        order = menu.order ?: 0L,
                     )
-                } ?: emptyList()
+                } ?: emptyList(),
             )
         } ?: emptyList()
         return response

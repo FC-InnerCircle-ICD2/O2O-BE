@@ -54,10 +54,14 @@ class StoreController(
         @PathVariable menuId: String,
     ): APIResponseDTO<List<MenuOptionGroupsResponse>> {
         logger.info("Received request for menu options groups. storeId: $storeId menusId: $menuId")
-
-        val response = storeService.findAllMenuOptionGroup(storeId, menuId)
-        logger.info("Successfully retrieved all store option groups for storeId: $response")
-        return APIResponseDTO(HttpStatus.OK.value(), "스토어 메뉴 조회 성공", response)
+        return try {
+            val response = storeService.getMenusOptions(storeId, menuId)
+            logger.info("Successfully retrieved all store option groups for storeId: $response")
+            APIResponseDTO(HttpStatus.OK.value(), "스토어 메뉴 옵션 조회 성공", response)
+        } catch (e: Exception) {
+            logger.info("Error retrieved all store option groups for storeId: $storeId")
+            return APIResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "스토어 메뉴 옵션 조회 실패", null)
+        }
     }
 
     @GetMapping("/test")
