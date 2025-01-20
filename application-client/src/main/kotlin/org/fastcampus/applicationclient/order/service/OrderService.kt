@@ -112,7 +112,7 @@ class OrderService(
     fun createOrder(userId: Long, orderCreationRequest: OrderCreationRequest): OrderCreationResponse {
         // 스토어 검색
         val storeEntity = (storeRepository.findById(orderCreationRequest.storeId))
-            ?: throw OrderException(HttpStatus.NOT_FOUND.value(), "가게를 찾을 수 없습니다.")
+            ?: throw OrderException(HttpStatus.BAD_REQUEST.value(), "가게를 찾을 수 없습니다.")
 
         // 주문내역 검사, 주문대상 정보 반환받기
         val targetMenuEntities = OrderCreationValidator.validate(storeEntity, orderCreationRequest)

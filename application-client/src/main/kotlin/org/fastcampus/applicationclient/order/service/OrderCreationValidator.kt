@@ -54,7 +54,7 @@ class OrderCreationValidator {
                 val targetMenuOptionGroupEntities = requestOrderMenu.orderMenuOptionGroups.map { requestOrderMenuOptionGroup ->
                     // DB 옵션그룹 정보
                     val optionGroupInfo = menuInfo.menuOptionGroup?.find { it.id == requestOrderMenuOptionGroup.id }
-                        ?: throw OrderException(HttpStatus.NOT_FOUND.value(), "요청된 옵션그룹중 가게에 등록되어 있지 않은 그룹이 존재합니다.")
+                        ?: throw OrderException(HttpStatus.BAD_REQUEST.value(), "요청된 옵션그룹중 가게에 등록되어 있지 않은 그룹이 존재합니다.")
 
                     // DB 옵션정보
                     val optionInfos = optionGroupInfo.menuOption ?: emptyList()
@@ -65,7 +65,7 @@ class OrderCreationValidator {
 
                     // 옵션그룹에 없는 옵션 ID 확인
                     if (requestOrderMenuOptionIds.isNotEmpty()) {
-                        throw OrderException(HttpStatus.NOT_FOUND.value(), "요청된 옵션중 가게에 등록되어 있지 않은 옵션이 존재합니다.")
+                        throw OrderException(HttpStatus.BAD_REQUEST.value(), "요청된 옵션중 가게에 등록되어 있지 않은 옵션이 존재합니다.")
                     }
 
                     // min, max 값 확인
@@ -91,7 +91,7 @@ class OrderCreationValidator {
             storeMenuCategoryEntities: Collection<StoreMenuCategory>?,
             requestOrderMenus: Collection<OrderCreationRequest.OrderMenu>,
         ): Map<String, Menu> {
-            storeMenuCategoryEntities ?: OrderException(HttpStatus.NOT_FOUND.value(), "가게에 등록된 메뉴 카테고리 정보가 없습니다.")
+            storeMenuCategoryEntities ?: OrderException(HttpStatus.BAD_REQUEST.value(), "가게에 등록된 메뉴 카테고리 정보가 없습니다.")
             if (requestOrderMenus.isEmpty()) {
                 throw OrderException(HttpStatus.BAD_REQUEST.value(), "주문 요청에 메뉴정보가 없습니다.")
             }
@@ -105,7 +105,7 @@ class OrderCreationValidator {
 
             // 주문 메뉴 정보 미존재
             if (requestOrderMenuIdSet.isNotEmpty()) {
-                throw OrderException(HttpStatus.NOT_FOUND.value(), "가게에 등록되어 있지 않은 메뉴가 있습니다.")
+                throw OrderException(HttpStatus.BAD_REQUEST.value(), "가게에 등록되어 있지 않은 메뉴가 있습니다.")
             }
 
             // 품절 메뉴가 있는지 확인
