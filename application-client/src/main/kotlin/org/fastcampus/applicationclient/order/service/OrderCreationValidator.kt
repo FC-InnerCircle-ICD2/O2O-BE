@@ -57,7 +57,7 @@ class OrderCreationValidator {
 
                 // 주문요청 옵션그룹에 필수 옵션그룹이 모두 포함되는지 확인
                 if (!requestOptionGroupIds.containsAll(requiredOptionGroupIdSet)) {
-                    logger.debug("누락된 필수 옵션: {}", requiredOptionGroupIdSet - requestOptionGroupIds)
+                    logger.debug("누락된 필수 옵션그룹: {}", requiredOptionGroupIdSet - requestOptionGroupIds)
                     throw OrderException(HttpStatus.BAD_REQUEST.value(), "필수 옵션그룹이 누락되었습니다.")
                 }
 

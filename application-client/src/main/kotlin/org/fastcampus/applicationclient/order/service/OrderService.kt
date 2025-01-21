@@ -140,7 +140,7 @@ class OrderService(
         val savedOrder = orderRepository.save(
             Order(
                 id = UUID.randomUUID().toString(),
-                storeId = storeEntity._id,
+                storeId = storeEntity.id,
                 userId = userId,
                 roadAddress = orderCreationRequest.roadAddress,
                 jibunAddress = orderCreationRequest.jibunAddress,
