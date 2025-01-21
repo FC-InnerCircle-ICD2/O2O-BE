@@ -8,10 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Field
  */
 
 class MenuOptionGroupDocument(
-    @Field("id")
+    @Field(name = "id")
     val id: String? = null,
     val name: String?,
-    val menuId: String?,
     val minSel: String?,
     val maxSel: String?,
     @Field(name = "menuOptions")
@@ -23,7 +22,6 @@ fun MenuOptionGroupDocument.toModel() =
     MenuOptionGroup(
         id,
         name,
-        menuId,
         minSel = minSel?.toIntWithoutUnit() ?: 0, // "1개" → 1로 변환
         maxSel = maxSel?.toIntWithoutUnit() ?: 0, // "2개" → 2로 변환
         menuOptionDocument?.map { it.toModel() },

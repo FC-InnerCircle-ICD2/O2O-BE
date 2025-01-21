@@ -1,9 +1,12 @@
 package org.fastcampus.applicationclient.store.service
 
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
-import org.fastcampus.applicationclient.store.controller.dto.response.MenuInfo
-import org.fastcampus.applicationclient.store.controller.dto.response.StoreDetailsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.paginate
+import org.fastcampus.applicationclient.store.controller.dto.response.toMenuResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.toStoreInfo
+import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.store.entity.Menu
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
 import org.fastcampus.store.repository.StoreRepository
@@ -25,53 +28,32 @@ class StoreService(
     }
 
     @Transactional(readOnly = true)
-    fun getStoreDetails(storeId: String, page: Int, size: Int, userCoordinates: Coordinates): StoreDetailsResponse {
-        logger.info("Fetching store details for storeId: $storeId, userCoordinates: $userCoordinates")
+    fun getStoreInfo(storeId: String, userCoordinates: Coordinates): StoreInfo {
         val store = storeRepository.findById(storeId)
             ?: throw IllegalArgumentException("Store not found: $storeId")
         val deliveryInfo = calculateDeliveryTime(storeId, userCoordinates)
 
-        // 페이징 처리
-        val categories = store.storeMenuCategory?.mapIndexed { index, category ->
-            val totalElements = category.menu?.size?.toLong() ?: 0L
-            val totalPages = if (totalElements > 0) ((totalElements + size - 1) / size).toInt() else 0
-            val startIndex = page * size
-            val endIndex = (startIndex + size).coerceAtMost(category.menu?.size ?: 0)
+        return store.toStoreInfo(deliveryInfo["deliveryTime"] as String)
+    }
 
+    @Transactional(readOnly = true)
+    fun getCategories(storeId: String, page: Int, size: Int): CursorDTO<CategoryInfo> {
+        val store = storeRepository.findById(storeId)
+            ?: throw IllegalArgumentException("Store not found: $storeId")
+
+        // 카테고리와 메뉴를 묶은 데이터 생성
+        val categoriesWithMenus = store.storeMenuCategory?.map { category ->
             CategoryInfo(
-                categoryId = index + 1,
-                categoryName = category.name ?: "Unknown",
-                menus = category.menu?.subList(startIndex, endIndex)?.map { menu ->
-                    MenuInfo(
-                        id = menu.id ?: "",
-                        name = menu.name ?: "Unknown",
-                        price = "${menu.price ?: 0}원",
-                        description = menu.desc ?: "",
-                        imageUrl = menu.imgUrl ?: "",
-                        isSoldOut = menu.isSoldOut,
-                    )
-                } ?: emptyList(),
-                page = page,
-                size = size,
-                totalPages = totalPages,
-                totalElements = totalElements,
+                categoryId = category.id ?: "unknown",
+                categoryName = category.name ?: "unknown",
+                menus = category.menu?.map(Menu::toMenuResponse) ?: emptyList(),
             )
         } ?: emptyList()
 
-        return StoreDetailsResponse(
-            store = StoreInfo(
-                id = store._id ?: "",
-                name = store.name ?: "",
-                imageMain = store.imageMain ?: "",
-                rating = 4.5,
-                reviewCount = 150,
-                deliveryTime = deliveryInfo["deliveryTime"] as String,
-                freeDelivery = (store.border ?: 0) > 5000,
-            ),
-            categories = categories,
-        ).also {
-            logger.info("StoreDetailsResponse created: ${it.store.name}")
-        }
+        // 카테고리별 페이징 처리
+        val paginatedCategories = categoriesWithMenus.paginate(page, size)
+
+        return paginatedCategories
     }
 
     /**
@@ -116,7 +98,7 @@ class StoreService(
         logger.info("Getting store coordinates for storeId: $storeId")
         return storeRedisRepository.getStoreLocation(storeId)?.also { logger.info("Store coordinates found in Redis: $it") }
             ?: storeRepository.findById(storeId)?.let {
-                val coordinates = Coordinates(it.latitude, it.longitude)
+                val coordinates = Coordinates(it.latitude ?: 0.0, it.longitude ?: 0.0)
                 logger.info("Store coordinates found in repository: $coordinates")
                 storeRedisRepository.saveStoreLocation(storeId, coordinates)
                 logger.info("Store coordinates saved to Redis")

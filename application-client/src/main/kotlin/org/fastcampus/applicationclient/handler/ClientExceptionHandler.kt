@@ -12,6 +12,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
+/**
+ * Created by kms0902 on 25. 1. 19..
+ */
 @RestControllerAdvice
 class ClientExceptionHandler {
     companion object {

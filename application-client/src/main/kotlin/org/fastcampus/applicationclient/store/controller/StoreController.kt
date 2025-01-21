@@ -1,8 +1,10 @@
 package org.fastcampus.applicationclient.store.controller
 
-import org.fastcampus.applicationclient.store.controller.dto.response.StoreDetailsResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
+import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.store.redis.Coordinates
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -30,25 +32,24 @@ class StoreController(
     @GetMapping("/{id}")
     fun getStoreDetails(
         @PathVariable id: String,
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
         @RequestHeader("X-User-Lat") userLat: Double,
         @RequestHeader("X-User-Lng") userLng: Double,
-    ): ResponseEntity<APIResponseDTO<StoreDetailsResponse>> {
-        logger.info("Received request for store details. ID: $id, Lat: $userLat, Lng: $userLng")
+    ): ResponseEntity<APIResponseDTO<StoreInfo>> {
         return try {
-            val response = storeService.getStoreDetails(id, page, size, Coordinates(userLat, userLng))
-            logger.info("Successfully retrieved store details for ID: $id")
-            ResponseEntity.ok(APIResponseDTO(200, "ok", response))
+            val response = storeService.getStoreInfo(id, Coordinates(userLat, userLng))
+            ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", response))
         } catch (e: Exception) {
-            logger.error("Error retrieving store details for ID: $id", e)
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(APIResponseDTO(500, "Error retrieving store details", null))
+                .build()
         }
     }
 
-    @GetMapping("/test")
-    fun getTest(): String {
-        return "test"
+    @GetMapping("/{id}/categories")
+    fun getCategories(
+        @PathVariable id: String,
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "5") size: Int,
+    ): ResponseEntity<CursorDTO<CategoryInfo>> {
+        return ResponseEntity.ok(storeService.getCategories(id, page, size))
     }
 }
