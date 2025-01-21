@@ -15,4 +15,9 @@ data class Menu(
     val menuCategoryId: String?,
     val menuOptionGroup: List<MenuOptionGroup>?,
     val order: Long,
-)
+) {
+    // 메뉴 옵션 그룹 데이터를 동적으로 생성하는 함수
+    fun getMenuOptionGroups(): List<MenuOptionGroup> {
+        return menuOptionGroup ?: emptyList()
+    }
+}

@@ -18,8 +18,9 @@ services:
   order-postgres:
     container_name: order-postgres
     image: yong7317/postgres-o2o:latest
+    platform: linux/amd64
     ports:
-      - '5432:5432'
+      - '5433:5432'
     networks:
       - o2o-network
 
