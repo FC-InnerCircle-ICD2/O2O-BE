@@ -1,6 +1,8 @@
 package org.fastcampus.order.event
 
-import org.fastcampus.order.entity.OrderMenuOption
+data class OrderNotification(
+    val orderId: String,
+)
 
 data class OrderNotificationMessage(
     val orderId: String,
@@ -18,7 +20,7 @@ data class OrderNotificationMessage(
         val menuName: String,
         val menuQuantity: Long,
         val menuPrice: Long,
-        val menuOptionGroups: List<OrderMenuOption>,
+        val menuOptionGroups: List<MenuOptionGroup>,
     ) {
         data class MenuOptionGroup(
             val id: String,

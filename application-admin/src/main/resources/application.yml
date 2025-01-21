@@ -8,6 +8,9 @@ spring:
       - order-postgres
       - store-mongo
       - store-redis
+  jpa:
+    open-in-view: false
+
 logging:
   level:
     org.hibernate.SQL: trace

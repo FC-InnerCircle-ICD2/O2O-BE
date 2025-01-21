@@ -22,10 +22,12 @@ class RedisMessageConfig(
                 addMessageListener(listenerAdapter, PatternTopic("ORDER_NOTIFICATION"))
                 setTaskExecutor(
                     ThreadPoolTaskExecutor().apply {
-                        corePoolSize = 2
-                        maxPoolSize = 2
-                        queueCapacity = 500
-                        setThreadNamePrefix("msg-listener-")
+                        val cpuCoreCount = Runtime.getRuntime().availableProcessors()
+                        corePoolSize = cpuCoreCount * 2
+                        maxPoolSize = cpuCoreCount * 4
+                        queueCapacity = 100
+                        keepAliveSeconds = 60
+                        setThreadNamePrefix("MsgListener-")
                         initialize()
                     },
                 )
