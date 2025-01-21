@@ -3,7 +3,7 @@ package org.fastcampus.applicationclient.store.service
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
-import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreDetailsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.store.redis.Coordinates
@@ -144,7 +144,7 @@ class StoreService(
                 maxSel = menuOptionGroup.maxSel?.toString() ?: "0",
                 order = menuOptionGroup.order ?: 0L,
                 menuOptions = menuOptionGroup.menuOption?.map { menu ->
-                    MenuOptionInfo(
+                    MenuOptionResponse(
                         id = menu.id ?: "",
                         name = menu.name ?: "",
                         price = "${menu.price}원",

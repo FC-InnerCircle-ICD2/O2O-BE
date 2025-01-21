@@ -6,10 +6,10 @@ data class MenuOptionGroupsResponse(
     val minSel: String,
     val maxSel: String,
     val order: Long,
-    val menuOptions: List<MenuOptionInfo>,
+    val menuOptions: List<MenuOptionResponse>,
 )
 
-data class MenuOptionInfo(
+data class MenuOptionResponse(
     val id: String,
     val name: String,
     val price: String,
