@@ -10,6 +10,9 @@ import jakarta.validation.constraints.NotBlank
 data class JwtLoginRequest
     @JsonCreator
     constructor(
+        @field:NotBlank(message = "권한을 입력해 주세요")
+        @JsonProperty("role")
+        val role: String?,
         @field:NotBlank(message = "아이디를 입력해 주세요")
         @JsonProperty("signname")
         val signname: String?,

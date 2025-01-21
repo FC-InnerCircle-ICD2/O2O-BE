@@ -6,6 +6,7 @@ import org.fastcampus.member.code.MemberState
 import org.fastcampus.member.code.Role
 import org.fastcampus.member.entity.Member
 import org.fastcampus.member.repository.MemberRepository
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service
 @Service
 class MemberService(
     private val memberRepository: MemberRepository,
+    private val passwordEncoder: PasswordEncoder,
 ) {
     fun join(memberJoinRequest: MemberJoinRequest): MemberJoinResponse {
         val createMember =
@@ -22,7 +24,7 @@ class MemberService(
                 Role.USER,
                 MemberState.JOIN,
                 requireNotNull(memberJoinRequest.signname),
-                requireNotNull(memberJoinRequest.password),
+                requireNotNull(passwordEncoder.encode(memberJoinRequest.password)),
                 requireNotNull(memberJoinRequest.username),
                 requireNotNull(memberJoinRequest.nickname),
                 requireNotNull(memberJoinRequest.phone),

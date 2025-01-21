@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.fastcampus.applicationclient.config.security.dto.JwtDTO
 import org.fastcampus.applicationclient.config.security.service.JwtService
+import org.fastcampus.applicationclient.config.security.util.JwtLoginResponseUtil
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -18,6 +20,13 @@ class JwtAuthorizationFilter(
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         if (isHeaderVerify(request)) {
             val token = request.getHeader(JwtDTO.HEADER).replace(JwtDTO.TOKEN_PREFIX, "")
+            val jwtService = JwtService()
+
+            if (jwtService.isTokenExpired(token, secretKey)) {
+                JwtLoginResponseUtil.sendResponse(response, HttpStatus.UNAUTHORIZED, mapOf("error" to "토큰이 만료되었습니다."))
+                return
+            }
+
             val loginUser = JwtService().verify(token, secretKey)
             loginUser.member.let {
                 val authentication: Authentication = UsernamePasswordAuthenticationToken(

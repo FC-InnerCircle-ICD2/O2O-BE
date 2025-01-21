@@ -3,6 +3,7 @@ package org.fastcampus.applicationclient.config.security
 import org.fastcampus.applicationclient.config.security.filter.JwtAuthenticationFilter
 import org.fastcampus.applicationclient.config.security.filter.JwtAuthorizationFilter
 import org.fastcampus.applicationclient.config.security.util.JwtLoginResponseUtil
+import org.fastcampus.member.repository.MemberRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,6 +27,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 class SecurityConfig(
     @Value("\${security.secret.key}")
     private val secretKey: String,
+    private val memberRepository: MemberRepository,
 ) {
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
@@ -41,7 +43,7 @@ class SecurityConfig(
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity, authenticationManager: AuthenticationManager): SecurityFilterChain {
-        val jwtAuthenticationFilter = JwtAuthenticationFilter(authenticationManager, secretKey)
+        val jwtAuthenticationFilter = JwtAuthenticationFilter(authenticationManager, secretKey, memberRepository)
         val jwtAuthorizationFilter = JwtAuthorizationFilter(authenticationManager, secretKey)
 
         http.headers { it.frameOptions { frame -> frame.sameOrigin() } }
@@ -63,6 +65,7 @@ class SecurityConfig(
         }
 
         http.authorizeHttpRequests {
+            it.requestMatchers("/api/v1/members/join").permitAll()
             it.requestMatchers("/api/**").authenticated()
             it.anyRequest().permitAll()
         }
