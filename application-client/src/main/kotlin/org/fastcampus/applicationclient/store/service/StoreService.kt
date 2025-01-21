@@ -4,12 +4,13 @@ import org.fastcampus.applicationclient.store.controller.dto.response.CategoryIn
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreDetailsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
-import org.fastcampus.store.entity.TrendKeyword
+import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
 import org.fastcampus.store.repository.StoreRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -127,14 +128,31 @@ class StoreService(
             }
     }
 
-    fun getTrendKeywords(): List<TrendKeyword>? {
-        return storeRedisRepository.getTrendKeywords()
+    fun getTrendKeywords(): TrendKeywordsResponse? {
+        val keywords = storeRedisRepository.getTrendKeywords()
+        return keywords?.let {
+            TrendKeywordsResponse(
+                keywords.entries
+                    .sortedByDescending { it.value }
+                    .mapIndexed { index, map ->
+                        TrendKeywordsResponse.TrendKeyword(
+                            keyword = map.key,
+                            order = index + 1,
+                        )
+                    },
+            )
+        }
     }
 
     @Transactional
     fun search(keyword: String) {
         if (storeRepository.existsByName(keyword) == true) {
-            storeRedisRepository.incrementSearchCount(keyword)
+            storeRedisRepository.addSearch(keyword)
         }
+    }
+
+    @Scheduled(fixedRate = 1000 * 60 * 60 * 1)
+    fun removeOldData() {
+        storeRedisRepository.removeOldData()
     }
 }

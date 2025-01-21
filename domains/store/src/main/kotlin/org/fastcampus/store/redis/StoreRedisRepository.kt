@@ -1,7 +1,5 @@
 package org.fastcampus.store.redis
 
-import org.fastcampus.store.entity.TrendKeyword
-
 data class Coordinates(val latitude: Double, val longitude: Double)
 
 interface StoreRedisRepository {
@@ -15,7 +13,9 @@ interface StoreRedisRepository {
 
     fun saveUserLocation(userKey: String, coordinates: Coordinates)
 
-    fun incrementSearchCount(keyword: String)
+    fun addSearch(keyword: String)
 
-    fun getTrendKeywords(): List<TrendKeyword>?
+    fun getTrendKeywords(): Map<String, Long>?
+
+    fun removeOldData()
 }

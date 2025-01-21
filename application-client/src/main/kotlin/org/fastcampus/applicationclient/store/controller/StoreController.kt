@@ -1,9 +1,9 @@
 package org.fastcampus.applicationclient.store.controller
 
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreDetailsResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
-import org.fastcampus.store.entity.TrendKeyword
 import org.fastcampus.store.redis.Coordinates
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -51,7 +51,7 @@ class StoreController(
     }
 
     @GetMapping("/trend")
-    fun getTrendKeywords(): List<TrendKeyword>? {
+    fun getTrendKeywords(): TrendKeywordsResponse? {
         return storeService.getTrendKeywords()
     }
 

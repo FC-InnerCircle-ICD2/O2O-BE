@@ -1,6 +1,5 @@
 package org.fastcampus.store.redis.repository
 
-import org.fastcampus.store.entity.TrendKeyword
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
 import org.springframework.data.geo.Point
@@ -14,7 +13,7 @@ class StoreRedisRepositoryImpl(
     companion object {
         const val GEO_KEY = "geo:store:location"
         const val DISTANCE_KEY = "distance:user:store"
-        const val TRENDING_KEY = "trending:keywords"
+        const val WINDOWDURATION = 60 * 60 * 12
     }
 
     override fun saveStoreLocation(storeId: String, coordinates: Coordinates) {
@@ -49,18 +48,31 @@ class StoreRedisRepositoryImpl(
         )
     }
 
-    override fun incrementSearchCount(keyword: String) {
-        redisTemplate.opsForZSet().incrementScore(TRENDING_KEY, keyword, 1.0)
+    override fun addSearch(keyword: String) {
+        val currentTime = System.currentTimeMillis() / 1000
+        redisTemplate.opsForZSet().add("search:$keyword", currentTime.toString(), currentTime.toDouble())
     }
 
-    override fun getTrendKeywords(): List<TrendKeyword>? {
-        return redisTemplate.opsForZSet()
-            .reverseRangeWithScores(TRENDING_KEY, 0, 9)
-            ?.mapIndexed { index, tuple ->
-                TrendKeyword(
-                    order = index + 1,
-                    keyword = tuple.value.toString(),
-                )
-            }
+    override fun getTrendKeywords(): Map<String, Long>? {
+        val keywords = redisTemplate.keys("search:*")
+        return keywords.associateWith { getRecentSearchCount(it.removePrefix("search:")) }
+            .filterValues { it > 0 }
+            .entries.sortedByDescending { it.value }
+            .take(10)
+            .associate { it.key.removePrefix("search:") to it.value }
+    }
+
+    override fun removeOldData() {
+        val currentTime = System.currentTimeMillis() / 1000
+        val thresholdTime = currentTime - WINDOWDURATION
+        redisTemplate.keys("search:*").forEach { key ->
+            redisTemplate.opsForZSet().removeRangeByScore(key, Double.NEGATIVE_INFINITY, thresholdTime.toDouble())
+        }
+    }
+
+    private fun getRecentSearchCount(keyword: String): Long {
+        val currentTime = System.currentTimeMillis() / 1000
+        val startTime = currentTime - WINDOWDURATION
+        return redisTemplate.opsForZSet().count("search:$keyword", startTime.toDouble(), currentTime.toDouble()) ?: 0
     }
 }
