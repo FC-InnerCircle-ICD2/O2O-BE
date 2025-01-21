@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Field
  * Created by brinst07 on 25. 1. 11..
  */
 class MenuDocument(
-    @Field("id")
+    @Field(name = "id")
     val id: String? = null,
     val name: String?,
     val price: String?,

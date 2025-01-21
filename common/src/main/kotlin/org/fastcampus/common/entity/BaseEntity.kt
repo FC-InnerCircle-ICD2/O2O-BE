@@ -25,10 +25,12 @@ abstract class BaseEntity {
     var updatedAt: LocalDateTime? = null
 
     @CreatedBy
-    @Column(updatable = false, nullable = false)
+//    @Column(updatable = false, nullable = false)
+    @Column(updatable = false)
     var createdBy: String? = null
 
     @LastModifiedBy
-    @Column(nullable = false)
+//    @Column(nullable = false)
+    @Column
     var updatedBy: String? = null
 }

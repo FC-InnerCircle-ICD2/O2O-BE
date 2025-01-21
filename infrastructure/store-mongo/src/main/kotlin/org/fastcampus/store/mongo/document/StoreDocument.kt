@@ -1,5 +1,6 @@
 package org.fastcampus.store.mongo.document
 
+import com.mongodb.client.model.geojson.Point
 import org.bson.types.ObjectId
 import org.fastcampus.store.entity.Store
 import org.springframework.data.annotation.Id
@@ -15,50 +16,42 @@ class StoreDocument(
     @Id
     @Field(name = "_id")
     val _id: ObjectId? = null,
-    val id: String?,
-    val name: String?,
     val address: String?,
-//    val latitude: String,
-//    val longitude: String,
-    val location: Location,
     val border: String?,
+    val breakTime: String?,
+    val category: Store.Category?,
+    val id: String?,
+    val status: Store.Status,
+    val imageMain: String?,
     val ownerId: String?,
+    val name: String?,
+    @Field(name = "location")
+    val location: Point, // location 객체
     val tel: String?,
     val imageThumbnail: String?,
-    val imageMain: String?,
-    val status: Store.Status,
-    val breakTime: String,
     val roadAddress: String?,
     val jibunAddress: String?,
-    val category: Store.Category?,
     @Field(name = "storeMenuCategory")
-    val storeMenuCategoryDocument: List<StoreMenuCategoryDocument>?,
-)
-
-data class Location(
-    val type: String,
-    val coordinates: List<Double>, // [경도, 위도]
+    val storeMenuCategoryDocument: List<StoreMenuCategoryDocument>? = null,
 )
 
 fun StoreDocument.toModel() =
     Store(
         _id.toString(),
+        address,
+        border ?: "unknown",
+        breakTime,
+        category,
         id,
         name,
-        address,
-//        latitude.toDouble(),
-//        longitude.toDouble(),
-        latitude = location.coordinates[1],
-        longitude = location.coordinates[0],
-        border?.toInt(),
+        location.coordinates.values[1] ?: 0.0, // location.coordinates[1]
+        jibunAddress,
+        location.coordinates.values[0] ?: 0.0, // location.coordinates[0]
         ownerId,
         tel,
         imageThumbnail,
         imageMain,
         status,
-        breakTime,
         roadAddress,
-        jibunAddress,
-        category,
         storeMenuCategoryDocument?.map { it.toModel() },
     )

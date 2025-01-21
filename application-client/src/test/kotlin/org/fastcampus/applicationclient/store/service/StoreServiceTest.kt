@@ -25,7 +25,7 @@ class StoreServiceTest {
 
         // When & Then
         assertThrows<IllegalArgumentException>("Store not found: $storeId") {
-            storeService.getStoreDetails(storeId, 0, 10, Coordinates(37.5665, 126.978))
+            storeService.getStoreInfo(storeId, Coordinates(37.5665, 126.978))
         }
     }
 
@@ -70,7 +70,7 @@ class StoreServiceTest {
             ownerId = "test",
             tel = "test",
             category = Store.Category.CHINESE_CUISINE,
-            border = 6000, // Free delivery threshold
+            border = 6000.toString(), // Free delivery threshold
         )
     }
 }

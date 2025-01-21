@@ -62,10 +62,26 @@ create table orders (
 );
 
 create table payment (
-    type smallint check (type between 0 and 1),
+    type varchar(255) check (type in ('KAKAO_PAY','TOSS_PAY')),
     created_at timestamp(6) not null,
     id bigserial not null,
     payment_price bigint,
+    updated_at timestamp(6) not null,
+    created_by varchar(255) not null,
+    updated_by varchar(255) not null,
+    primary key (id)
+);
+
+create table members (
+    id bigserial not null,
+    role varchar(255) check (role in ('USER','CEO')),
+    state varchar(255) check (state in ('JOIN','PAUSE','LEAVE')),
+    sign_name varchar(255) not null,
+    password varchar(255) not null,
+    user_name varchar(255) not null,
+    nick_name varchar(255) not null,
+    phone varchar(255) not null,
+    created_at timestamp(6) not null,
     updated_at timestamp(6) not null,
     created_by varchar(255) not null,
     updated_by varchar(255) not null,
