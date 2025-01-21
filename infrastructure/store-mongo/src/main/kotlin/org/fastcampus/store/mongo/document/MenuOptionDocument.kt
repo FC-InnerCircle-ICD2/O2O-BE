@@ -10,7 +10,6 @@ class MenuOptionDocument(
     val id: String? = null,
     val name: String?,
     val price: Long?,
-    val menuOptionGroupId: String?,
     val isSoldOut: String,
     val order: Long?,
 )
@@ -20,7 +19,6 @@ fun MenuOptionDocument.toModel() =
         id,
         name,
         price,
-        menuOptionGroupId,
         isSoldOut = isSoldOut == "Y",
         order,
     )

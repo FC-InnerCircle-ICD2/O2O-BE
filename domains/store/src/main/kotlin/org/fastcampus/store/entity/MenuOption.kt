@@ -8,7 +8,6 @@ data class MenuOption(
     val id: String? = null,
     val name: String?,
     val price: Long?,
-    val menuOptionGroupId: String?,
     val isSoldOut: Boolean,
     val order: Long?,
 )
