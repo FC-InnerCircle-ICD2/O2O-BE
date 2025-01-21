@@ -3,6 +3,7 @@ package org.fastcampus.applicationclient.config.security.filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.fastcampus.applicationclient.config.security.dto.AuthMember
 import org.fastcampus.applicationclient.config.security.dto.JwtDTO
 import org.fastcampus.applicationclient.config.security.service.JwtService
 import org.fastcampus.applicationclient.config.security.util.JwtLoginResponseUtil
@@ -20,17 +21,24 @@ class JwtAuthorizationFilter(
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         if (isHeaderVerify(request)) {
             val token = request.getHeader(JwtDTO.HEADER).replace(JwtDTO.TOKEN_PREFIX, "")
-            val jwtService = JwtService()
 
+            val jwtService = JwtService()
             if (jwtService.isTokenExpired(token, secretKey)) {
                 JwtLoginResponseUtil.sendResponse(response, HttpStatus.UNAUTHORIZED, mapOf("error" to "토큰이 만료되었습니다."))
                 return
             }
 
             val loginUser = JwtService().verify(token, secretKey)
+
+            val authMember = AuthMember(
+                id = requireNotNull(loginUser.member.id),
+                role = loginUser.member.role,
+                state = loginUser.member.state,
+            )
+
             loginUser.member.let {
                 val authentication: Authentication = UsernamePasswordAuthenticationToken(
-                    loginUser,
+                    authMember,
                     null,
                     loginUser.authorities,
                 )
