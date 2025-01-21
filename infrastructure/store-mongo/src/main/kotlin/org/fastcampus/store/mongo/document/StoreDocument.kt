@@ -3,6 +3,7 @@ package org.fastcampus.store.mongo.document
 import org.bson.types.ObjectId
 import org.fastcampus.store.entity.Store
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 
@@ -18,8 +19,8 @@ class StoreDocument(
     val id: String?,
     val name: String?,
     val address: String?,
-    val latitude: String,
-    val longitude: String,
+    @Field("location")
+    val location: GeoJsonPoint,
     val border: String?,
     val ownerId: String?,
     val tel: String?,
@@ -40,8 +41,8 @@ fun StoreDocument.toModel() =
         id,
         name,
         address,
-        latitude.toDouble(),
-        longitude.toDouble(),
+        location.y,
+        location.x,
         border?.toInt(),
         ownerId,
         tel,
