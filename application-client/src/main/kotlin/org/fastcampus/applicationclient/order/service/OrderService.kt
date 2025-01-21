@@ -114,7 +114,7 @@ class OrderService(
         val storeEntity = (storeRepository.findById(orderCreationRequest.storeId))
             ?: throw OrderException(HttpStatus.BAD_REQUEST.value(), "가게를 찾을 수 없습니다.")
 
-        // 주문내역 검사, 주문대상 정보 반환받기
+        // 주문내역 검사, 메뉴정보 반환받기
         val targetMenuEntities = OrderCreationValidator.validate(storeEntity, orderCreationRequest)
 
         // 주문 메뉴는 여러개 나누어 들어올 수 있다. (동일메뉴 + 다른옵션)
@@ -159,7 +159,7 @@ class OrderService(
             ),
         )
         // 주문 메뉴, 옵션그룹, 옵션 저장
-        createAssociatedEntitiesAndSave(tempOrderMenus, savedOrder)
+        saveOrderSubEntities(tempOrderMenus, savedOrder)
 
         return OrderCreationResponse(
             savedOrder.id,
@@ -168,7 +168,7 @@ class OrderService(
         )
     }
 
-    private fun createAssociatedEntitiesAndSave(tempOrderMenus: List<OrderMenu>, savedOrder: Order) {
+    private fun saveOrderSubEntities(tempOrderMenus: List<OrderMenu>, savedOrder: Order) {
         // 주문 메뉴 생성, 저장
         tempOrderMenus.forEach { tempOrderMenu ->
             val savedOrderMenu = orderMenuRepository.save(
