@@ -18,8 +18,9 @@ class StoreDocument(
     val id: String?,
     val name: String?,
     val address: String?,
-    val latitude: String,
-    val longitude: String,
+//    val latitude: String,
+//    val longitude: String,
+    val location: Location,
     val border: String?,
     val ownerId: String?,
     val tel: String?,
@@ -34,14 +35,21 @@ class StoreDocument(
     val storeMenuCategoryDocument: List<StoreMenuCategoryDocument>?,
 )
 
+data class Location(
+    val type: String,
+    val coordinates: List<Double>, // [경도, 위도]
+)
+
 fun StoreDocument.toModel() =
     Store(
         _id.toString(),
         id,
         name,
         address,
-        latitude.toDouble(),
-        longitude.toDouble(),
+//        latitude.toDouble(),
+//        longitude.toDouble(),
+        latitude = location.coordinates[1],
+        longitude = location.coordinates[0],
         border?.toInt(),
         ownerId,
         tel,
