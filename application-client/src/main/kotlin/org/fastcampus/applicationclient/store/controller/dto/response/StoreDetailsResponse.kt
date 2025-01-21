@@ -49,7 +49,7 @@ data class MenuOptionInfo(
 
 fun Store.toStoreInfo(deliveryTime: String): StoreInfo =
     StoreInfo(
-        id = _id ?: "unknown",
+        id = id ?: "unknown",
         name = name ?: "unknown",
         imageMain = imageMain ?: "unknown",
         rating = 3.8,

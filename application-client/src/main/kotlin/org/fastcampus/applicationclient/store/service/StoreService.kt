@@ -43,7 +43,6 @@ class StoreService(
 
         // 카테고리와 메뉴를 묶은 데이터 생성
         val categoriesWithMenus = store.storeMenuCategory?.map { category ->
-            logger.info("category: {}", category.id)
             CategoryInfo(
                 categoryId = category.id ?: "unknown",
                 categoryName = category.name ?: "unknown",
