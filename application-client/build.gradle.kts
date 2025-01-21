@@ -14,6 +14,7 @@ dependencies {
     runtimeOnly(project(":infrastructure:store-mongo"))
     runtimeOnly(project(":infrastructure:store-redis"))
     runtimeOnly(project(":infrastructure:order-postgres"))
+    runtimeOnly(project(":infrastructure:order-redis"))
     runtimeOnly(project(":infrastructure:payment-postgres"))
     implementation(project(":common"))
     implementation("org.springframework.boot:spring-boot-starter-web")

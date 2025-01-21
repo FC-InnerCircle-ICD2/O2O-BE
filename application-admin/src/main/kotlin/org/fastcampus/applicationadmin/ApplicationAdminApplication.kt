@@ -7,7 +7,9 @@ import org.springframework.boot.runApplication
     scanBasePackages = [
         "org.fastcampus.applicationadmin",
         "org.fastcampus.order",
+        "org.fastcampus.store",
         "org.fastcampus.member",
+        "org.fastcampus.payment",
     ],
 )
 class ApplicationAdminApplication

@@ -1,0 +1,15 @@
+server:
+  port: 8081
+
+spring:
+  profiles:
+    active: local
+    include:
+      - order-postgres
+      - store-mongo
+      - store-redis
+logging:
+  level:
+    org.hibernate.SQL: trace
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    org.fastcampus: debug
