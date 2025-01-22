@@ -1,8 +1,8 @@
 package org.fastcampus.applicationclient.order.service.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.fastcampus.order.event.NotificationSender
 import org.fastcampus.order.entity.OrderReceivedEvent
+import org.fastcampus.order.event.NotificationSender
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -31,14 +31,15 @@ class OrderNotificationEventHandler(
     fun handleEvent(event: OrderNotificationEvent) {
         logger.debug("주문알림 이벤트 처리: {}", event.order)
 
-        val stringMessage = objectMapper.writeValueAsString(
-            OrderReceivedEvent.of(
-                event.order,
-                orderMenuRepository,
-                orderMenuOptionGroupRepository,
-                orderMenuOptionRepository,
-            ),
+        val targetStore = event.order.storeId
+        val eventMessageBody = OrderReceivedEvent.of(
+            event.order,
+            orderMenuRepository,
+            orderMenuOptionGroupRepository,
+            orderMenuOptionRepository,
         )
+
+        val stringMessage = objectMapper.writeValueAsString(mapOf(targetStore to eventMessageBody))
 
         orderNotificationSender.send(stringMessage)
     }

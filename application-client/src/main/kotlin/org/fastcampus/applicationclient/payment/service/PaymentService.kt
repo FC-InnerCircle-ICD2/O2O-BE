@@ -1,8 +1,8 @@
 package org.fastcampus.applicationclient.payment.service
 
+import org.fastcampus.applicationclient.order.service.event.OrderNotificationEvent
 import org.fastcampus.applicationclient.payment.controller.dto.request.OrderPaymentApproveRequest
 import org.fastcampus.order.entity.Order
-import org.fastcampus.order.event.OrderNotificationEvent
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.payment.exception.PaymentException
 import org.fastcampus.payment.repository.PaymentRepository
