@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
 
-@Component
+@Component("OrderNotificationSender")
 class OrderNotificationSender(
     private val stringRedisTemplate: StringRedisTemplate,
 ) : NotificationSender {

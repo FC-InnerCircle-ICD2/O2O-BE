@@ -8,6 +8,7 @@ import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
@@ -19,6 +20,7 @@ class OrderNotificationEventHandler(
     private val orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository,
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
     private val objectMapper: ObjectMapper,
+    @Qualifier("OrderNotificationSender")
     private val orderNotificationSender: NotificationSender,
 ) {
     companion object {
