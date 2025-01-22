@@ -38,7 +38,9 @@ jobs:
           }
 
           # Fetch changed files (customize as needed)
-          changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          BASE_SHA=$(git rev-parse origin/${{ github.event.pull_request.base.ref }})
+          git fetch origin ${{ github.event.pull_request.base.ref }}  # base 브랜치 최신 상태로 가져오기
+          changed_files=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...${{ github.sha }} | tr '\n' ' ')
 
           # Identify modules in changed files
           for file in $changed_files; do
@@ -80,7 +82,7 @@ jobs:
         run: |
           # 문자열을 배열로 전환
           IFS=' ' read -r -a MODIFIED_FILES_ARRAY <<< "${{ env.MODIFIED_FILES }}"
-          IFS=' ' read -r -a MODULES_ARRAY <<< "${{ env.modules }}"
+          IFS=' ' read -r -a MODULES_ARRAY <<< "${{ env.MODULES }}"
 
           MODIFIED_MODULES=()
           for FILE in "${MODIFIED_FILES_ARRAY[@]}"; do
