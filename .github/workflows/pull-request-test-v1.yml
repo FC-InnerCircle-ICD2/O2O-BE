@@ -125,12 +125,37 @@ jobs:
       - name: Execute Gradle Test
         if: ${{ matrix.module && matrix.module != '' }}
         run: |
-          # domains/member -> domains:member 변환
           TARGET_MODULE=$(echo "${{ matrix.module }}")
           echo "TARGET : $TARGET_MODULE"
           chmod +x ./gradlew
           ./gradlew :$TARGET_MODULE:test --parallel
-          echo "target_module=$TARGET_MODULE" >> $GITHUB_ENV
+
+  jacoco-report:
+    needs: execute-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Cache Gradle Package
+        uses: actions/cache@v3
+        id: gradle-cache
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Create jacoco Test Report
+        run: |
+          chmod +x ./gradlew
+          ./gradlew jacocoTestReport
 
       - name: Create jacoco Test Report
         run: |
@@ -141,11 +166,9 @@ jobs:
         uses: madrapps/jacoco-report@v1.6.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: 📝 ${{ matrix.module }} 테스트 커버리지 리포트
+          title: 📝 테스트 커버리지 리포트
           update-comment: true
           min-coverage-overall: 60
           min-coverage-changed-files: 60
           paths: |
             ${{ github.workspace }}/**/build/reports/jacoco/jacocoTestReport.xml
-          extra-info: |
-            Target Module: ${{ matrix.module }}
