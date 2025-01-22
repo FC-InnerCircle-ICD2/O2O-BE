@@ -70,7 +70,8 @@ jobs:
       - name: Get Modified Files
         run: |
           BASE_SHA=$(git rev-parse origin/${{ github.event.pull_request.base.ref }})
-          MODIFIED_FILES=$(git diff --name-only $BASE_SHA ${{ github.sha }} | tr '\n' ' ')
+          git fetch origin ${{ github.event.pull_request.base.ref }}  # base 브랜치 최신 상태로 가져오기
+          MODIFIED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...${{ github.sha }} | tr '\n' ' ')
           echo "MODIFIED_FILES=$MODIFIED_FILES" >> $GITHUB_ENV
 
       - name: Determine Modified Modules
