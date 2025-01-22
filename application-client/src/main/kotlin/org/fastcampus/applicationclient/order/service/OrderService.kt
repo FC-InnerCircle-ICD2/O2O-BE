@@ -195,10 +195,14 @@ class OrderService(
         }
     }
 
-    private fun createTempOrderMenus(orderCreationRequest: OrderCreationRequest, targetMenuEntities: List<Menu>): List<OrderMenu> {
+    private fun createTempOrderMenus(
+        orderCreationRequest: OrderCreationRequest,
+        targetMenuEntities: Map<String, Menu>,
+    ): List<OrderMenu> {
         val tempOrderMenus = orderCreationRequest.orderMenus.map { reqOrderMenu ->
             // 주문 메뉴에 해당하는 메뉴 정보
-            val menuEntity = targetMenuEntities.first { it.id == reqOrderMenu.id }
+            val menuEntity = targetMenuEntities[reqOrderMenu.id]
+                ?: throw OrderException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "주문메뉴 처리중 실패")
 
             // INSERT 위한 임시 객체 생성. INSERT 시점 copy 하여 값 재설정
             OrderMenu(
@@ -209,15 +213,21 @@ class OrderService(
                 menuPrice = menuEntity.getLongTypePrice(), // 주문시점 메뉴의 1개당 기본가격
                 totalPrice = 0L, // INSERT 시점에 설정
                 orderMenuOptionGroups = reqOrderMenu.orderMenuOptionGroups.map { reqOrderMenuOptionGroup ->
-                    // 주문요청 메뉴의 옵션그룹 정보
-                    val groupEntity = targetMenuEntities.flatMap { it.menuOptionGroup!! }.first { it.id == reqOrderMenuOptionGroup.id }
+                    // 주문요청 메뉴의 옵션그룹 정보.
+                    // 동일메뉴-동일옵션그룹-다른옵션 이라면 동일 그룹이 여러개가 된다.
+                    val groupEntities = menuEntity.menuOptionGroup?.filter { it.id == reqOrderMenuOptionGroup.id }
+                        ?: throw OrderException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "주문메뉴 옵션그룹 처리중 실패")
 
                     OrderMenuOptionGroup(
                         orderMenuId = 0L,
-                        orderMenuOptionGroupName = groupEntity.name!!,
+                        orderMenuOptionGroupName = groupEntities[0].name!!, //
                         orderMenuOptions = reqOrderMenuOptionGroup.orderMenuOptionIds.map { orderMenuOptionId ->
-                            // 주문요청 메뉴에 해당하는 옵션그룹의 옵션 정보
-                            val optionEntity = groupEntity.menuOption!!.find { it.id == orderMenuOptionId }!!
+                            // 주문요청 메뉴에 해당하는 옵션그룹의 옵션 정보.
+                            // 동일메뉴-동일옵션그룹-다른옵션 이라면 그룹 내 옵션들을 모두 봐야 함.
+                            val optionEntity = groupEntities
+                                .flatMap { it.menuOption ?: emptyList() }
+                                .find { it.id == orderMenuOptionId }
+                                ?: throw OrderException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "주문메뉴 옵션 처리중 실패")
 
                             OrderMenuOption(
                                 orderMenuOptionGroupId = 0L,

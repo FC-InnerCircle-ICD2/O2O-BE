@@ -21,12 +21,13 @@ class ClientExceptionHandler {
         private val logger: Logger = LoggerFactory.getLogger(ClientExceptionHandler::class.java)
     }
 
-    @ExceptionHandler(RuntimeException::class)
-    fun handlerRuntime(exception: RuntimeException): ResponseEntity<APIResponseDTO<Void>>? {
+    @ExceptionHandler(Exception::class)
+    fun handle(exception: Exception): ResponseEntity<APIResponseDTO<Void>> {
         logger.error(exception.message)
+
         return ResponseEntity.status(
             HttpStatus.INTERNAL_SERVER_ERROR,
-        ).body(APIResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.message, null))
+        ).body(APIResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "관리자에게 문의 바랍니다.", null))
     }
 
     /**

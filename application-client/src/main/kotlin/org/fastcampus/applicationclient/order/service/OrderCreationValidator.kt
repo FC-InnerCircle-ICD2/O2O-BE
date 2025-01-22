@@ -19,7 +19,10 @@ class OrderCreationValidator {
          * @param orderCreationRequest  주문요청정보 DTO
          * @return 주문 메뉴에 대한 ENTITY 리스트
          */
-        fun validate(storeEntity: Store, orderCreationRequest: OrderCreationRequest): List<Menu> {
+        fun validate(
+            storeEntity: Store,
+            orderCreationRequest: OrderCreationRequest,
+        ): Map<String, Menu> {
             if (storeEntity.isClosed()) {
                 throw OrderException(HttpStatus.BAD_REQUEST.value(), "가게의 영업이 종료되었습니다.")
             }
@@ -31,7 +34,9 @@ class OrderCreationValidator {
             val filteredMenuInfos = mapMenuInfoByRequestMenuId(storeMenuCategoryEntities, requestOrderMenus)
 
             // 옵션그룹정보, 옵션 선택 확인
-            return confirmOrderMenuDetails(filteredMenuInfos, requestOrderMenus)
+            confirmOrderMenuDetails(filteredMenuInfos, requestOrderMenus)
+
+            return filteredMenuInfos
         }
 
         private fun Store.isClosed(): Boolean {
@@ -41,9 +46,9 @@ class OrderCreationValidator {
         private fun confirmOrderMenuDetails(
             filteredMenuInfos: Map<String, Menu>,
             requestOrderMenus: Collection<OrderCreationRequest.OrderMenu>,
-        ): List<Menu> {
+        ) {
             // 주문요청 메뉴 1개씩 확인
-            return requestOrderMenus.map { requestOrderMenu ->
+            requestOrderMenus.forEach { requestOrderMenu ->
                 // DB 메뉴정보
                 val menuInfo = filteredMenuInfos[requestOrderMenu.id]!!
 
@@ -62,7 +67,7 @@ class OrderCreationValidator {
                 }
 
                 // 주문요청 옵션그룹 1개씩 확인
-                val targetMenuOptionGroupEntities = requestOrderMenu.orderMenuOptionGroups.map { requestOrderMenuOptionGroup ->
+                requestOrderMenu.orderMenuOptionGroups.forEach { requestOrderMenuOptionGroup ->
                     logger.debug("requestOrderMenuOptionGroup: {}", requestOrderMenuOptionGroup)
                     // DB 옵션그룹 정보
                     val optionGroupInfo = menuInfo.menuOptionGroup?.find { it.id == requestOrderMenuOptionGroup.id }
@@ -70,8 +75,10 @@ class OrderCreationValidator {
 
                     // DB 옵션정보
                     val optionInfos = optionGroupInfo.menuOption ?: emptyList()
+
                     // 주문요청 옵션 ID 목록
                     val requestOrderMenuOptionIds = requestOrderMenuOptionGroup.orderMenuOptionIds.toMutableSet()
+
                     // 주문요청 옵션 정보만 필터링
                     val targetOptionInfos = optionInfos.filter { requestOrderMenuOptionIds.remove(it.id) }
 
@@ -80,7 +87,6 @@ class OrderCreationValidator {
                         logger.debug("등록되어 있지 않은 옵션: {}", requestOrderMenuOptionIds)
                         throw OrderException(HttpStatus.BAD_REQUEST.value(), "요청된 옵션중 가게에 등록되어 있지 않은 옵션이 존재합니다.")
                     }
-
                     // min, max 값 확인
                     val minSel = optionGroupInfo.minSel
                     val maxSel = optionGroupInfo.maxSel
@@ -93,12 +99,7 @@ class OrderCreationValidator {
                         logger.debug("올바르지 않은 min..max 선택: {}", optionGroupInfo.id)
                         throw OrderException(HttpStatus.BAD_REQUEST.value(), "옵션그룹의 선택범위를 벗어나는 옵션이 존재합니다.")
                     }
-
-                    // 메뉴옵션그룹 복사
-                    optionGroupInfo.copy(menuOption = targetOptionInfos)
                 }
-                // 메뉴 복사
-                menuInfo.copy(menuOptionGroup = targetMenuOptionGroupEntities)
             }
         }
 

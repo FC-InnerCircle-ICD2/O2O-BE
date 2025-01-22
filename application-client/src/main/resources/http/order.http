@@ -22,6 +22,18 @@ Content-Type: application/json
             ]
         },
         {
+            "id": "9e15c3da-cae8-4c25-8b4e-ae21a926f072",
+            "quantity": 1,
+            "orderMenuOptionGroups": [
+                {
+                    "id": "62f5ab82-6f9f-4344-964c-9a09a568df62",
+                    "orderMenuOptionIds": [
+                        "fa72f6e8-1cd4-4ee7-a4ca-61167daaa3fe"
+                    ]
+                }
+            ]
+        },
+        {
             "id": "51c20adf-9962-48b7-aaec-65a867d3c0c6",
             "quantity": 1,
             "orderMenuOptionGroups": [
