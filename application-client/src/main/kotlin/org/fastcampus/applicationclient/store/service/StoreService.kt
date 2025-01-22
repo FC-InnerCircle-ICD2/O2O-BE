@@ -107,4 +107,10 @@ class StoreService(
                 if (it == null) logger.warn("Store coordinates not found for storeId: $storeId")
             }
     }
+
+    @Transactional(readOnly = true)
+    fun getStoreSuggestion(affix: String, page: Int, size: Int): CursorDTO<String>? {
+        val storeNameList = storeRepository.findByNameContaining(affix) ?: return null
+        return storeNameList.paginate(page, size)
+    }
 }

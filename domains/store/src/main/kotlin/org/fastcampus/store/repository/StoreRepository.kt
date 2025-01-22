@@ -10,4 +10,6 @@ interface StoreRepository {
     fun findByCategory(category: String): List<Store>
 
     fun findById(storeId: String): Store?
+
+    fun findByNameContaining(name: String): List<String>?
 }
