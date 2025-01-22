@@ -1,10 +1,13 @@
 package org.fastcampus.applicationclient.member.controller
 
 import jakarta.validation.Valid
-import org.fastcampus.applicationclient.member.dto.MemberJoinRequest
-import org.fastcampus.applicationclient.member.dto.MemberJoinResponse
+import org.fastcampus.applicationclient.config.security.dto.AuthMember
+import org.fastcampus.applicationclient.member.dto.request.MemberJoinRequest
+import org.fastcampus.applicationclient.member.dto.response.MemberJoinResponse
 import org.fastcampus.applicationclient.member.service.MemberService
 import org.fastcampus.common.dto.APIResponseDTO
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,5 +26,12 @@ class MemberController(
         @RequestBody @Valid memberJoinRequestDto: MemberJoinRequest,
     ): APIResponseDTO<MemberJoinResponse> {
         return APIResponseDTO(200, "OK", memberService.join(memberJoinRequestDto))
+    }
+
+    @GetMapping("/auth")
+    fun auth(
+        @AuthenticationPrincipal authMember: AuthMember,
+    ): APIResponseDTO<MemberJoinResponse> {
+        return APIResponseDTO(200, "OK", null)
     }
 }

@@ -29,6 +29,18 @@ class StoreServiceTest {
         }
     }
 
+    @Test
+    fun `should throw exception when store id and menu id not found`() {
+        val storeId = "nonexistent_store"
+        val menuId = "nonexistent_menus"
+
+        `when`(storeRepository.findById(storeId)).thenReturn(null)
+
+        assertThrows<IllegalArgumentException>("Store id: $storeId menu id: $menuId not found") {
+            storeService.getMenusOptions(storeId, menuId)
+        }
+    }
+
     private fun createMockStore(storeId: String): Store {
         return Store(
             _id = storeId,

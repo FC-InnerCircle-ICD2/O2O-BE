@@ -39,7 +39,7 @@ class OrderService(
 ) {
     @Transactional(readOnly = true)
     fun getOrders(userId: Long, keyword: String, page: Int, size: Int): CursorBasedDTO<OrderResponse> {
-        val orders = orderRepository.findByUserId(userId, page, size)
+        val orders = orderRepository.findByUserId(userId, if (page == 0) 0 else page - 1, size)
         return CursorBasedDTO(
             isEnd = orders.isEnd,
             totalCount = orders.totalCount,
@@ -66,6 +66,8 @@ class OrderService(
         val orderMenus = orderMenuRepository.findByOrderId(order.id)
         return OrderDetailResponse(
             orderId = order.id,
+            status = mapOf("code" to order.status.code, "desc" to order.status.desc),
+            orderTime = order.orderTime,
             isDeleted = order.isDeleted,
             tel = order.tel,
             roadAddress = order.roadAddress,
@@ -73,6 +75,7 @@ class OrderService(
             detailAddress = order.detailAddress,
             orderPrice = order.orderPrice,
             deliveryPrice = order.deliveryPrice,
+            deliveryCompleteTime = order.deliveryCompleteTime,
             paymentPrice = order.paymentPrice,
             paymentId = order.paymentId,
             paymentType = mapOf("code" to payment.type.code, "desc" to payment.type.desc),

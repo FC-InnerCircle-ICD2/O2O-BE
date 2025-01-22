@@ -21,6 +21,15 @@ class ClientExceptionHandler {
         private val logger: Logger = LoggerFactory.getLogger(ClientExceptionHandler::class.java)
     }
 
+    @ExceptionHandler(RuntimeException::class)
+    fun handlerRuntime(exception: RuntimeException): ResponseEntity<APIResponseDTO<Void>>? {
+        logger.error(exception.message)
+
+        return ResponseEntity.status(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+        ).body(APIResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.message, null))
+    }
+
     @ExceptionHandler(Exception::class)
     fun handle(exception: Exception): ResponseEntity<APIResponseDTO<Void>> {
         logger.error(exception.message)
