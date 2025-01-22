@@ -2,9 +2,11 @@ package org.fastcampus.applicationclient.payment.service
 
 import org.fastcampus.applicationclient.payment.controller.dto.request.OrderPaymentApproveRequest
 import org.fastcampus.order.entity.Order
+import org.fastcampus.order.event.OrderNotificationEvent
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.payment.exception.PaymentException
 import org.fastcampus.payment.repository.PaymentRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 class PaymentService(
     private val paymentRepository: PaymentRepository,
     private val orderRepository: OrderRepository,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     @Transactional
     fun approveOrderPayment(userId: Long, request: OrderPaymentApproveRequest) {
@@ -31,5 +34,8 @@ class PaymentService(
 
         // 주문접수 상태 변경
         orderRepository.save(order.copy(status = Order.Status.RECEIVE))
+
+        // 점주에게 주문 알림 - 트랜잭션 커밋이후 비동기 전송
+        eventPublisher.publishEvent(OrderNotificationEvent(order))
     }
 }

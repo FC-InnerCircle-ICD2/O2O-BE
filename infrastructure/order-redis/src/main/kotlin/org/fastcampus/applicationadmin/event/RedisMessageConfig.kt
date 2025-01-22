@@ -1,6 +1,7 @@
 package org.fastcampus.applicationadmin.event
 
 import org.fastcampus.order.event.NotificationReceiver
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
@@ -12,10 +13,14 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 
 @Configuration
 class RedisMessageConfig(
+    @Qualifier("OrderNotificationReceiver")
     private val notificationReceiver: NotificationReceiver,
 ) {
     @Bean
-    fun redisContainer(connectionFactory: RedisConnectionFactory, listenerAdapter: MessageListenerAdapter): RedisMessageListenerContainer {
+    fun redisContainer(
+        connectionFactory: RedisConnectionFactory,
+        @Qualifier("OrderNotificationReceiverAdapter") listenerAdapter: MessageListenerAdapter,
+    ): RedisMessageListenerContainer {
         return RedisMessageListenerContainer()
             .apply {
                 setConnectionFactory(connectionFactory)
@@ -34,7 +39,7 @@ class RedisMessageConfig(
             }
     }
 
-    @Bean
+    @Bean("OrderNotificationReceiverAdapter")
     fun listenerAdapter(): MessageListenerAdapter {
         return MessageListenerAdapter(notificationReceiver)
     }

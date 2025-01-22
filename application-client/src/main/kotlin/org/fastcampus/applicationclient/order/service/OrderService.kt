@@ -195,10 +195,7 @@ class OrderService(
         }
     }
 
-    private fun createTempOrderMenus(
-        orderCreationRequest: OrderCreationRequest,
-        targetMenuEntities: Map<String, Menu>,
-    ): List<OrderMenu> {
+    private fun createTempOrderMenus(orderCreationRequest: OrderCreationRequest, targetMenuEntities: Map<String, Menu>): List<OrderMenu> {
         val tempOrderMenus = orderCreationRequest.orderMenus.map { reqOrderMenu ->
             // 주문 메뉴에 해당하는 메뉴 정보
             val menuEntity = targetMenuEntities[reqOrderMenu.id]

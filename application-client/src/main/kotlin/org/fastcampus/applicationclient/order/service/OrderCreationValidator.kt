@@ -17,12 +17,9 @@ class OrderCreationValidator {
          *
          * @param storeEntity           가게정보 ENTITY
          * @param orderCreationRequest  주문요청정보 DTO
-         * @return 주문 메뉴에 대한 ENTITY 리스트
+         * @return <메뉴 ID, 메뉴정보> MAP
          */
-        fun validate(
-            storeEntity: Store,
-            orderCreationRequest: OrderCreationRequest,
-        ): Map<String, Menu> {
+        fun validate(storeEntity: Store, orderCreationRequest: OrderCreationRequest): Map<String, Menu> {
             if (storeEntity.isClosed()) {
                 throw OrderException(HttpStatus.BAD_REQUEST.value(), "가게의 영업이 종료되었습니다.")
             }
