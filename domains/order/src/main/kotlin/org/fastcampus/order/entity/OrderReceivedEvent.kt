@@ -1,16 +1,11 @@
-package org.fastcampus.order.event
+package org.fastcampus.order.entity
 
-import org.fastcampus.order.entity.Order
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
 import java.time.ZoneOffset
 
-data class OrderNotificationEvent(
-    val order: Order,
-)
-
-data class OrderNotificationMessage(
+data class OrderReceivedEvent(
     val orderId: String,
     val orderName: String,
     val orderStatus: String,
@@ -23,16 +18,37 @@ data class OrderNotificationMessage(
     val detailAddress: String,
     val orderMenus: List<OrderMenu>,
 ) {
+    data class OrderMenu(
+        val id: Long,
+        val menuName: String,
+        val menuQuantity: Long,
+        val menuPrice: Long,
+        val totalPrice: Long,
+        val orderMenuOptionGroups: List<OrderMenuOptionGroup>,
+    ) {
+        data class OrderMenuOptionGroup(
+            val id: Long,
+            val orderMenuOptionGroupName: String,
+            val orderMenuOptions: List<OrderMenuOption>,
+        ) {
+            data class OrderMenuOption(
+                val id: Long,
+                val orderMenuOptionName: String,
+                val orderMenuOptionPrice: Long,
+            )
+        }
+    }
+
     companion object {
         fun of(
             order: Order,
             orderMenuRepository: OrderMenuRepository,
             orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository,
             orderMenuOptionRepository: OrderMenuOptionRepository,
-        ): OrderNotificationMessage {
+        ): OrderReceivedEvent {
             val orderMenus = orderMenuRepository.findByOrderId(order.id)
 
-            return OrderNotificationMessage(
+            return OrderReceivedEvent(
                 orderId = order.id,
                 orderName = order.orderSummary ?: "알 수 없음",
                 orderStatus = order.status.name,
@@ -69,27 +85,6 @@ data class OrderNotificationMessage(
                                 },
                     )
                 },
-            )
-        }
-    }
-
-    data class OrderMenu(
-        val id: Long,
-        val menuName: String,
-        val menuQuantity: Long,
-        val menuPrice: Long,
-        val totalPrice: Long,
-        val orderMenuOptionGroups: List<OrderMenuOptionGroup>,
-    ) {
-        data class OrderMenuOptionGroup(
-            val id: Long,
-            val orderMenuOptionGroupName: String,
-            val orderMenuOptions: List<OrderMenuOption>,
-        ) {
-            data class OrderMenuOption(
-                val id: Long,
-                val orderMenuOptionName: String,
-                val orderMenuOptionPrice: Long,
             )
         }
     }

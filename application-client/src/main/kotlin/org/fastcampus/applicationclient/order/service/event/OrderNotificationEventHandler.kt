@@ -2,8 +2,7 @@ package org.fastcampus.applicationclient.order.service.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.fastcampus.order.event.NotificationSender
-import org.fastcampus.order.event.OrderNotificationEvent
-import org.fastcampus.order.event.OrderNotificationMessage
+import org.fastcampus.order.entity.OrderReceivedEvent
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -33,7 +32,7 @@ class OrderNotificationEventHandler(
         logger.debug("주문알림 이벤트 처리: {}", event.order)
 
         val stringMessage = objectMapper.writeValueAsString(
-            OrderNotificationMessage.of(
+            OrderReceivedEvent.of(
                 event.order,
                 orderMenuRepository,
                 orderMenuOptionGroupRepository,
