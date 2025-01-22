@@ -128,6 +128,11 @@ class StoreService(
             }
     }
 
+    /**
+     * 트렌드 키워드를 가져오는 메서드
+     * 1~10위까지 키워드를 가져옵니다.
+     */
+    @Transactional(readOnly = true)
     fun getTrendKeywords(): TrendKeywordsResponse? {
         val keywords = storeRedisRepository.getTrendKeywords()
         return keywords?.let {
@@ -144,6 +149,10 @@ class StoreService(
         }
     }
 
+    /**
+     * 검색 기록을 저장하는 메서드
+     * (검색어가 가게 이름과 일치하는 경우에만 저장합니다.)
+     */
     @Transactional
     fun search(keyword: String) {
         if (storeRepository.existsByName(keyword) == true) {
@@ -151,6 +160,10 @@ class StoreService(
         }
     }
 
+    /**
+     * 1시간마다 실행되는 스케줄러
+     * (1시간마다 12시간 이전의 검색 기록을 삭제합니다.)
+     */
     @Scheduled(fixedRate = 1000 * 60 * 60 * 1)
     fun removeOldData() {
         storeRedisRepository.removeOldData()
