@@ -1,6 +1,8 @@
 package org.fastcampus.applicationclient.store.service
 
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.paginate
 import org.fastcampus.applicationclient.store.controller.dto.response.toMenuResponse
@@ -106,5 +108,37 @@ class StoreService(
             }.also {
                 if (it == null) logger.warn("Store coordinates not found for storeId: $storeId")
             }
+    }
+
+    fun getMenusOptions(storeId: String, menuId: String): List<MenuOptionGroupsResponse> {
+        logger.info("Call findAllMenuOptionGroup storeId: $storeId, menuId: $menuId")
+        val test = storeRepository.findById(storeId)
+        logger.info(test.toString())
+
+        val menuOptionGroupInfo = storeRepository.findById(storeId)
+            ?.storeMenuCategory
+            ?.flatMap { it.menu ?: emptyList() }
+            ?.filter { it.id == menuId }
+            ?.flatMap { it.menuOptionGroup ?: emptyList() }
+            ?: throw IllegalArgumentException("Store id: $storeId menu id: $menuId not found")
+        val response = menuOptionGroupInfo.map { menuOptionGroup ->
+            MenuOptionGroupsResponse(
+                id = menuOptionGroup.id ?: "",
+                name = menuOptionGroup.name ?: "",
+                minSel = menuOptionGroup.minSel?.toString() ?: "0",
+                maxSel = menuOptionGroup.maxSel?.toString() ?: "0",
+                order = menuOptionGroup.order ?: 0L,
+                menuOptions = menuOptionGroup.menuOption?.map { menu ->
+                    MenuOptionResponse(
+                        id = menu.id ?: "",
+                        name = menu.name ?: "",
+                        price = "${menu.price}원",
+                        isSoldOut = menu.isSoldOut,
+                        order = menu.order ?: 0L,
+                    )
+                } ?: emptyList(),
+            )
+        }
+        return response
     }
 }
