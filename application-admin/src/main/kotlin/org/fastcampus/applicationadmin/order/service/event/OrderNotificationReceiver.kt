@@ -1,4 +1,4 @@
-package org.fastcampus.applicationadmin.event
+package org.fastcampus.applicationadmin.order.service.event
 
 import org.fastcampus.order.event.NotificationReceiver
 import org.slf4j.Logger

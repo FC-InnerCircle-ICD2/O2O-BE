@@ -25,5 +25,4 @@ class OrderNotificationHandler(
         logger.debug("주문알림 이벤트 처리: {}", event.orderId)
         // TODO 정보 조회해서 메세지 전송
     }
-
 }
