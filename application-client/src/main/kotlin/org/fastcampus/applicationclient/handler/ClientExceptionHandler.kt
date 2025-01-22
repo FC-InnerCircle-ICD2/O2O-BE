@@ -3,11 +3,10 @@ package org.fastcampus.applicationclient.handler
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.order.exception.OrderException
 import org.fastcampus.payment.exception.PaymentException
-import org.slf4j.Logger
+import org.fastcampus.store.exception.StoreException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -18,46 +17,54 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 class ClientExceptionHandler {
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(ClientExceptionHandler::class.java)
+        private val logger = LoggerFactory.getLogger(ClientExceptionHandler::class.java)
     }
 
-    @ExceptionHandler(RuntimeException::class)
-    fun handlerRuntime(exception: RuntimeException): ResponseEntity<APIResponseDTO<Void>>? {
-        logger.error(exception.message)
-
-        return ResponseEntity.status(
-            HttpStatus.INTERNAL_SERVER_ERROR,
-        ).body(APIResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.message, null))
-    }
-
-    @ExceptionHandler(Exception::class)
-    fun handle(exception: Exception): ResponseEntity<APIResponseDTO<Void>> {
-        logger.error(exception.message)
-
-        return ResponseEntity.status(
-            HttpStatus.INTERNAL_SERVER_ERROR,
-        ).body(APIResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "관리자에게 문의 바랍니다.", null))
-    }
-
-    /**
-     * Validation 실패 처리
-     */
-    @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleValidationException(exception: MethodArgumentNotValidException): ResponseEntity<APIResponseDTO<Map<String, String>>> {
-        logger.error("Validation Exception: ${exception.message}", exception)
-
-        // 필드 에러 메시지 맵핑
-        val errors = exception.bindingResult.allErrors.associate { error ->
-            val fieldName = if (error is FieldError) error.field else "unknown"
-            fieldName to (error.defaultMessage ?: "Invalid value")
+    @ExceptionHandler(StoreException::class)
+    fun handleStoreException(ex: StoreException): ResponseEntity<APIResponseDTO<Void>> {
+        val (status, message) = when (ex) {
+            is StoreException.StoreNotFoundException ->
+                HttpStatus.NOT_FOUND to ex.message
+            is StoreException.StoreCoordinatesNotFoundException ->
+                HttpStatus.BAD_REQUEST to ex.message
+            is StoreException.DeliveryCalculationException ->
+                HttpStatus.INTERNAL_SERVER_ERROR to ex.message
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        logger.error("Store exception occurred: ${ex.message}")
+        return ResponseEntity
+            .status(status)
+            .body(APIResponseDTO(status.value(), message, null))
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidationException(ex: MethodArgumentNotValidException): ResponseEntity<APIResponseDTO<Map<String, String>>> {
+        val errors = ex.bindingResult.fieldErrors.associate { error ->
+            error.field to (error.defaultMessage ?: "Invalid value")
+        }
+
+        logger.error("Validation failed: $errors")
+        return ResponseEntity
+            .badRequest()
             .body(
                 APIResponseDTO(
                     HttpStatus.BAD_REQUEST.value(),
                     "Validation failed",
                     errors,
+                ),
+            )
+    }
+
+    @ExceptionHandler(RuntimeException::class)
+    fun handleRuntime(ex: RuntimeException): ResponseEntity<APIResponseDTO<Void>> {
+        logger.error("Unexpected error occurred", ex)
+        return ResponseEntity
+            .internalServerError()
+            .body(
+                APIResponseDTO(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    ex.message ?: "Internal server error",
+                    null,
                 ),
             )
     }
