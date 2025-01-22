@@ -1,20 +1,23 @@
 package org.fastcampus.order.postgres.repository
 
 import org.fastcampus.common.dto.CursorBasedDTO
+import org.fastcampus.common.dto.OffSetBasedDTO
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.postgres.entity.OrderJpaEntity
 import org.fastcampus.order.postgres.entity.toJpaEntity
 import org.fastcampus.order.postgres.entity.toModel
 import org.fastcampus.order.repository.OrderRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 class OrderJpaRepositoryCustom(
-    private val orderJpaRepository: OrderJpaRepository,
+    @Autowired private val orderJpaRepository: OrderJpaRepository,
 ) : OrderRepository {
     override fun save(order: Order): Order {
         return orderJpaRepository.save(order.toJpaEntity()).toModel()
@@ -45,6 +48,32 @@ class OrderJpaRepositoryCustom(
             isEnd = orderJpaEntities.isLast,
             totalCount = orderJpaEntities.totalElements,
             content = orderJpaEntities.content.map { it.toModel() },
+        )
+    }
+
+    override fun findByStoreIdAndStatusWithPeriod(
+        storeId: String,
+        status: Order.Status,
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime,
+        page: Int,
+        size: Int,
+    ): OffSetBasedDTO<Order> {
+        val pageable: Pageable = PageRequest.of(page, size, Sort.by("orderTime").descending())
+        val orderJpaEntities: Page<Order> =
+            orderJpaRepository.findByStoreIdAndStatusAndOrderTimeBetween(
+                storeId,
+                status,
+                startDateTime,
+                endDateTime,
+                pageable,
+            ).map { it.toModel() }
+        return OffSetBasedDTO(
+            content = orderJpaEntities.content,
+            currentPage = orderJpaEntities.number,
+            totalPages = orderJpaEntities.totalPages,
+            totalItems = orderJpaEntities.totalElements,
+            hasNext = orderJpaEntities.hasNext(),
         )
     }
 }
