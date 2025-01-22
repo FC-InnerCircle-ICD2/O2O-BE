@@ -141,7 +141,7 @@ jobs:
         uses: madrapps/jacoco-report@v1.6.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: 📝 테스트 커버리지 리포트
+          title: 📝 ${{ matrix.module }} 테스트 커버리지 리포트
           update-comment: true
           min-coverage-overall: 60
           min-coverage-changed-files: 60
