@@ -24,7 +24,7 @@ data class OrderNotificationMessage(
     val orderMenus: List<OrderMenu>,
 ) {
     companion object {
-        fun fromOrder(
+        fun of(
             order: Order,
             orderMenuRepository: OrderMenuRepository,
             orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository,

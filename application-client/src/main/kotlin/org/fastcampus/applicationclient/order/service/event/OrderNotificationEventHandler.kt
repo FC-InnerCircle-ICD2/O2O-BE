@@ -33,7 +33,7 @@ class OrderNotificationEventHandler(
         logger.debug("주문알림 이벤트 처리: {}", event.order)
 
         val stringMessage = objectMapper.writeValueAsString(
-            OrderNotificationMessage.fromOrder(
+            OrderNotificationMessage.of(
                 event.order,
                 orderMenuRepository,
                 orderMenuOptionGroupRepository,
