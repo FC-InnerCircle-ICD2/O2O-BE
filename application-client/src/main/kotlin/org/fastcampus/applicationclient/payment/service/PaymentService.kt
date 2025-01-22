@@ -22,6 +22,10 @@ class PaymentService(
         val order = orderRepository.findById(request.orderId)
             ?: throw PaymentException(HttpStatus.BAD_REQUEST.value(), "주문을 찾을 수 없습니다.")
 
+        if (order.userId != userId) {
+            throw PaymentException(HttpStatus.BAD_REQUEST.value(), "로그인 된 유저와 주문 유저가 다릅니다.")
+        }
+
         // TODO - 주문 상태가 WAIT 인지 확인
 
         if (request.amount != order.paymentPrice) {

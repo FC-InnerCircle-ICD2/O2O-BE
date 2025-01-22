@@ -1,5 +1,29 @@
+### 회원가입
+POST http://localhost:8080/api/v1/members/join
+Content-Type: application/json
+
+{
+    "signname": "user@gmail.com",
+    "password": "1234",
+    "nickname": "개발의민족",
+    "username": "홍길동",
+    "phone": "01012345678"
+}
+
+### 로그인
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+    "signname": "user@gmail.com",
+    "password": "1234",
+    "role": "USER"
+}
+
+### 주문생성
 POST http://localhost:8080/api/v1/orders
 Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhY2Nlc3NUb2tlbiIsInJvbGUiOiJVU0VSIiwiaWQiOjEsInN0YXRlIjoiSk9JTiIsImV4cCI6MTczNzU1NTQxNX0.vOvX3fndX_F84sIitKCRUtPWxFKwg1HAr8CEoTQz35-zbySSpwHs8RA9HxJE94bjqMG6Pk2GHYy4wXDJTQaCLA
 
 {
     "storeId": "26466355",
@@ -48,12 +72,13 @@ Content-Type: application/json
     ]
 }
 
-###
+### 결제승인
 POST http://localhost:8080/api/v1/payments/approve
 Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhY2Nlc3NUb2tlbiIsInJvbGUiOiJVU0VSIiwiaWQiOjEsInN0YXRlIjoiSk9JTiIsImV4cCI6MTczNzU1NTQxNX0.vOvX3fndX_F84sIitKCRUtPWxFKwg1HAr8CEoTQz35-zbySSpwHs8RA9HxJE94bjqMG6Pk2GHYy4wXDJTQaCLA
 
 {
     "paymentKey": "",
-    "orderId": "746b9cf1-5cce-4ee8-9c62-71791b1b6b80",
+    "orderId": "d723e9cb-5bb8-4da3-944e-bd720d03171a",
     "amount": 40500
 }

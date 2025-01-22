@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.order.controller
 
+import org.fastcampus.applicationclient.config.security.dto.AuthMember
 import org.fastcampus.applicationclient.order.controller.dto.request.OrderCreationRequest
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderCreationResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderDetailResponse
@@ -9,6 +10,7 @@ import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorBasedDTO
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -45,9 +47,9 @@ class OrderController(
     @PostMapping
     fun createOrder(
         @RequestBody orderCreationRequest: OrderCreationRequest,
+        @AuthenticationPrincipal authMember: AuthMember,
     ): APIResponseDTO<OrderCreationResponse> {
-        // TODO userID 설정
-        val response = orderService.createOrder(1, orderCreationRequest)
+        val response = orderService.createOrder(authMember.id, orderCreationRequest)
         return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response)
     }
 }
