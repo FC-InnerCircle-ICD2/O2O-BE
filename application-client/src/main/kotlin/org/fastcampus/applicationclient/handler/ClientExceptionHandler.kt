@@ -81,7 +81,7 @@ class ClientExceptionHandler {
     fun handlePaymentException(exception: PaymentException): ResponseEntity<APIResponseDTO<*>> {
         logger.error("handlePaymentException: {}", exception.toString(), exception)
         return ResponseEntity
-            .status(exception.status)
-            .body(APIResponseDTO(exception.status, "FAIL", exception.message))
+            .status(400)
+            .body(APIResponseDTO(400, "FAIL", exception.message))
     }
 }

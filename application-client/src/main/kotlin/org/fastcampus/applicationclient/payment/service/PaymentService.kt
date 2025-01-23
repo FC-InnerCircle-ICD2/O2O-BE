@@ -7,7 +7,6 @@ import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.payment.exception.PaymentException
 import org.fastcampus.payment.repository.PaymentRepository
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,23 +19,23 @@ class PaymentService(
     @Transactional
     fun approveOrderPayment(userId: Long, request: OrderPaymentApproveRequest) {
         val order = orderRepository.findById(request.orderId)
-            ?: throw PaymentException(HttpStatus.BAD_REQUEST.value(), "주문을 찾을 수 없습니다.")
+            ?: throw PaymentException.OrderNotFound(request.orderId)
 
         if (order.userId != userId) {
-            throw PaymentException(HttpStatus.BAD_REQUEST.value(), "로그인 된 유저와 주문 유저가 다릅니다.")
+            throw PaymentException.UserNotMatching("login: [${userId}] | orderUser: [${order.userId}]")
         }
 
         // TODO - 주문 상태가 WAIT 인지 확인
 
         if (request.amount != order.paymentPrice) {
-            throw PaymentException(HttpStatus.BAD_REQUEST.value(), "결제 금액이 올바르지 않습니다.")
+            throw PaymentException.IncorrectAmount("reqAmount: [${request.amount}] | orderPayment: [${order.paymentPrice}]")
         }
 
         // TODO - PG 승인 구현
 
         // TODO - Payment Status 추가, 결제완료시 상태 변경
         paymentRepository.findById(order.paymentId)
-            ?: throw PaymentException(HttpStatus.BAD_REQUEST.value(), "결제 정보를 찾을 수 없습니다.")
+            ?: throw PaymentException.PaymentNotFound(order.paymentId.toString())
 
         // 주문접수 상태 변경
         orderRepository.save(order.copy(status = Order.Status.RECEIVE))
