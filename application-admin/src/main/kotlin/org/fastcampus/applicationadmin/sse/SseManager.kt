@@ -23,8 +23,8 @@ class SseManager {
         // 연결 시작시 연결 지속을 위해 더미데이터 응답 1회
         push(
             key = key,
-            comment = "server hello",
-            reconnectTime = 1_000L,
+            comment = "connected",
+            reconnectTime = 500L,
         )
         logger.debug("관리중 세션: {}", emitters)
     }
