@@ -1,16 +1,20 @@
 package org.fastcampus.applicationclient.store.service
 
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
-import org.fastcampus.applicationclient.store.controller.dto.response.paginate
-import org.fastcampus.applicationclient.store.controller.dto.response.toMenuResponse
-import org.fastcampus.applicationclient.store.controller.dto.response.toStoreInfo
+import org.fastcampus.applicationclient.store.mapper.StoreMapper.toCategoryInfo
+import org.fastcampus.applicationclient.store.mapper.StoreMapper.toStoreInfo
+import org.fastcampus.applicationclient.store.mapper.calculateDeliveryTime
+import org.fastcampus.applicationclient.store.mapper.fetchDistance
+import org.fastcampus.applicationclient.store.mapper.fetchStoreCoordinates
+import org.fastcampus.applicationclient.store.utils.PaginationUtils.paginate
 import org.fastcampus.common.dto.CursorDTO
-import org.fastcampus.store.entity.Menu
+import org.fastcampus.store.exception.StoreException
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
 import org.fastcampus.store.repository.StoreRepository
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,94 +22,75 @@ import org.springframework.transaction.annotation.Transactional
 /**
  * Created by brinst07 on 25. 1. 11..
  */
+
 @Service
 class StoreService(
     private val storeRepository: StoreRepository,
     private val storeRedisRepository: StoreRedisRepository,
 ) {
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(StoreService::class.java)
+        private val logger = LoggerFactory.getLogger(StoreService::class.java)
     }
 
     @Transactional(readOnly = true)
-    fun getStoreInfo(storeId: String, userCoordinates: Coordinates): StoreInfo {
-        val store = storeRepository.findById(storeId)
-            ?: throw IllegalArgumentException("Store not found: $storeId")
-        val deliveryInfo = calculateDeliveryTime(storeId, userCoordinates)
-
-        return store.toStoreInfo(deliveryInfo["deliveryTime"] as String)
-    }
+    fun getStoreInfo(storeId: String, userCoordinates: Coordinates): StoreInfo =
+        storeRepository.findById(storeId)?.run {
+            val deliveryInfo = calculateDeliveryDetails(storeId, userCoordinates)
+            toStoreInfo(deliveryInfo["deliveryTime"] as String)
+        } ?: throw StoreException.StoreNotFoundException(storeId)
 
     @Transactional(readOnly = true)
-    fun getCategories(storeId: String, page: Int, size: Int): CursorDTO<CategoryInfo> {
-        val store = storeRepository.findById(storeId)
-            ?: throw IllegalArgumentException("Store not found: $storeId")
+    fun getCategories(storeId: String, page: Int, size: Int): CursorDTO<CategoryInfo> =
+        storeRepository.findById(storeId)?.storeMenuCategory?.map { it.toCategoryInfo() }
+            ?.paginate(page, size)
+            ?: throw StoreException.StoreNotFoundException(storeId)
 
-        // 카테고리와 메뉴를 묶은 데이터 생성
-        val categoriesWithMenus = store.storeMenuCategory?.map { category ->
-            CategoryInfo(
-                categoryId = category.id ?: "unknown",
-                categoryName = category.name ?: "unknown",
-                menus = category.menu?.map(Menu::toMenuResponse) ?: emptyList(),
-            )
-        } ?: emptyList()
+    fun calculateDeliveryDetails(storeId: String, userCoordinates: Coordinates): Map<String, Any> =
+        getStoreCoordinates(storeId).let {
+            val distance = storeRedisRepository.fetchDistance(userCoordinates, storeId)
+            val deliveryTime = distance.calculateDeliveryTime()
 
-        // 카테고리별 페이징 처리
-        val paginatedCategories = categoriesWithMenus.paginate(page, size)
-
-        return paginatedCategories
-    }
-
-    /**
-     * 배달 예상 시간을 계산하는 메서드
-     */
-    fun calculateDeliveryTime(storeId: String, userCoordinates: Coordinates): Map<String, Any> {
-        logger.info("Calculating delivery time for storeId: $storeId, userCoordinates: $userCoordinates")
-        // 가게 좌표 가져오기
-        val storeCoordinates = getStoreCoordinates(storeId)
-            ?: throw IllegalArgumentException("Store coordinates not found for storeId=$storeId")
-
-        logger.info("Store coordinates: $storeCoordinates")
-
-        // 거리 계산
-        val distance = storeRedisRepository.getDistanceBetweenUserByStore(
-            userKey = "user:${userCoordinates.latitude},${userCoordinates.longitude}",
-            storeKey = storeId,
-        )
-
-        logger.info("Calculated distance: $distance km")
-
-        // 거리 범위에 따른 배달 시간 계산
-        val deliveryTime = when {
-            distance < 5 -> 25
-            distance < 10 -> 30
-            distance < 20 -> 35
-            distance < 30 -> 40
-            distance < 40 -> 45
-            else -> 60 // 40km 이상
-        }
-
-        return mapOf(
-            "storeId" to storeId,
-            "distance" to String.format("%.2f km", distance),
-            "deliveryTime" to "$deliveryTime 분",
-        ).also {
-            logger.info("Delivery time calculation result: $it")
-        }
-    }
-
-    private fun getStoreCoordinates(storeId: String): Coordinates? {
-        logger.info("Getting store coordinates for storeId: $storeId")
-        return storeRedisRepository.getStoreLocation(storeId)?.also { logger.info("Store coordinates found in Redis: $it") }
-            ?: storeRepository.findById(storeId)?.let {
-                val coordinates = Coordinates(it.latitude ?: 0.0, it.longitude ?: 0.0)
-                logger.info("Store coordinates found in repository: $coordinates")
-                storeRedisRepository.saveStoreLocation(storeId, coordinates)
-                logger.info("Store coordinates saved to Redis")
-                coordinates
-            }.also {
-                if (it == null) logger.warn("Store coordinates not found for storeId: $storeId")
+            mapOf(
+                "storeId" to storeId,
+                "distance" to "%.2f km".format(distance),
+                "deliveryTime" to "$deliveryTime 분",
+            ).apply {
+                logger.info("Delivery time calculation result: $this")
             }
+        }
+
+    private fun getStoreCoordinates(storeId: String) = storeRepository.fetchStoreCoordinates(storeId, storeRedisRepository)
+
+    fun getMenusOptions(storeId: String, menuId: String): List<MenuOptionGroupsResponse> {
+        logger.info("Call findAllMenuOptionGroup storeId: $storeId, menuId: $menuId")
+        val test = storeRepository.findById(storeId)
+        logger.info(test.toString())
+
+        val menuOptionGroupInfo = storeRepository.findById(storeId)
+            ?.storeMenuCategory
+            ?.flatMap { it.menu ?: emptyList() }
+            ?.filter { it.id == menuId }
+            ?.flatMap { it.menuOptionGroup ?: emptyList() }
+            ?: throw IllegalArgumentException("Store id: $storeId menu id: $menuId not found")
+        val response = menuOptionGroupInfo.map { menuOptionGroup ->
+            MenuOptionGroupsResponse(
+                id = menuOptionGroup.id ?: "",
+                name = menuOptionGroup.name ?: "",
+                minSel = menuOptionGroup.minSel?.toString() ?: "0",
+                maxSel = menuOptionGroup.maxSel?.toString() ?: "0",
+                order = menuOptionGroup.order ?: 0L,
+                menuOptions = menuOptionGroup.menuOption?.map { menu ->
+                    MenuOptionResponse(
+                        id = menu.id ?: "",
+                        name = menu.name ?: "",
+                        price = "${menu.price}원",
+                        isSoldOut = menu.isSoldOut,
+                        order = menu.order ?: 0L,
+                    )
+                } ?: emptyList(),
+            )
+        }
+        return response
     }
 
     @Transactional(readOnly = true)
