@@ -1,4 +1,4 @@
-package org.fastcampus.applicationclient.config.security.dto.request
+package org.fastcampus.applicationadmin.config.security.dto.request
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
