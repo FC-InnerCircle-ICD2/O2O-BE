@@ -22,7 +22,7 @@ class PaymentService(
             ?: throw PaymentException.OrderNotFound(request.orderId)
 
         if (order.userId != userId) {
-            throw PaymentException.UserNotMatching("login: [${userId}] | orderUser: [${order.userId}]")
+            throw PaymentException.UserNotMatching("login: [$userId] | orderUser: [${order.userId}]")
         }
 
         // TODO - 주문 상태가 WAIT 인지 확인
