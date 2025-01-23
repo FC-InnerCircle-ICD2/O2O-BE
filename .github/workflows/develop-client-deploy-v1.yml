@@ -51,7 +51,6 @@ jobs:
             docker stop app-client || true
             docker rm app-client || true
             docker pull yong7317/application-client:latest
-            docker image prune -f
             docker-compose up -d
 
 

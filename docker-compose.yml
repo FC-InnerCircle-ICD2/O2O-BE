@@ -22,17 +22,17 @@ services:
       - '5432:5432'
     networks:
       - o2o-network
-  app-client:
-    container_name: app-client
-    image: yong7317/application-client:latest
-    ports:
-      - '8081:8080'
-    networks:
-      - o2o-network
-    depends_on:
-      - store-mongo
-      - store-redis
-      - order-postgres
+#  app-client:
+#    container_name: app-client
+#    image: yong7317/application-client:latest
+#    ports:
+#      - '8081:8080'
+#    networks:
+#      - o2o-network
+#    depends_on:
+#      - store-mongo
+#      - store-redis
+#      - order-postgres
 #  app-admin:
 #    container_name: app-admin
 #    image: yong7317/application-admin:latest

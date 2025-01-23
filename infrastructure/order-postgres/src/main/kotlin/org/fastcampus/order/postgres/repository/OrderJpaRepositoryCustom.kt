@@ -1,6 +1,7 @@
 package org.fastcampus.order.postgres.repository
 
 import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.common.dto.OffSetBasedDTO
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.postgres.entity.OrderJpaEntity
 import org.fastcampus.order.postgres.entity.toJpaEntity
@@ -11,6 +12,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 class OrderJpaRepositoryCustom(
@@ -44,6 +46,32 @@ class OrderJpaRepositoryCustom(
         return CursorDTO(
             content = orderJpaEntities.content.map { it.toModel() },
             nextCursor = if (orderJpaEntities.nextPageable().sort.isSorted) orderJpaEntities.nextPageable().pageNumber else null,
+        )
+    }
+
+    override fun findByStoreIdAndStatusWithPeriod(
+        storeId: String,
+        status: Order.Status,
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime,
+        page: Int,
+        size: Int,
+    ): OffSetBasedDTO<Order> {
+        val pageable: Pageable = PageRequest.of(page, size, Sort.by("orderTime").descending())
+        val orderJpaEntities: Page<Order> =
+            orderJpaRepository.findByStoreIdAndStatusAndOrderTimeBetween(
+                storeId,
+                status,
+                startDateTime,
+                endDateTime,
+                pageable,
+            ).map { it.toModel() }
+        return OffSetBasedDTO(
+            content = orderJpaEntities.content,
+            currentPage = orderJpaEntities.number,
+            totalPages = orderJpaEntities.totalPages,
+            totalItems = orderJpaEntities.totalElements,
+            hasNext = orderJpaEntities.hasNext(),
         )
     }
 }
