@@ -6,8 +6,6 @@ import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
-import org.fastcampus.store.entity.Store
-import org.fastcampus.store.entity.StoreWithDistance
 import org.fastcampus.store.redis.Coordinates
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

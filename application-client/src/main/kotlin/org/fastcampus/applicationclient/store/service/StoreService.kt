@@ -12,13 +12,9 @@ import org.fastcampus.applicationclient.store.mapper.fetchStoreCoordinates
 import org.fastcampus.applicationclient.store.utils.PaginationUtils.paginate
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.store.exception.StoreException
-import org.fastcampus.store.entity.Store
-import org.fastcampus.store.entity.StoreWithDistance
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
 import org.fastcampus.store.repository.StoreRepository
-import org.fastcampus.store.utils.DeliveryUtils
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
