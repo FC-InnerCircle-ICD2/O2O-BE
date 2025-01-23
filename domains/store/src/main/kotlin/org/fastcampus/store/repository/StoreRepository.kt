@@ -10,4 +10,6 @@ interface StoreRepository {
     fun findByCategory(category: String): List<Store>
 
     fun findById(storeId: String): Store?
+
+    fun findOwnerIdByStoreId(storeId: String): String?
 }

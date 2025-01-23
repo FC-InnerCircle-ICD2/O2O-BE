@@ -1,6 +1,8 @@
 package org.fastcampus.applicationclient.handler
 
 import org.fastcampus.common.dto.APIResponseDTO
+import org.fastcampus.order.exception.OrderException
+import org.fastcampus.payment.exception.PaymentException
 import org.fastcampus.store.exception.StoreException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -65,5 +67,21 @@ class ClientExceptionHandler {
                     null,
                 ),
             )
+    }
+
+    @ExceptionHandler(OrderException::class)
+    fun handleOrderException(exception: OrderException): ResponseEntity<APIResponseDTO<*>> {
+        logger.error("handleOrderException: {}", exception.toString(), exception)
+        return ResponseEntity
+            .status(400)
+            .body(APIResponseDTO(400, "FAIL", exception.message))
+    }
+
+    @ExceptionHandler(PaymentException::class)
+    fun handlePaymentException(exception: PaymentException): ResponseEntity<APIResponseDTO<*>> {
+        logger.error("handlePaymentException: {}", exception.toString(), exception)
+        return ResponseEntity
+            .status(400)
+            .body(APIResponseDTO(400, "FAIL", exception.message))
     }
 }
