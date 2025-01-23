@@ -2,6 +2,7 @@ package org.fastcampus.order.postgres.repository
 
 import org.fastcampus.common.dto.CursorBasedDTO
 import org.fastcampus.common.dto.OffSetBasedDTO
+import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.postgres.entity.OrderJpaEntity
 import org.fastcampus.order.postgres.entity.toJpaEntity
@@ -41,13 +42,12 @@ class OrderJpaRepositoryCustom(
         TODO("Not yet implemented")
     }
 
-    override fun findByUserId(userId: Long, page: Int, size: Int): CursorBasedDTO<Order> {
+    override fun findByUserId(userId: Long, page: Int, size: Int): CursorDTO<Order> {
         val pageable: Pageable = PageRequest.of(page, size, Sort.by("orderTime").descending())
         val orderJpaEntities: Page<OrderJpaEntity> = orderJpaRepository.findByUserId(userId, pageable)
-        return CursorBasedDTO(
-            isEnd = orderJpaEntities.isLast,
-            totalCount = orderJpaEntities.totalElements,
+        return CursorDTO(
             content = orderJpaEntities.content.map { it.toModel() },
+            nextCursor = if (orderJpaEntities.nextPageable().sort.isSorted) orderJpaEntities.nextPageable().pageNumber else null,
         )
     }
 

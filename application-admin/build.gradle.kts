@@ -1,6 +1,10 @@
 plugins {
 }
 
+tasks.getByName("bootJar") {
+    enabled = true
+}
+
 dependencies {
     implementation(project(":domains:store"))
     implementation(project(":domains:order"))

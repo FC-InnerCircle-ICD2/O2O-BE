@@ -2,6 +2,7 @@ package org.fastcampus.order.repository
 
 import org.fastcampus.common.dto.CursorBasedDTO
 import org.fastcampus.common.dto.OffSetBasedDTO
+import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.order.entity.Order
 import java.time.LocalDateTime
 
@@ -29,4 +30,6 @@ interface OrderRepository {
         page: Int,
         size: Int,
     ): OffSetBasedDTO<Order>
+  
+    fun findByUserId(userId: Long, page: Int, size: Int): CursorDTO<Order>
 }
