@@ -1,6 +1,6 @@
 FROM eclipse-temurin:21-jdk-alpine
 
-EXPOSE 8080
+EXPOSE 8081
 
 COPY ./build/libs/application-client-1.0-SNAPSHOT.jar client-app.jar
 
