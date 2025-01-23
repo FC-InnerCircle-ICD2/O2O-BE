@@ -1,6 +1,10 @@
 plugins {
 }
 
+tasks.getByName("bootJar") {
+    enabled = true
+}
+
 dependencies {
     implementation(project(":domains:store"))
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
