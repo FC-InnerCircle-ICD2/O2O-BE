@@ -16,8 +16,7 @@ Content-Type: application/json
 
 {
     "signname": "user@gmail.com",
-    "password": "1234",
-    "role": "USER"
+    "password": "1234"
 }
 > {%
     client.global.set("accessToken", response.body.data.accessToken)
