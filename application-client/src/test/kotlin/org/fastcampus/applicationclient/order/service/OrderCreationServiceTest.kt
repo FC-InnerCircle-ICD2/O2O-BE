@@ -67,22 +67,18 @@ class OrderCreationServiceTest {
 
         val requestTotalPrice = calculateRequestMenuTotalPrice(request, menuMap)
 
-        val paymentSeq = 1L
-        var orderMenuSeq = 1L
-        var orderMenuOptionGroupSeq = 1L
-        var orderMenuOptionSeq = 1L
         `when`(storeRepository.findById(storeId))
             .thenReturn(store)
         `when`(paymentRepository.save(any()))
-            .thenAnswer { (it.arguments[0] as Payment).copy(id = paymentSeq) }
+            .thenAnswer { (it.arguments[0] as Payment).copy(id = 1) }
         `when`(orderRepository.save(any()))
             .thenAnswer { it.arguments[0] }
         `when`(orderMenuRepository.save(any()))
-            .thenAnswer { (it.arguments[0] as OrderMenu).copy(id = orderMenuSeq++) }
+            .thenAnswer { (it.arguments[0] as OrderMenu).copy(id = 1) }
         `when`(orderMenuOptionGroupRepository.save(any()))
-            .thenAnswer { (it.arguments[0] as OrderMenuOptionGroup).copy(id = orderMenuOptionGroupSeq++) }
+            .thenAnswer { (it.arguments[0] as OrderMenuOptionGroup).copy(id = 1) }
         `when`(orderMenuOptionRepository.save(any()))
-            .thenAnswer { (it.arguments[0] as OrderMenuOption).copy(id = orderMenuOptionSeq++) }
+            .thenAnswer { (it.arguments[0] as OrderMenuOption).copy(id = 1) }
 
         // when
         val result = orderService.createOrder(1, request)
