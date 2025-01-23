@@ -1,9 +1,13 @@
 package org.fastcampus.applicationclient.store.controller
 
+import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreDetailsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
+import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.store.redis.Coordinates
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -33,21 +37,41 @@ class StoreController(
     @GetMapping("/{id}")
     fun getStoreDetails(
         @PathVariable id: String,
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
         @RequestHeader("X-User-Lat") userLat: Double,
         @RequestHeader("X-User-Lng") userLng: Double,
-    ): ResponseEntity<APIResponseDTO<StoreDetailsResponse>> {
-        logger.info("Received request for store details. ID: $id, Lat: $userLat, Lng: $userLng")
+    ): ResponseEntity<APIResponseDTO<StoreInfo>> {
         return try {
-            val response = storeService.getStoreDetails(id, page, size, Coordinates(userLat, userLng))
-            logger.info("Successfully retrieved store details for ID: $id")
-            ResponseEntity.ok(APIResponseDTO(200, "ok", response))
+            val response = storeService.getStoreInfo(id, Coordinates(userLat, userLng))
+            ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", response))
         } catch (e: Exception) {
-            logger.error("Error retrieving store details for ID: $id", e)
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(APIResponseDTO(500, "Error retrieving store details", null))
+                .build()
         }
+    }
+
+    @GetMapping("/{storeId}/menus/{menuId}/options")
+    fun getMenusOptions(
+        @PathVariable storeId: String,
+        @PathVariable menuId: String,
+    ): APIResponseDTO<List<MenuOptionGroupsResponse>> {
+        logger.info("Received request for menu options groups. storeId: $storeId menusId: $menuId")
+        return try {
+            val response = storeService.getMenusOptions(storeId, menuId)
+            logger.info("Successfully retrieved all store option groups for storeId: $response")
+            APIResponseDTO(HttpStatus.OK.value(), "OK", response)
+        } catch (e: Exception) {
+            logger.info("Error retrieved all store option groups for storeId: $storeId")
+            return APIResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "스토어 메뉴 옵션 조회 실패", null)
+        }
+    }
+
+    @GetMapping("/{id}/menus")
+    fun getCategories(
+        @PathVariable id: String,
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "5") size: Int,
+    ): ResponseEntity<CursorDTO<CategoryInfo>> {
+        return ResponseEntity.ok(storeService.getCategories(id, page, size))
     }
 
     @GetMapping("/trend")
@@ -60,10 +84,5 @@ class StoreController(
         @RequestBody keyword: String,
     ) {
         storeService.search(keyword)
-    }
-
-    @GetMapping("/test")
-    fun getTest(): String {
-        return "test"
     }
 }

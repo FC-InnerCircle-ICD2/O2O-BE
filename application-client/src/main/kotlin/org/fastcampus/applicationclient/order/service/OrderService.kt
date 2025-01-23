@@ -5,7 +5,7 @@ import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuO
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuOptionResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderResponse
-import org.fastcampus.common.dto.CursorBasedDTO
+import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -25,16 +25,15 @@ class OrderService(
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
 ) {
     @Transactional(readOnly = true)
-    fun getOrders(userId: Long, keyword: String, page: Int, size: Int): CursorBasedDTO<OrderResponse> {
-        val orders = orderRepository.findByUserId(userId, page, size)
-        return CursorBasedDTO(
-            isEnd = orders.isEnd,
-            totalCount = orders.totalCount,
+    fun getOrders(userId: Long, keyword: String, page: Int, size: Int): CursorDTO<OrderResponse> {
+        val orders = orderRepository.findByUserId(userId, if (page == 0) 0 else page, size)
+        return CursorDTO(
             content = orders.content.map { order ->
+                val store = storeRepository.findById(requireNotNull(order.storeId))
                 OrderResponse(
                     storeId = order.storeId,
-                    storeName = "",
-                    imageThumbnail = "",
+                    storeName = store?.name,
+                    imageThumbnail = store?.imageThumbnail,
                     orderId = order.id,
                     status = mapOf("code" to order.status.code, "desc" to order.status.desc),
                     orderTime = order.orderTime,
@@ -43,6 +42,7 @@ class OrderService(
                     paymentPrice = order.paymentPrice,
                 )
             },
+            nextCursor = orders.nextCursor?.plus(1),
         )
     }
 
@@ -53,6 +53,8 @@ class OrderService(
         val orderMenus = orderMenuRepository.findByOrderId(order.id)
         return OrderDetailResponse(
             orderId = order.id,
+            status = mapOf("code" to order.status.code, "desc" to order.status.desc),
+            orderTime = order.orderTime,
             isDeleted = order.isDeleted,
             tel = order.tel,
             roadAddress = order.roadAddress,
@@ -60,6 +62,7 @@ class OrderService(
             detailAddress = order.detailAddress,
             orderPrice = order.orderPrice,
             deliveryPrice = order.deliveryPrice,
+            deliveryCompleteTime = order.deliveryCompleteTime,
             paymentPrice = order.paymentPrice,
             paymentId = order.paymentId,
             paymentType = mapOf("code" to payment.type.code, "desc" to payment.type.desc),

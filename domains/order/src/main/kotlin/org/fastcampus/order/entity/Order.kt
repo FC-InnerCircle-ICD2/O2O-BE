@@ -35,6 +35,34 @@ data class Order(
         REFUSE("S4", "주문거절"),
         COMPLETED("S5", "주문완료"),
         CANCEL("S6", "주문취소"),
+        ;
+
+        fun toClientStatus(): ClientStatus {
+            return when (this) {
+                RECEIVE -> ClientStatus.NEW
+                ACCEPT -> ClientStatus.ONGOING
+                COMPLETED -> ClientStatus.DONE
+                else -> throw IllegalArgumentException("Unknown status $this")
+            }
+        }
+    }
+
+    enum class ClientStatus(
+        val code: String,
+        val desc: String,
+    ) {
+        NEW("C1", "신규"),
+        ONGOING("C2", "진행중"),
+        DONE("C3", "완료"),
+        ;
+
+        fun toOrderStatus(): Status {
+            return when (this) {
+                NEW -> Status.RECEIVE
+                ONGOING -> Status.ACCEPT
+                DONE -> Status.COMPLETED
+            }
+        }
     }
 
     enum class Type(
