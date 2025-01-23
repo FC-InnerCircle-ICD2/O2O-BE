@@ -18,9 +18,4 @@ internal class StoreMongoRepositoryCustom(
             ?.map { it.toModel() }
             ?.orElse(null)
     }
-
-    override fun findByNameContaining(name: String): List<String>? {
-        return storeMongoRepository.findByNameContaining(name)
-            .map { it.name.toString() }
-    }
 }
