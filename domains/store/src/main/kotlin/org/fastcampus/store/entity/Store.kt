@@ -6,23 +6,27 @@ package org.fastcampus.store.entity
 
 data class Store(
     val _id: String? = null,
+    val address: String?,
+    val border: String?,
+    val breakTime: String?,
+    val category: Category?,
     val id: String?,
     val name: String?,
-    val address: String?,
-    val latitude: Double,
-    val longitude: Double,
-    val border: Int?,
+    val latitude: Double?, // location.coordinates[1]
+    val jibunAddress: String?,
+    val longitude: Double?, // location.coordinates[0]
     val ownerId: String?,
     val tel: String?,
     val imageThumbnail: String?,
     val imageMain: String?,
     val status: Status,
-    val breakTime: String,
     val roadAddress: String?,
-    val jibunAddress: String?,
-    val category: Category?,
     val storeMenuCategory: List<StoreMenuCategory>?,
 ) {
+    fun getCategories(): List<StoreMenuCategory> {
+        return storeMenuCategory ?: emptyList()
+    }
+
     enum class Status(
         val code: String,
         val desc: String,
