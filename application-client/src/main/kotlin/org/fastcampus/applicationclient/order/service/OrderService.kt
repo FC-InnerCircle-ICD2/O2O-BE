@@ -7,7 +7,7 @@ import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuO
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuOptionResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderResponse
-import org.fastcampus.common.dto.CursorBasedDTO
+import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOption
@@ -37,16 +37,15 @@ class OrderService(
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
 ) {
     @Transactional(readOnly = true)
-    fun getOrders(userId: Long, keyword: String, page: Int, size: Int): CursorBasedDTO<OrderResponse> {
-        val orders = orderRepository.findByUserId(userId, if (page == 0) 0 else page - 1, size)
-        return CursorBasedDTO(
-            isEnd = orders.isEnd,
-            totalCount = orders.totalCount,
+    fun getOrders(userId: Long, keyword: String, page: Int, size: Int): CursorDTO<OrderResponse> {
+        val orders = orderRepository.findByUserId(userId, if (page == 0) 0 else page, size)
+        return CursorDTO(
             content = orders.content.map { order ->
+                val store = storeRepository.findById(requireNotNull(order.storeId))
                 OrderResponse(
                     storeId = order.storeId,
-                    storeName = "",
-                    imageThumbnail = "",
+                    storeName = store?.name,
+                    imageThumbnail = store?.imageThumbnail,
                     orderId = order.id,
                     status = mapOf("code" to order.status.code, "desc" to order.status.desc),
                     orderTime = order.orderTime,
@@ -55,6 +54,7 @@ class OrderService(
                     paymentPrice = order.paymentPrice,
                 )
             },
+            nextCursor = orders.nextCursor?.plus(1),
         )
     }
 

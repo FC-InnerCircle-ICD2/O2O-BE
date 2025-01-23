@@ -1,6 +1,6 @@
 package org.fastcampus.order.repository
 
-import org.fastcampus.common.dto.CursorBasedDTO
+import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.order.entity.Order
 
 /**
@@ -17,5 +17,5 @@ interface OrderRepository {
 
     fun update(id: Long): Order
 
-    fun findByUserId(userId: Long, page: Int, size: Int): CursorBasedDTO<Order>
+    fun findByUserId(userId: Long, page: Int, size: Int): CursorDTO<Order>
 }

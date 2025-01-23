@@ -85,8 +85,9 @@ subprojects {
 
         reports {
             xml.outputLocation.set(File("${rootProject.projectDir}/build/reports/jacoco/jacocoTestReport.xml"))
+            html.outputLocation.set(File("${rootProject.projectDir}/build/reports/jacoco/html"))
             xml.required.set(true)
-            html.required.set(false)
+            html.required.set(true)
         }
     }
 
