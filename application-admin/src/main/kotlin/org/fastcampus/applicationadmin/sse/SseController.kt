@@ -1,8 +1,10 @@
 package org.fastcampus.applicationadmin.sse
 
+import org.fastcampus.applicationadmin.config.security.dto.AuthMember
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -14,12 +16,11 @@ class SseController(
     private val sseManager: SseManager,
 ) {
     @GetMapping("/event-stream", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun connectSse(): SseEmitter {
-        // TODO ID 받기
-        logger.debug("connectSse")
+    fun connectSse(@AuthenticationPrincipal authMember: AuthMember): SseEmitter {
+        logger.debug("Connected Sse UserId: {}", authMember.id)
 
         val emitter = SseEmitter(TIMEOUT_MILLIS)
-        sseManager.manage("1495eeb6-baad-4d17-8c50-9e4987f2f667", emitter)
+        sseManager.manage(authMember.id.toString(), emitter)
         return emitter
     }
 
