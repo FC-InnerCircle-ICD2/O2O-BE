@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":domains:payment"))
     runtimeOnly(project(":infrastructure:member-postgres"))
     runtimeOnly(project(":infrastructure:order-postgres"))
+    runtimeOnly(project(":infrastructure:payment-postgres"))
     implementation(project(":common"))
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
     implementation("org.springframework.boot:spring-boot-starter-web")
