@@ -1,14 +1,14 @@
-package org.fastcampus.applicationclient.config.security.filter
+package org.fastcampus.applicationadmin.config.security.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.fastcampus.applicationclient.config.security.dto.LoginUser
-import org.fastcampus.applicationclient.config.security.dto.request.JwtLoginRequest
-import org.fastcampus.applicationclient.config.security.service.JwtService
-import org.fastcampus.applicationclient.config.security.util.JwtLoginResponseUtil
+import org.fastcampus.applicationadmin.config.security.dto.LoginUser
+import org.fastcampus.applicationadmin.config.security.dto.request.JwtLoginRequest
+import org.fastcampus.applicationadmin.config.security.service.JwtService
+import org.fastcampus.applicationadmin.config.security.util.JwtLoginResponseUtil
 import org.fastcampus.member.code.Role
 import org.fastcampus.member.repository.MemberRepository
 import org.springframework.http.HttpStatus
@@ -39,7 +39,7 @@ class JwtAuthenticationFilter(
             val objectMapper = ObjectMapper()
             val loginRequest: JwtLoginRequest = objectMapper.readValue(requestBody, JwtLoginRequest::class.java)
 
-            val role = Role.USER
+            val role = Role.CEO
             memberRepository.findByRoleAndSignname(role, requireNotNull(loginRequest.signname))
 
             val authenticationToken = UsernamePasswordAuthenticationToken(

@@ -26,9 +26,6 @@
           </set>
         </option>
       </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/infrastructure/member-postgres" />
-      </GradleProjectSettings>
     </option>
   </component>
 </project>
