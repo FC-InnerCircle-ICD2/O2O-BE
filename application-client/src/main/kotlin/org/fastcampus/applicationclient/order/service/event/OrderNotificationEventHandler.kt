@@ -6,6 +6,7 @@ import org.fastcampus.order.event.NotificationSender
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
+import org.fastcampus.store.repository.StoreRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.scheduling.annotation.Async
@@ -18,6 +19,7 @@ class OrderNotificationEventHandler(
     private val orderMenuRepository: OrderMenuRepository,
     private val orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository,
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
+    private val storeRepository: StoreRepository,
     private val objectMapper: ObjectMapper,
     @Qualifier("OrderNotificationSender")
     private val orderNotificationSender: NotificationSender,
@@ -31,15 +33,19 @@ class OrderNotificationEventHandler(
     fun handleEvent(event: OrderNotificationEvent) {
         logger.debug("주문알림 이벤트 처리: {}", event.order)
 
-        val targetStore = event.order.storeId
-        val eventMessageBody = OrderReceivedEvent.of(
-            event.order,
-            orderMenuRepository,
-            orderMenuOptionGroupRepository,
-            orderMenuOptionRepository,
+        val ownerId = storeRepository.findOwnerIdByStoreId(event.order.storeId!!)
+        logger.debug("가게ID로 점주ID 찾기 결과: {}", ownerId)
+
+        val eventMessageBody = objectMapper.writeValueAsString(
+            OrderReceivedEvent.of(
+                event.order,
+                orderMenuRepository,
+                orderMenuOptionGroupRepository,
+                orderMenuOptionRepository,
+            ),
         )
 
-        val stringMessage = objectMapper.writeValueAsString(mapOf(targetStore to eventMessageBody))
+        val stringMessage = objectMapper.writeValueAsString(mapOf(ownerId to eventMessageBody))
 
         orderNotificationSender.send(stringMessage)
     }

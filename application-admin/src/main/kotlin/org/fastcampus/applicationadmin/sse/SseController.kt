@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api")
 class SseController(
     private val sseManager: SseManager,
 ) {
@@ -18,9 +18,8 @@ class SseController(
         // TODO ID 받기
         logger.debug("connectSse")
 
-        // ID로 store 조회, key 설정
         val emitter = SseEmitter(TIMEOUT_MILLIS)
-        sseManager.manage("temp", emitter)
+        sseManager.manage("1495eeb6-baad-4d17-8c50-9e4987f2f667", emitter)
         return emitter
     }
 

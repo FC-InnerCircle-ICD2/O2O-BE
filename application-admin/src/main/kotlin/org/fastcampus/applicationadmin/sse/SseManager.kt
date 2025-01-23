@@ -48,7 +48,7 @@ class SseManager {
                         lastEventId?.let { id(lastEventId) }
                         reconnectTime?.let { reconnectTime(reconnectTime) }
                     },
-            ) ?: logger.debug("key[{}] 미존재", key)
+            ) ?: logger.debug("push key[{}] 미존재", key)
         } catch (ex: Exception) {
             logger.error("SSE push error", ex)
             emitters.remove(key)

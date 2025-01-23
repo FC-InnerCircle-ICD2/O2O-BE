@@ -19,11 +19,14 @@ Content-Type: application/json
     "password": "1234",
     "role": "USER"
 }
+> {%
+    client.global.set("accessToken", response.body.data.accessToken)
+%}
 
 ### 주문생성
 POST http://localhost:8080/api/v1/orders
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhY2Nlc3NUb2tlbiIsInJvbGUiOiJVU0VSIiwiaWQiOjEsInN0YXRlIjoiSk9JTiIsImV4cCI6MTczNzU1NTQxNX0.vOvX3fndX_F84sIitKCRUtPWxFKwg1HAr8CEoTQz35-zbySSpwHs8RA9HxJE94bjqMG6Pk2GHYy4wXDJTQaCLA
+Authorization: {{accessToken}}
 
 {
     "storeId": "26466355",
@@ -71,14 +74,18 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhY2Nlc3NUb
         }
     ]
 }
+> {%
+    client.global.set("orderId", response.body.data.orderId)
+    client.global.set("totalPrice", response.body.data.totalPrice)
+%}
 
 ### 결제승인
 POST http://localhost:8080/api/v1/payments/approve
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhY2Nlc3NUb2tlbiIsInJvbGUiOiJVU0VSIiwiaWQiOjEsInN0YXRlIjoiSk9JTiIsImV4cCI6MTczNzU1NTQxNX0.vOvX3fndX_F84sIitKCRUtPWxFKwg1HAr8CEoTQz35-zbySSpwHs8RA9HxJE94bjqMG6Pk2GHYy4wXDJTQaCLA
+Authorization: {{accessToken}}
 
 {
     "paymentKey": "",
-    "orderId": "d723e9cb-5bb8-4da3-944e-bd720d03171a",
-    "amount": 40500
+    "orderId": "{{orderId}}",
+    "amount": {{totalPrice}}
 }
