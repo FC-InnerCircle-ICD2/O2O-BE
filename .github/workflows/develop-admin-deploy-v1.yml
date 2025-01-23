@@ -51,5 +51,4 @@ jobs:
             docker stop app-admin || true
             docker rm app-admin || true
             docker pull yong7317/application-admin:latest
-            docker image prune -f
             docker-compose up -d
