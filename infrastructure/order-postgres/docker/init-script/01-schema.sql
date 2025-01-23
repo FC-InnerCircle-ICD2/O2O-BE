@@ -5,11 +5,11 @@ create table order_menu (
     menu_quantity bigint,
     total_price bigint,
     updated_at timestamp(6) not null,
-    created_by varchar(255) not null,
+    created_by varchar(255),
     menu_id varchar(255),
     menu_name varchar(255),
     order_id varchar(255),
-    updated_by varchar(255) not null,
+    updated_by varchar(255),
     primary key (id)
 );
 
@@ -19,9 +19,9 @@ create table order_menu_option (
     menu_option_price bigint,
     order_option_group_id bigint,
     updated_at timestamp(6) not null,
-    created_by varchar(255) not null,
+    created_by varchar(255),
     menu_option_name varchar(255),
-    updated_by varchar(255) not null,
+    updated_by varchar(255),
     primary key (id)
 );
 
@@ -30,9 +30,9 @@ create table order_menu_option_group (
     id bigserial not null,
     order_menu_id bigint,
     updated_at timestamp(6) not null,
-    created_by varchar(255) not null,
+    created_by varchar(255),
     order_menu_option_group_name varchar(255),
-    updated_by varchar(255) not null,
+    updated_by varchar(255),
     primary key (id)
 );
 
@@ -48,7 +48,7 @@ create table orders (
     payment_price bigint,
     updated_at timestamp(6) not null,
     user_id bigint,
-    created_by varchar(255) not null,
+    created_by varchar(255),
     detail_address varchar(255),
     id varchar(255) not null,
     jibun_address varchar(255),
@@ -57,7 +57,7 @@ create table orders (
     store_id varchar(255),
     tel varchar(255),
     type varchar(255) check (type in ('DELIVERY','PACKING')),
-    updated_by varchar(255) not null,
+    updated_by varchar(255),
     primary key (id)
 );
 
@@ -67,8 +67,8 @@ create table payment (
     id bigserial not null,
     payment_price bigint,
     updated_at timestamp(6) not null,
-    created_by varchar(255) not null,
-    updated_by varchar(255) not null,
+    created_by varchar(255),
+    updated_by varchar(255),
     primary key (id)
 );
 
@@ -83,7 +83,7 @@ create table members (
     phone varchar(255) not null,
     created_at timestamp(6) not null,
     updated_at timestamp(6) not null,
-    created_by varchar(255) not null,
-    updated_by varchar(255) not null,
+    created_by varchar(255),
+    updated_by varchar(255),
     primary key (id)
 );
