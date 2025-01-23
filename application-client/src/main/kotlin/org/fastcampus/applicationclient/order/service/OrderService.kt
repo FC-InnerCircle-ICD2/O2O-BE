@@ -22,7 +22,6 @@ import org.fastcampus.payment.repository.PaymentRepository
 import org.fastcampus.store.entity.Menu
 import org.fastcampus.store.entity.MenuOption
 import org.fastcampus.store.repository.StoreRepository
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -115,7 +114,7 @@ class OrderService(
     fun createOrder(userId: Long, orderCreationRequest: OrderCreationRequest): OrderCreationResponse {
         // 스토어 검색
         val storeEntity = (storeRepository.findById(orderCreationRequest.storeId))
-            ?: throw OrderException(HttpStatus.BAD_REQUEST.value(), "가게를 찾을 수 없습니다.")
+            ?: throw OrderException.StoreNotFound(orderCreationRequest.storeId)
 
         // 주문내역 검사, 메뉴정보 반환받기
         val targetMenuEntities = OrderCreationValidator.validate(storeEntity, orderCreationRequest)
@@ -201,8 +200,7 @@ class OrderService(
     private fun createTempOrderMenus(orderCreationRequest: OrderCreationRequest, targetMenuEntities: Map<String, Menu>): List<OrderMenu> {
         val tempOrderMenus = orderCreationRequest.orderMenus.map { reqOrderMenu ->
             // 주문 메뉴에 해당하는 메뉴 정보
-            val menuEntity = targetMenuEntities[reqOrderMenu.id]
-                ?: throw OrderException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "주문메뉴 처리중 실패")
+            val menuEntity = targetMenuEntities[reqOrderMenu.id] ?: throw OrderException.MenuNotFound(reqOrderMenu.id)
 
             // INSERT 위한 임시 객체 생성. INSERT 시점 copy 하여 값 재설정
             OrderMenu(
@@ -216,7 +214,7 @@ class OrderService(
                     // 주문요청 메뉴의 옵션그룹 정보.
                     // 동일메뉴-동일옵션그룹-다른옵션 이라면 동일 그룹이 여러개가 된다.
                     val groupEntities = menuEntity.menuOptionGroup?.filter { it.id == reqOrderMenuOptionGroup.id }
-                        ?: throw OrderException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "주문메뉴 옵션그룹 처리중 실패")
+                        ?: throw OrderException.OptionGroupNotFound(reqOrderMenuOptionGroup.id)
 
                     OrderMenuOptionGroup(
                         orderMenuId = 0L,
@@ -227,7 +225,7 @@ class OrderService(
                             val optionEntity = groupEntities
                                 .flatMap { it.menuOption ?: emptyList() }
                                 .find { it.id == orderMenuOptionId }
-                                ?: throw OrderException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "주문메뉴 옵션 처리중 실패")
+                                ?: throw OrderException.OptionNotFound(orderMenuOptionId)
 
                             OrderMenuOption(
                                 orderMenuOptionGroupId = 0L,
@@ -247,12 +245,12 @@ class OrderService(
         val tmpPrice = this.price?.replace(",", "")
         return tmpPrice
             .runCatching { tmpPrice?.toLong() }
-            .onFailure { throw OrderException(HttpStatus.BAD_REQUEST.value(), "가격 정보를 파싱할 수 없습니다.") }
-            .getOrNull() ?: throw OrderException(HttpStatus.BAD_REQUEST.value(), "가격 정보가 없습니다.")
+            .onFailure { throw OrderException("가격 정보를 파싱할 수 없습니다.") }
+            .getOrNull() ?: throw OrderException("가격 정보가 없습니다.")
     }
 
     private fun MenuOption.getLongTypePrice(): Long {
         // 옵션 가격은 Long?
-        return this.price ?: throw OrderException(HttpStatus.BAD_REQUEST.value(), "가격 정보가 없습니다.")
+        return this.price ?: throw OrderException("가격 정보가 없습니다.")
     }
 }
