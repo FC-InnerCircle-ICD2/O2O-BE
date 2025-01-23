@@ -1,0 +1,14 @@
+server:
+  port: 8081
+
+spring:
+  profiles:
+    active: local
+    include:
+      - member-postgres
+      - order-postgres
+      - payment-postgres
+logging:
+  level:
+    org.hibernate.SQL: trace
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
