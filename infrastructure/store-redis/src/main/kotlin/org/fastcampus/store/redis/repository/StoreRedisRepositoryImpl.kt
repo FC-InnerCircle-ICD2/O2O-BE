@@ -48,6 +48,12 @@ class StoreRedisRepositoryImpl(
         )
     }
 
+    override fun getSuggestions(affix: String, page: Int, size: Int): List<String>? {
+        val keys = redisTemplate.keys("suggest:$affix*")
+        keys.addAll(redisTemplate.keys("suggest:?*$affix*"))
+        return keys.map { it.removePrefix("suggest:") }
+    }
+
     override fun addSearch(keyword: String) {
         val currentTime = System.currentTimeMillis() / 1000
         redisTemplate.opsForZSet().add("search:$keyword", currentTime.toString(), currentTime.toDouble())

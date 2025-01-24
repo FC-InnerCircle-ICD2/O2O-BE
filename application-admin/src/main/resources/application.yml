@@ -8,7 +8,13 @@ spring:
       - member-postgres
       - order-postgres
       - payment-postgres
+      - store-mongo
+      - store-redis
+  jpa:
+    open-in-view: false
+
 logging:
   level:
     org.hibernate.SQL: trace
     org.hibernate.type.descriptor.sql.BasicBinder: trace
+    org.fastcampus: debug

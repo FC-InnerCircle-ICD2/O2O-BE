@@ -11,5 +11,7 @@ interface StoreRepository {
 
     fun findById(storeId: String): Store?
 
+    fun findOwnerIdByStoreId(storeId: String): String?
+
     fun existsByName(name: String): Boolean?
 }

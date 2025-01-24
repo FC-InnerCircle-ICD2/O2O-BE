@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/infrastructure" />
             <option value="$PROJECT_DIR$/infrastructure/member-postgres" />
             <option value="$PROJECT_DIR$/infrastructure/order-postgres" />
+            <option value="$PROJECT_DIR$/infrastructure/order-redis" />
             <option value="$PROJECT_DIR$/infrastructure/payment-postgres" />
             <option value="$PROJECT_DIR$/infrastructure/store-mongo" />
             <option value="$PROJECT_DIR$/infrastructure/store-redis" />
