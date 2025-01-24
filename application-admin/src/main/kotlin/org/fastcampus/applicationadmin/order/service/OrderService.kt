@@ -8,6 +8,7 @@ import org.fastcampus.common.dto.OffSetBasedDTO
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOptionGroup
+import org.fastcampus.order.exception.OrderException
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -52,6 +53,12 @@ class OrderService(
             totalItems = orders.totalItems,
             hasNext = orders.hasNext,
         )
+    }
+
+    fun acceptOrder(orderId: String) {
+        val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
+        order.accept()
+        orderRepository.save(order)
     }
 
     private fun convertIntoOrderInquiryResponse(order: Order): OrderInquiryResponse {

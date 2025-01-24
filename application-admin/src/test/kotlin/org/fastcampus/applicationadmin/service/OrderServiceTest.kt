@@ -8,6 +8,7 @@ import org.fastcampus.applicationadmin.order.controller.dto.OrderInquiryResponse
 import org.fastcampus.applicationadmin.order.service.OrderService
 import org.fastcampus.common.dto.OffSetBasedDTO
 import org.fastcampus.order.entity.Order
+import org.fastcampus.order.exception.OrderException
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -16,11 +17,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import strikt.api.expectThat
-import strikt.assertions.contains
+import strikt.api.expectThrows
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isNotNull
@@ -79,5 +81,41 @@ class OrderServiceTest {
         verify(orderMenuRepository).findByOrderId(orderId = order.id)
         verify(orderMenuOptionGroupRepository).findByOrderMenuId(orderMenuId = orderMenu.id!!)
         verify(orderMenuOptionRepository).findByOrderMenuOptionGroupId(orderMenuOptionGroupId = orderMenuOptionGroup.id!!)
+    }
+
+    @Test
+    fun `must change order status to accept when admin accept order`() {
+        // given
+        val order = createOrderFixture()
+        order.status = Order.Status.RECEIVE
+
+        `when`(orderRepository.findById(order.id)).thenReturn(order)
+
+        // when
+        orderService.acceptOrder(order.id)
+
+        // then
+        verify(orderRepository).findById(order.id)
+        verify(orderRepository).save(order)
+        expectThat(order.status).isEqualTo(Order.Status.ACCEPT)
+    }
+
+    @Test
+    fun `must throw exception when admin try to accept order witch has not receive status`() {
+        // given
+        val order = createOrderFixture()
+        order.status = Order.Status.CANCEL
+
+        `when`(orderRepository.findById(order.id)).thenReturn(order)
+
+        // when & then
+        expectThrows<OrderException.OrderCanNotAccept> {
+            orderService.acceptOrder(order.id)
+        }.and {
+            get { orderId }.isEqualTo(order.id)
+            get { message }.isEqualTo("주문 수락이 불가능한 주문입니다.")
+        }
+        verify(orderRepository).findById(order.id)
+        verify(orderRepository, never()).save(order)
     }
 }
