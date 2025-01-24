@@ -92,4 +92,10 @@ class StoreService(
         }
         return response
     }
+
+    @Transactional(readOnly = true)
+    fun getStoreSuggestions(affix: String, page: Int, size: Int): CursorDTO<String> {
+        val storeNameList = storeRedisRepository.getSuggestions(affix, page, size) ?: return CursorDTO(emptyList(), null)
+        return storeNameList.paginate(page, size)
+    }
 }

@@ -69,4 +69,13 @@ class StoreController(
     ): ResponseEntity<CursorDTO<CategoryInfo>> {
         return ResponseEntity.ok(storeService.getCategories(id, page, size))
     }
+
+    @GetMapping("/suggestion")
+    fun getStoreSuggestion(
+        @RequestParam(defaultValue = "") affix: String,
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "5") size: Int,
+    ): ResponseEntity<CursorDTO<String>> {
+        return ResponseEntity.ok(storeService.getStoreSuggestions(affix, page, size))
+    }
 }

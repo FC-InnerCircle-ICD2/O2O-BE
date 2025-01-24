@@ -24,6 +24,7 @@ class StoreDocument(
     val status: Store.Status,
     val imageMain: String?,
     val ownerId: String?,
+    @Field(name = "name")
     val name: String?,
     @Field(name = "location")
     val location: Point, // location 객체
