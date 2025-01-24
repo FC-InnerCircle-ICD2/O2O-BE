@@ -3,7 +3,6 @@ package org.fastcampus.applicationclient.store.controller
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
-import org.fastcampus.applicationclient.store.controller.dto.response.StoreDetailsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
@@ -84,14 +83,23 @@ class StoreController(
     }
 
     @GetMapping("/trend")
-    fun getTrendKeywords(): TrendKeywordsResponse? {
-        return storeService.getTrendKeywords()
+    fun getTrendKeywords(): ResponseEntity<APIResponseDTO<TrendKeywordsResponse>>? {
+        val response = storeService.getTrendKeywords()
+        logger.info("Successfully retrieved trend keywords: $response")
+        return ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", response))
     }
 
     @PostMapping("/search")
     fun search(
         @RequestBody keyword: String,
-    ) {
-        storeService.search(keyword)
+    ): ResponseEntity<APIResponseDTO<String>> {
+        val addCount = storeService.search(keyword)
+        if (addCount) {
+            logger.info("Successfully added search keyword: $keyword")
+            return ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", "success"))
+        } else {
+            logger.info("Failed to add search keyword: $keyword")
+            return ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", "fail"))
+        }
     }
 }

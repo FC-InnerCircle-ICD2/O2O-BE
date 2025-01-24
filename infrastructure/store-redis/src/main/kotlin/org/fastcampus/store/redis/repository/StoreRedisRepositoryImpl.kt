@@ -54,6 +54,11 @@ class StoreRedisRepositoryImpl(
         return keys.map { it.removePrefix("suggest:") }
     }
 
+    override fun existsByName(name: String): Boolean {
+        val storeList = redisTemplate.keys("suggest:$name")
+        return storeList.isNotEmpty()
+    }
+
     override fun addSearch(keyword: String) {
         val currentTime = System.currentTimeMillis() / 1000
         redisTemplate.opsForZSet().add("search:$keyword", currentTime.toString(), currentTime.toDouble())

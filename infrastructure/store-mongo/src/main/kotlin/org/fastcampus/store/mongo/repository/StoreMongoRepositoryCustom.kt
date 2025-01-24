@@ -30,10 +30,6 @@ internal class StoreMongoRepositoryCustom(
         val result = mongoTemplate.findOne(query, OwnerIdProjection::class.java, "stores")
         return result?.ownerId
     }
-
-    override fun existsByName(name: String): Boolean? {
-        return storeMongoRepository.existsStoreDocumentByName(name)
-    }
 }
 
 internal data class OwnerIdProjection(

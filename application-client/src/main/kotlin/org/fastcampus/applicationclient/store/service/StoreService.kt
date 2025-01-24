@@ -4,6 +4,7 @@ import org.fastcampus.applicationclient.store.controller.dto.response.CategoryIn
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
 import org.fastcampus.applicationclient.store.mapper.StoreMapper.toCategoryInfo
 import org.fastcampus.applicationclient.store.mapper.StoreMapper.toStoreInfo
 import org.fastcampus.applicationclient.store.mapper.calculateDeliveryTime
@@ -12,12 +13,10 @@ import org.fastcampus.applicationclient.store.mapper.fetchStoreCoordinates
 import org.fastcampus.applicationclient.store.utils.PaginationUtils.paginate
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.store.exception.StoreException
-import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
 import org.fastcampus.store.repository.StoreRepository
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -101,10 +100,6 @@ class StoreService(
         return storeNameList.paginate(page, size)
     }
 
-    /**
-     * 트렌드 키워드를 가져오는 메서드
-     * 1~10위까지 키워드를 가져옵니다.
-     */
     @Transactional(readOnly = true)
     fun getTrendKeywords(): TrendKeywordsResponse? {
         val keywords = storeRedisRepository.getTrendKeywords()
@@ -122,23 +117,14 @@ class StoreService(
         }
     }
 
-    /**
-     * 검색 기록을 저장하는 메서드
-     * (검색어가 가게 이름과 일치하는 경우에만 저장합니다.)
-     */
     @Transactional
-    fun search(keyword: String) {
-        if (storeRepository.existsByName(keyword) == true) {
+    fun search(keyword: String): Boolean {
+        val storeNameExist = storeRedisRepository.existsByName(keyword)
+        if (storeNameExist == true) { // 가게 이름이 검색어와 일치하는 가게가 있을 경우
             storeRedisRepository.addSearch(keyword)
+            return true
+        } else {
+            return false
         }
-    }
-
-    /**
-     * 1시간마다 실행되는 스케줄러
-     * (1시간마다 12시간 이전의 검색 기록을 삭제합니다.)
-     */
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 1)
-    fun removeOldData() {
-        storeRedisRepository.removeOldData()
     }
 }
