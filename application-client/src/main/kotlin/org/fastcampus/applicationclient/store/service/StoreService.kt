@@ -4,6 +4,7 @@ import org.fastcampus.applicationclient.store.controller.dto.response.CategoryIn
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeyword
 import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
 import org.fastcampus.applicationclient.store.mapper.StoreMapper.toCategoryInfo
 import org.fastcampus.applicationclient.store.mapper.StoreMapper.toStoreInfo
@@ -108,7 +109,7 @@ class StoreService(
                 keywords.entries
                     .sortedByDescending { it.value }
                     .mapIndexed { index, map ->
-                        TrendKeywordsResponse.TrendKeyword(
+                        TrendKeyword(
                             keyword = map.key,
                             order = index + 1,
                         )
