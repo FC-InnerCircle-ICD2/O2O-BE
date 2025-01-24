@@ -50,7 +50,6 @@ class StoreRedisRepositoryImpl(
     override fun getSuggestions(affix: String, page: Int, size: Int): List<String>? {
         val keys = redisTemplate.keys("suggest:$affix*")
         keys.addAll(redisTemplate.keys("suggest:?*$affix*"))
-        println(keys)
         return keys.map { it.removePrefix("suggest:") }
     }
 }
