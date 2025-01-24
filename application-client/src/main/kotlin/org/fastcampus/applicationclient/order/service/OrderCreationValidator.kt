@@ -79,19 +79,16 @@ class OrderCreationValidator {
 
                     // 옵션그룹에 없는 옵션 ID 확인
                     if (requestOrderMenuOptionIds.isNotEmpty()) {
-                        logger.debug("등록되어 있지 않은 옵션: {}", requestOrderMenuOptionIds)
                         throw OrderException.OptionNotFound(requestOrderMenuOptionIds.joinToString(", "))
                     }
                     // min, max 값 확인
                     val minSel = optionGroupInfo.minSel
                     val maxSel = optionGroupInfo.maxSel
                     if (minSel == null || maxSel == null) {
-                        logger.debug("올바르지 않은 옵션그룹 선택정보: {}", optionGroupInfo.id)
                         throw OrderException.WeiredOptionGroupInfo(optionGroupInfo.id!!)
                     }
                     // min..max 사이로 선택했는지 확인
                     if (targetOptionInfos.size !in minSel..maxSel) {
-                        logger.debug("올바르지 않은 min..max 선택: {}", optionGroupInfo.id)
                         throw OrderException.OutOfOptionSelectionRange(optionGroupInfo.id!!)
                     }
                 }
@@ -118,7 +115,6 @@ class OrderCreationValidator {
                     val removed = requestOrderMenuIdSet.remove(menu.id)
                     // 품절 확인
                     if (removed && menu.isSoldOut) {
-                        logger.debug("품절메뉴: {}", menu.id)
                         throw OrderException.SoldOutMenu(menu.id!!)
                     }
                     removed
@@ -127,7 +123,6 @@ class OrderCreationValidator {
 
             // 주문 메뉴 정보 미존재
             if (requestOrderMenuIdSet.isNotEmpty()) {
-                logger.debug("등록되어 있지 않은 메뉴: {}", requestOrderMenuIdSet)
                 throw OrderException.MenuNotFound(requestOrderMenuIdSet.joinToString(", "))
             }
 
