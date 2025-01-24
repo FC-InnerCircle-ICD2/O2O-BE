@@ -78,8 +78,9 @@ class StoreController(
         @RequestParam(defaultValue = "") affix: String,
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "5") size: Int,
-    ): ResponseEntity<CursorDTO<String>> {
-        return ResponseEntity.ok(storeService.getStoreSuggestions(affix, page, size))
+    ): ResponseEntity<APIResponseDTO<CursorDTO<String>>> {
+        val response = storeService.getStoreSuggestions(affix, page, size)
+        return ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", response))
     }
 
     @GetMapping("/trend")
