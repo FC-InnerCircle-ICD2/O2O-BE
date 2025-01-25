@@ -6,6 +6,7 @@ import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import jakarta.persistence.Version
 import org.fastcampus.common.entity.BaseEntity
 import org.fastcampus.order.entity.Order
 import java.time.LocalDateTime
@@ -54,6 +55,8 @@ class OrderJpaEntity(
     val deliveryPrice: Long? = 0L,
     @Column(name = "PAYMENT_PRICE")
     val paymentPrice: Long,
+    @Version
+    val version: Long? = null,
 ) : BaseEntity()
 
 fun Order.toJpaEntity() =

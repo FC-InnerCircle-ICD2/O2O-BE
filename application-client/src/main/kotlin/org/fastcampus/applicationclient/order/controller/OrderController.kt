@@ -5,6 +5,7 @@ import org.fastcampus.applicationclient.order.controller.dto.request.OrderCreati
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderCreationResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderDetailResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderResponse
+import org.fastcampus.applicationclient.order.service.OrderCancellationService
 import org.fastcampus.applicationclient.order.service.OrderService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/orders")
 class OrderController(
     private val orderService: OrderService,
+    private val orderCancellationService: OrderCancellationService,
 ) {
     @GetMapping
     fun getOrders(
@@ -51,5 +54,14 @@ class OrderController(
     ): APIResponseDTO<OrderCreationResponse> {
         val response = orderService.createOrder(authMember.id, orderCreationRequest)
         return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response)
+    }
+
+    @PatchMapping("/{orderId}/cancel")
+    fun cancelOrder(
+        @PathVariable orderId: String,
+        @AuthenticationPrincipal authMember: AuthMember,
+    ): APIResponseDTO<Nothing?> {
+        orderCancellationService.cancelOrder(orderId)
+        return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null)
     }
 }
