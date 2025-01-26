@@ -7,6 +7,7 @@ import org.fastcampus.applicationadmin.config.security.dto.AuthMember
 import org.fastcampus.applicationadmin.config.security.dto.JwtDTO
 import org.fastcampus.applicationadmin.config.security.service.JwtService
 import org.fastcampus.applicationadmin.config.security.util.JwtLoginResponseUtil
+import org.fastcampus.member.code.Role
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -29,6 +30,11 @@ class JwtAuthorizationFilter(
             }
 
             val loginUser = JwtService().verify(token, secretKey)
+
+            if (Role.CEO != loginUser.getRole()) {
+                JwtLoginResponseUtil.sendResponse(response, HttpStatus.UNAUTHORIZED, mapOf("error" to "접근 권한이 없습니다."))
+                return
+            }
 
             val authMember = AuthMember(
                 id = requireNotNull(loginUser.member.id),
