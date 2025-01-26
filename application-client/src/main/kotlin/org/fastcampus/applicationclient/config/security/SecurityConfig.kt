@@ -2,14 +2,13 @@ package org.fastcampus.applicationclient.config.security
 
 import org.fastcampus.applicationclient.config.security.filter.JwtAuthenticationFilter
 import org.fastcampus.applicationclient.config.security.filter.JwtAuthorizationFilter
-import org.fastcampus.applicationclient.config.security.util.JwtLoginResponseUtil
 import org.fastcampus.member.repository.MemberRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -23,6 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 /**
  * Created by kms0902 on 25. 1. 20..
  */
+@EnableMethodSecurity(prePostEnabled = true)
 @Configuration
 class SecurityConfig(
     @Value("\${security.secret.key}")
@@ -56,17 +56,7 @@ class SecurityConfig(
         http.addFilter(jwtAuthenticationFilter)
         http.addFilter(jwtAuthorizationFilter)
 
-        // 인증 실패 핸들링
-        http.exceptionHandling {
-            it.authenticationEntryPoint { _, response, _ ->
-                val errors = mapOf("request" to "로그인이 필요합니다")
-                JwtLoginResponseUtil.sendResponse(response, HttpStatus.UNAUTHORIZED, errors)
-            }
-        }
-
         http.authorizeHttpRequests {
-            it.requestMatchers("/api/v1/members/join").permitAll()
-            it.requestMatchers("/api/**").authenticated()
             it.anyRequest().permitAll()
         }
 
