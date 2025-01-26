@@ -3,6 +3,7 @@ package org.fastcampus.applicationclient.member.controller
 import jakarta.validation.Valid
 import org.fastcampus.applicationclient.config.security.dto.AuthMember
 import org.fastcampus.applicationclient.member.dto.request.MemberJoinRequest
+import org.fastcampus.applicationclient.member.dto.response.MemberInfoResponse
 import org.fastcampus.applicationclient.member.dto.response.MemberJoinResponse
 import org.fastcampus.applicationclient.member.service.MemberService
 import org.fastcampus.common.dto.APIResponseDTO
@@ -28,10 +29,10 @@ class MemberController(
         return APIResponseDTO(200, "OK", memberService.join(memberJoinRequestDto))
     }
 
-    @GetMapping("/auth")
-    fun auth(
+    @GetMapping
+    fun info(
         @AuthenticationPrincipal authMember: AuthMember,
-    ): APIResponseDTO<MemberJoinResponse> {
-        return APIResponseDTO(200, "OK", null)
+    ): APIResponseDTO<MemberInfoResponse> {
+        return APIResponseDTO(200, "OK", memberService.info(authMember))
     }
 }
