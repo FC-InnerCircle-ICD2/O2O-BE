@@ -114,7 +114,7 @@ class StoreServiceTest {
         // then
         expectThat(result) {
             get { get("storeId") }.isEqualTo(storeId)
-            get { get("distance") }.isEqualTo("3.00 km")
+            get { get("distance") }.isEqualTo(3.0)
             get { get("deliveryTime") }.isEqualTo("25 분")
         }
     }

@@ -7,6 +7,7 @@ data class StoreInfo(
     val rating: Double,
     val reviewCount: Int,
     val deliveryTime: String,
+    val deliveryDistance: Double,
     val freeDelivery: Boolean,
     val address: String?,
     val latitude: Double,
