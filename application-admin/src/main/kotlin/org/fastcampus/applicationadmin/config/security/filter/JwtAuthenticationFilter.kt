@@ -1,10 +1,13 @@
 package org.fastcampus.applicationadmin.config.security.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.ConstraintViolationException
+import jakarta.validation.Validation
+import jakarta.validation.Validator
 import org.fastcampus.applicationadmin.config.security.dto.LoginUser
 import org.fastcampus.applicationadmin.config.security.dto.request.JwtLoginRequest
 import org.fastcampus.applicationadmin.config.security.service.JwtService
@@ -33,11 +36,20 @@ class JwtAuthenticationFilter(
     }
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
+        val validator: Validator = Validation.buildDefaultValidatorFactory().validator
+
         return try {
             val requestBody = request.inputStream.bufferedReader().use { it.readText() }
 
             val objectMapper = ObjectMapper()
             val loginRequest: JwtLoginRequest = objectMapper.readValue(requestBody, JwtLoginRequest::class.java)
+
+            // 유효성 검증
+            val violations = validator.validate(loginRequest)
+            if (violations.isNotEmpty()) {
+                val errorMessages = violations.joinToString(", ") { it.message }
+                throw ConstraintViolationException(errorMessages, violations)
+            }
 
             val role = Role.CEO
             memberRepository.findByRoleAndSignname(role, requireNotNull(loginRequest.signname))
@@ -48,16 +60,16 @@ class JwtAuthenticationFilter(
                 listOf(GrantedAuthority { "ROLE_$role" }),
             )
             authenticationManager.authenticate(authenticationToken)
-        } catch (e: InvalidDefinitionException) {
+        } catch (e: MismatchedInputException) {
             throw InternalAuthenticationServiceException("아이디 또는 비밀번호를 입력해 주세요", e)
         } catch (e: Exception) {
-            throw InternalAuthenticationServiceException(e.message ?: "Authentication failed", e)
+            throw InternalAuthenticationServiceException(e.message, e)
         }
     }
 
     override fun unsuccessfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, failed: AuthenticationException) {
-        val errorMessage = when (failed) {
-            is InternalAuthenticationServiceException -> "아이디 또는 비밀번호가 일치하지 않습니다."
+        val errorMessage = when {
+            failed.message.equals("자격 증명에 실패하였습니다.") -> "아이디 또는 비밀번호가 일치하지 않습니다."
             else -> failed.message
         }
 
