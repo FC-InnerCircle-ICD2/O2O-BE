@@ -7,23 +7,23 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/application-admin" />
-            <option value="$PROJECT_DIR$/application-client" />
-            <option value="$PROJECT_DIR$/common" />
-            <option value="$PROJECT_DIR$/domains" />
-            <option value="$PROJECT_DIR$/domains/member" />
-            <option value="$PROJECT_DIR$/domains/order" />
-            <option value="$PROJECT_DIR$/domains/payment" />
-            <option value="$PROJECT_DIR$/domains/review" />
-            <option value="$PROJECT_DIR$/domains/store" />
-            <option value="$PROJECT_DIR$/infrastructure" />
-            <option value="$PROJECT_DIR$/infrastructure/member-postgres" />
-            <option value="$PROJECT_DIR$/infrastructure/order-postgres" />
-            <option value="$PROJECT_DIR$/infrastructure/order-redis" />
-            <option value="$PROJECT_DIR$/infrastructure/payment-postgres" />
-            <option value="$PROJECT_DIR$/infrastructure/store-mongo" />
-            <option value="$PROJECT_DIR$/infrastructure/store-redis" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/application-admin" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/application-client" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/common" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/domains" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/domains/member" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/domains/order" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/domains/payment" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/domains/review" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/domains/store" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/member-postgres" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/order-postgres" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/order-redis" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/payment-postgres" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/store-mongo" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/store-redis" />
           </set>
         </option>
       </GradleProjectSettings>
