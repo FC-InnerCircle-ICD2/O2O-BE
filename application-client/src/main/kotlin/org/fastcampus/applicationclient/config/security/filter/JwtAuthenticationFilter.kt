@@ -3,13 +3,16 @@ package org.fastcampus.applicationclient.config.security.filter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import jakarta.servlet.FilterChain
+import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.ConstraintViolationException
 import jakarta.validation.Validation
 import jakarta.validation.Validator
+import org.fastcampus.applicationclient.config.security.dto.JwtDTO
 import org.fastcampus.applicationclient.config.security.dto.LoginUser
 import org.fastcampus.applicationclient.config.security.dto.request.JwtLoginRequest
+import org.fastcampus.applicationclient.config.security.dto.response.JwtLoginResponse
 import org.fastcampus.applicationclient.config.security.service.JwtService
 import org.fastcampus.applicationclient.config.security.util.JwtLoginResponseUtil
 import org.fastcampus.member.code.Role
@@ -22,14 +25,16 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import java.util.*
 
 /**
  * Created by kms0902 on 25. 1. 20..
  */
 class JwtAuthenticationFilter(
     private val authenticationManager: AuthenticationManager,
-    private val secretKey: String,
+    private val jwtService: JwtService,
     private val memberRepository: MemberRepository,
+    private val secretKey: String,
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
     init {
         setFilterProcessesUrl("/api/login")
@@ -84,18 +89,23 @@ class JwtAuthenticationFilter(
         authResult: Authentication,
     ) {
         val loginUser = authResult.principal as LoginUser
-        val jwtService = JwtService()
-
         val (accessToken, accessTokenExpiration) = jwtService.createAccessToken(loginUser, secretKey)
         val (refreshToken, refreshTokenExpiration) = jwtService.createRefreshToken(loginUser, secretKey)
 
-        val responseBody = mapOf(
-            "accessToken" to accessToken,
-            "refreshToken" to refreshToken,
-            "accessTokenExpiresIn" to accessTokenExpiration,
-            "refreshTokenExpiresIn" to refreshTokenExpiration,
-        )
+        val accessTokenCookie = Cookie("accessToken", accessToken)
+        accessTokenCookie.isHttpOnly = true
+        accessTokenCookie.secure = true
+        accessTokenCookie.path = "/"
+        accessTokenCookie.maxAge = JwtDTO.ACCESS_TOKEN_EXPIRATION_TIME / 1000
 
+        response.addCookie(accessTokenCookie)
+
+        val responseBody = JwtLoginResponse(
+            accessToken,
+            refreshToken,
+            accessTokenExpiration,
+            refreshTokenExpiration,
+        )
         JwtLoginResponseUtil.sendResponse(response, HttpStatus.OK, responseBody)
     }
 }

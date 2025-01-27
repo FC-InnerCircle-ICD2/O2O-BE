@@ -10,6 +10,10 @@ data class LoginUser(val member: Member) : UserDetails {
         return listOf(GrantedAuthority { "ROLE_${member.role}" })
     }
 
+    fun getId(): Long? {
+        return member.id
+    }
+
     fun getRole(): Role {
         return member.role
     }

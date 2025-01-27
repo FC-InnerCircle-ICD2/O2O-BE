@@ -31,7 +31,7 @@ class MemberJpaEntity(
     val role: Role,
     @Enumerated(EnumType.STRING)
     @Column(name = "STATE", nullable = false)
-    val state: MemberState,
+    val state: MemberState?,
     @Column(name = "SIGN_NAME", nullable = false)
     val signname: String = "",
     @Column(name = "PASSWORD", nullable = false)

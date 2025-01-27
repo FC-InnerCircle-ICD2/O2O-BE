@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/domains/store" />
             <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure" />
             <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/member-postgres" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/member-redis" />
             <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/order-postgres" />
             <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/order-redis" />
             <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/payment-postgres" />

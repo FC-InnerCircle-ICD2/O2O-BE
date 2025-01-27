@@ -12,7 +12,7 @@ object JwtLoginResponseUtil {
     fun sendResponse(response: HttpServletResponse, httpStatus: HttpStatus, body: Any) {
         try {
             val objectMapper = ObjectMapper()
-            val responseDto = APIResponseDTO(httpStatus.value(), null, body)
+            val responseDto = APIResponseDTO(httpStatus.value(), httpStatus.reasonPhrase, body)
             val responseBody = objectMapper.writeValueAsString(responseDto)
             response.contentType = "application/json; charset=utf-8"
             response.status = httpStatus.value()

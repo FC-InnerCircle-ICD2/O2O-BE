@@ -9,7 +9,7 @@ import org.fastcampus.member.code.Role
 data class Member(
     val id: Long? = null,
     val role: Role,
-    val state: MemberState,
+    val state: MemberState? = null,
     val signname: String,
     val password: String,
     val username: String,
