@@ -3,6 +3,7 @@ package org.fastcampus.applicationclient.member.service
 import org.fastcampus.applicationclient.config.security.dto.JwtDTO
 import org.fastcampus.applicationclient.config.security.dto.response.JwtLoginResponse
 import org.fastcampus.applicationclient.config.security.service.JwtService
+import org.fastcampus.applicationclient.member.dto.request.AuthLogoutRequest
 import org.fastcampus.applicationclient.member.dto.request.AuthRefreshRequest
 import org.fastcampus.applicationclient.member.exception.MemberException
 import org.fastcampus.applicationclient.member.exception.MemberExceptionResult
@@ -63,7 +64,10 @@ class AuthService(
         return JwtLoginResponse(createdAccessToken, createdRefreshToken, accessTokenExpiration, refreshTokenExpiration)
     }
 
-    fun logout(accessToken: String, refreshToken: String): String {
-        return "OK"
+    fun logout(authLogoutRequest: AuthLogoutRequest) {
+        val accessToken = authLogoutRequest.accessToken.replace(JwtDTO.TOKEN_PREFIX, "").trim()
+        val refreshToken = authLogoutRequest.refreshToken.replace(JwtDTO.TOKEN_PREFIX, "").trim()
+        jwtService.saveBlackList(accessToken)
+        jwtService.saveBlackList(refreshToken)
     }
 }
