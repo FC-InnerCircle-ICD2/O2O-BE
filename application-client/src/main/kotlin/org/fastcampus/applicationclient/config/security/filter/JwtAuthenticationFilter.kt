@@ -3,13 +3,11 @@ package org.fastcampus.applicationclient.config.security.filter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import jakarta.servlet.FilterChain
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.ConstraintViolationException
 import jakarta.validation.Validation
 import jakarta.validation.Validator
-import org.fastcampus.applicationclient.config.security.dto.JwtDTO
 import org.fastcampus.applicationclient.config.security.dto.LoginUser
 import org.fastcampus.applicationclient.config.security.dto.request.JwtLoginRequest
 import org.fastcampus.applicationclient.config.security.dto.response.JwtLoginResponse
@@ -25,7 +23,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import java.util.*
 
 /**
  * Created by kms0902 on 25. 1. 20..
@@ -91,14 +88,6 @@ class JwtAuthenticationFilter(
         val loginUser = authResult.principal as LoginUser
         val (accessToken, accessTokenExpiration) = jwtService.createAccessToken(loginUser, secretKey)
         val (refreshToken, refreshTokenExpiration) = jwtService.createRefreshToken(loginUser, secretKey)
-
-        val accessTokenCookie = Cookie("accessToken", accessToken)
-        accessTokenCookie.isHttpOnly = true
-        accessTokenCookie.secure = true
-        accessTokenCookie.path = "/"
-        accessTokenCookie.maxAge = JwtDTO.ACCESS_TOKEN_EXPIRATION_TIME / 1000
-
-        response.addCookie(accessTokenCookie)
 
         val responseBody = JwtLoginResponse(
             accessToken,
