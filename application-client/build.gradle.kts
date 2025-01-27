@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":domains:order"))
     implementation(project(":domains:payment"))
     runtimeOnly(project(":infrastructure:member-postgres"))
+    runtimeOnly(project(":infrastructure:member-redis"))
     runtimeOnly(project(":infrastructure:order-postgres"))
     runtimeOnly(project(":infrastructure:order-redis"))
     runtimeOnly(project(":infrastructure:payment-postgres"))

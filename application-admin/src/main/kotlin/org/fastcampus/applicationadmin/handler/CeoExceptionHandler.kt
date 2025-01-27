@@ -1,5 +1,6 @@
-package org.fastcampus.applicationclient.handler
+package org.fastcampus.applicationadmin.handler
 
+import org.fastcampus.applicationadmin.member.exception.MemberException
 import org.fastcampus.common.dto.APIResponseDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -33,6 +34,15 @@ class CeoExceptionHandler {
                     errors,
                 ),
             )
+    }
+
+    @ExceptionHandler(MemberException::class)
+    fun handleOrderException(exception: MemberException): ResponseEntity<APIResponseDTO<*>> {
+        logger.error("handleOrderException: {}", exception.toString(), exception)
+        val memberExceptionResult = exception.memberExceptionResult
+        val httpStatus = memberExceptionResult.httpStatus
+        val errors = mapOf("error" to memberExceptionResult.message)
+        return ResponseEntity.status(httpStatus).body(APIResponseDTO(httpStatus.value(), httpStatus.reasonPhrase, errors))
     }
 
     @ExceptionHandler(RuntimeException::class)
