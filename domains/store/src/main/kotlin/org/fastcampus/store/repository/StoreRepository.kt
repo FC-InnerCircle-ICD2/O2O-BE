@@ -10,6 +10,13 @@ import org.fastcampus.store.entity.StoreWithDistance
 interface StoreRepository {
     fun findByCategory(category: String): List<Store>
     fun findById(storeId: String): Store?
-    fun findStoreNearbyAndCondition(latitude: Double, longitude: Double, category: Store.Category?, searchName: String?): List<StoreWithDistance>?
     fun findOwnerIdByStoreId(storeId: String): String?
+    fun findStoreNearbyAndCondition(
+        latitude: Double,
+        longitude: Double,
+        category: Store.Category?,
+        searchName: String?,
+        page: Int,
+        size: Int,
+    ): List<StoreWithDistance>?
 }

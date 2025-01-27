@@ -4,7 +4,6 @@ import org.fastcampus.store.entity.Store
 import org.fastcampus.store.entity.StoreWithDistance
 import org.fastcampus.store.mongo.document.StoreDocument
 import org.fastcampus.store.mongo.document.toModel
-import org.fastcampus.store.mongo.utils.DistanceUtils
 import org.fastcampus.store.repository.StoreRepository
 import org.springframework.data.geo.Metrics
 import org.springframework.data.mongodb.core.MongoTemplate
@@ -41,6 +40,8 @@ internal class StoreMongoRepositoryCustom(
         longitude: Double,
         category: Store.Category?,
         searchName: String?,
+        page: Int,
+        size: Int,
     ): List<StoreWithDistance>? {
         // 기본 geoNear 쿼리 생성
         val nearQuery = NearQuery.near(longitude, latitude)
@@ -60,6 +61,11 @@ internal class StoreMongoRepositoryCustom(
             query.addCriteria(Criteria.where("name").regex(".*$it.*", "i")) // 대소문자 구분 없이 검색
         }
 
+        // 페이지네이션 추가 (skip과 limit)
+        val skip = page * size
+        query.skip(skip.toLong())
+        query.limit(size)
+
         // NearQuery에 추가 조건을 연결
         nearQuery.query(query)
 
@@ -67,7 +73,7 @@ internal class StoreMongoRepositoryCustom(
         val geoResults = mongoTemplate.geoNear(nearQuery, StoreDocument::class.java)
 
         // 결과 매핑 및 반환
-        return geoResults.map { StoreWithDistance(it.content.toModel(), DistanceUtils.formatDistance(it.distance)) }
+        return geoResults.map { StoreWithDistance(it.content.toModel(), it.distance.value.toString()) }
     }
 }
 
