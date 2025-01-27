@@ -1,5 +1,6 @@
 package org.fastcampus.order.entity
 
+import org.fastcampus.order.exception.OrderException
 import java.time.LocalDateTime
 
 /**
@@ -14,7 +15,7 @@ data class Order(
     val jibunAddress: String?,
     val detailAddress: String?,
     val tel: String?,
-    val status: Status,
+    var status: Status,
     val orderTime: LocalDateTime,
     val orderSummary: String?,
     val type: Type,
@@ -25,6 +26,14 @@ data class Order(
     val deliveryPrice: Long?,
     val paymentPrice: Long,
 ) {
+    fun accept() {
+        // 주문접수상태만 주문수락가능
+        if (!this.status.equals(Status.RECEIVE)) {
+            throw OrderException.OrderCanNotAccept(this.id)
+        }
+        this.status = Status.ACCEPT
+    }
+
     enum class Status(
         val code: String,
         val desc: String,

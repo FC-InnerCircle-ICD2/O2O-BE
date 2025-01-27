@@ -1,6 +1,10 @@
 package org.fastcampus.order.exception
 
 open class OrderException(message: String) : RuntimeException(message) {
+    data class OrderNotFound(val orderId: String) : OrderException("주문을 찾을 수 없습니다.")
+
+    data class OrderCanNotAccept(val orderId: String) : OrderException("주문 수락이 불가능한 주문입니다.")
+
     data class StoreNotFound(val storeId: String) : OrderException("가게를 찾을 수 없습니다.")
 
     data class StoreClosed(val storeId: String) : OrderException("가게의 영업이 종료되어 주문이 불가능합니다.")
