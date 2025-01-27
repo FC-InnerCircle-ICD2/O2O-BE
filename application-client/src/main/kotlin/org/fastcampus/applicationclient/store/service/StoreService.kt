@@ -11,6 +11,7 @@ import org.fastcampus.applicationclient.store.mapper.fetchDistance
 import org.fastcampus.applicationclient.store.mapper.fetchStoreCoordinates
 import org.fastcampus.applicationclient.store.utils.PaginationUtils.paginate
 import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.store.entity.Store
 import org.fastcampus.store.exception.StoreException
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
@@ -102,9 +103,14 @@ class StoreService(
     fun getStoresByNearByAndCondition(
         latitude: Double,
         longitude: Double,
+        page: Int,
+        size: Int,
         category: Store.Category?,
         searchCondition: String?,
-    ): List<StoreWithDistance>? {
-        return storeRepository.findStoreNearbyAndCondition(latitude,longitude, category, searchCondition);
+    ): CursorDTO<StoreInfo>? {
+        return storeRepository
+            .findStoreNearbyAndCondition(latitude, longitude, category, searchCondition, page, size)
+            ?.map { it.store.toStoreInfo(it.distance) }
+            ?.paginate(page, size)
     }
 }

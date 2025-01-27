@@ -7,7 +7,6 @@ import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.store.entity.Store
-import org.fastcampus.store.entity.StoreWithDistance
 import org.fastcampus.store.redis.Coordinates
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -85,10 +84,11 @@ class StoreController(
     fun getStoresByNearyByAndCondition(
         @RequestParam(value = "latitude") latitude: Double,
         @RequestParam(value = "longitude") longitude: Double,
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "5") size: Int,
         @RequestParam(required = false) category: Store.Category?,
         @RequestParam(required = false) searchCondition: String?,
-    ):ResponseEntity<APIResponseDTO<List<StoreWithDistance>>> {
-        val storeWithDistances = storeService.getStoresByNearByAndCondition(latitude, longitude, category, searchCondition)
-        return ResponseEntity.ok(APIResponseDTO(200, "ok", storeWithDistances))
+    ): ResponseEntity<CursorDTO<StoreInfo>> {
+        return ResponseEntity.ok(storeService.getStoresByNearByAndCondition(latitude, longitude, page, size, category, searchCondition))
     }
 }
