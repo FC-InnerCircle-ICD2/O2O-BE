@@ -1,14 +1,13 @@
 package org.fastcampus.applicationclient.member.controller
 
 import jakarta.validation.Valid
-import org.fastcampus.applicationclient.config.security.dto.JwtAuthenticated
 import org.fastcampus.applicationclient.config.security.dto.response.JwtLoginResponse
+import org.fastcampus.applicationclient.member.dto.request.AuthLogoutRequest
 import org.fastcampus.applicationclient.member.dto.request.AuthRefreshRequest
 import org.fastcampus.applicationclient.member.service.AuthService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -27,12 +26,10 @@ class AuthController(
         return APIResponseDTO(200, "OK", authService.refresh(authRefreshRequest))
     }
 
-    @JwtAuthenticated
     @PostMapping("/logout")
     fun logout(
-        @RequestHeader("Authorization") accessToken: String,
-        @RequestHeader("Refresh-Token") refreshToken: String,
-    ): APIResponseDTO<String> {
-        return APIResponseDTO(200, "OK", authService.logout(accessToken, refreshToken))
+        @RequestBody @Valid authLogoutRequest: AuthLogoutRequest,
+    ): APIResponseDTO<Unit> {
+        return APIResponseDTO(200, "OK", authService.logout(authLogoutRequest))
     }
 }

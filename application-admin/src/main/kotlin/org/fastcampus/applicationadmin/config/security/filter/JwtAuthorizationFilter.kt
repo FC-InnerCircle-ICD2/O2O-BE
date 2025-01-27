@@ -23,7 +23,7 @@ class JwtAuthorizationFilter(
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val requestURI = request.requestURI
         // 특정 URL 제외
-        if (requestURI == "/api/v1/auth/refresh") {
+        if (requestURI == "/api/v1/auth/refresh" || requestURI == "/api/v1/auth/logout") {
             chain.doFilter(request, response)
             return
         }

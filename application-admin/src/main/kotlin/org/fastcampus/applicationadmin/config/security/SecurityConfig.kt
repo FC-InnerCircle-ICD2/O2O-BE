@@ -78,6 +78,7 @@ class SecurityConfig(
         http.authorizeHttpRequests {
             it.requestMatchers(
                 AntPathRequestMatcher("/api/v1/auth/refresh", HttpMethod.POST.name()),
+                AntPathRequestMatcher("/api/v1/auth/logout", HttpMethod.POST.name()),
             ).permitAll()
             it.anyRequest().hasAnyRole("CEO")
         }
