@@ -10,7 +10,7 @@ services:
       - o2o-network
   store-redis:
     container_name: store-redis
-    image: redis:7.0.15
+    image: devpsh/redis-o2o:latest
     ports:
       - '6379:6379'
     networks:

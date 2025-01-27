@@ -1,6 +1,7 @@
 package org.fastcampus.order.postgres.repository
 
 import org.fastcampus.order.entity.OrderMenu
+import org.fastcampus.order.postgres.entity.toJpaEntity
 import org.fastcampus.order.postgres.entity.toModel
 import org.fastcampus.order.repository.OrderMenuRepository
 import org.springframework.stereotype.Repository
@@ -12,5 +13,9 @@ class OrderMenuJpaRepositoryCustom(
     override fun findByOrderId(orderId: String): List<OrderMenu> {
         return orderMenuJpaRepository.findByOrderId(orderId)
             .map { it.toModel() }
+    }
+
+    override fun save(orderMenu: OrderMenu): OrderMenu {
+        return orderMenuJpaRepository.saveAndFlush(orderMenu.toJpaEntity()).toModel()
     }
 }

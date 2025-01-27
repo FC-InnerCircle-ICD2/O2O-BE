@@ -11,4 +11,5 @@ interface StoreRepository {
     fun findByCategory(category: String): List<Store>
     fun findById(storeId: String): Store?
     fun findStoreNearbyAndCondition(latitude: Double, longitude: Double, category: Store.Category?, searchName: String?): List<StoreWithDistance>?
+    fun findOwnerIdByStoreId(storeId: String): String?
 }

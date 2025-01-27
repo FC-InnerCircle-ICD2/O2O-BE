@@ -25,9 +25,13 @@ class MemberRepositoryCustom(
         ).map { it.toModel() }.orElseThrow { UserNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다") }
     }
 
-    override fun findByRoleAndSignname(role: String, signname: String): Member {
-        return memberJpaRepository.findByRoleAndSignname(Role.valueOf(role), signname).map {
+    override fun findByRoleAndSignname(role: Role, signname: String): Member {
+        return memberJpaRepository.findByRoleAndSignname(role, signname).map {
             it.toModel()
         }.orElseThrow { UserNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다") }
+    }
+
+    override fun findById(id: Long): Member {
+        return memberJpaRepository.findById(id).map { it.toModel() }.orElseThrow { UserNotFoundException("일치하는 회원을 찾을 수 없습니다.") }
     }
 }

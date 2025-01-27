@@ -6,6 +6,8 @@ import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.store.entity.Store
+import org.fastcampus.store.entity.StoreWithDistance
 import org.fastcampus.store.redis.Coordinates
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -68,6 +70,15 @@ class StoreController(
         @RequestParam(defaultValue = "5") size: Int,
     ): ResponseEntity<CursorDTO<CategoryInfo>> {
         return ResponseEntity.ok(storeService.getCategories(id, page, size))
+    }
+
+    @GetMapping("/suggestion")
+    fun getStoreSuggestion(
+        @RequestParam(defaultValue = "") affix: String,
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "5") size: Int,
+    ): ResponseEntity<CursorDTO<String>> {
+        return ResponseEntity.ok(storeService.getStoreSuggestions(affix, page, size))
     }
 
     @GetMapping("/list")

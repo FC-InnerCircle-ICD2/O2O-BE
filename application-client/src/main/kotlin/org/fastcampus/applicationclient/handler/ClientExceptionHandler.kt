@@ -1,13 +1,17 @@
 package org.fastcampus.applicationclient.handler
 
 import org.fastcampus.common.dto.APIResponseDTO
+import org.fastcampus.order.exception.OrderException
+import org.fastcampus.payment.exception.PaymentException
 import org.fastcampus.store.exception.StoreException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.context.request.WebRequest
 
 /**
  * Created by kms0902 on 25. 1. 19..
@@ -47,7 +51,24 @@ class ClientExceptionHandler {
             .body(
                 APIResponseDTO(
                     HttpStatus.BAD_REQUEST.value(),
-                    "Validation failed",
+                    HttpStatus.BAD_REQUEST.reasonPhrase,
+                    errors,
+                ),
+            )
+    }
+
+    @ExceptionHandler(AccessDeniedException::class)
+    protected fun handleAccessDeniedException(ex: AccessDeniedException?, request: WebRequest?): ResponseEntity<APIResponseDTO<*>> {
+        logger.error("Unexpected error occurred", ex)
+        val httpStatus = HttpStatus.UNAUTHORIZED
+        val errors = mapOf("request" to "접근 권한이 없습니다.")
+
+        return ResponseEntity
+            .status(httpStatus)
+            .body(
+                APIResponseDTO(
+                    httpStatus.value(),
+                    httpStatus.reasonPhrase,
                     errors,
                 ),
             )
@@ -65,5 +86,21 @@ class ClientExceptionHandler {
                     null,
                 ),
             )
+    }
+
+    @ExceptionHandler(OrderException::class)
+    fun handleOrderException(exception: OrderException): ResponseEntity<APIResponseDTO<*>> {
+        logger.error("handleOrderException: {}", exception.toString(), exception)
+        return ResponseEntity
+            .status(400)
+            .body(APIResponseDTO(400, "FAIL", exception.message))
+    }
+
+    @ExceptionHandler(PaymentException::class)
+    fun handlePaymentException(exception: PaymentException): ResponseEntity<APIResponseDTO<*>> {
+        logger.error("handlePaymentException: {}", exception.toString(), exception)
+        return ResponseEntity
+            .status(400)
+            .body(APIResponseDTO(400, "FAIL", exception.message))
     }
 }

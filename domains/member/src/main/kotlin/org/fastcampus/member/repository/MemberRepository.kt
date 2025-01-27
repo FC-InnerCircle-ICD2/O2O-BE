@@ -1,5 +1,6 @@
 package org.fastcampus.member.repository
 
+import org.fastcampus.member.code.Role
 import org.fastcampus.member.entity.Member
 
 /**
@@ -10,5 +11,7 @@ interface MemberRepository {
 
     fun findBySignname(signname: String): Member
 
-    fun findByRoleAndSignname(role: String, signname: String): Member
+    fun findByRoleAndSignname(role: Role, signname: String): Member?
+
+    fun findById(id: Long): Member?
 }

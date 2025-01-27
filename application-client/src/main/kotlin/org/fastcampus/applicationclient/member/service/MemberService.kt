@@ -1,6 +1,8 @@
 package org.fastcampus.applicationclient.member.service
 
+import org.fastcampus.applicationclient.config.security.dto.AuthMember
 import org.fastcampus.applicationclient.member.dto.request.MemberJoinRequest
+import org.fastcampus.applicationclient.member.dto.response.MemberInfoResponse
 import org.fastcampus.applicationclient.member.dto.response.MemberJoinResponse
 import org.fastcampus.member.code.MemberState
 import org.fastcampus.member.code.Role
@@ -31,5 +33,10 @@ class MemberService(
             )
         val savedMember = memberRepository.save(createMember)
         return MemberJoinResponse(savedMember?.id)
+    }
+
+    fun info(authMember: AuthMember): MemberInfoResponse? {
+        val findMember = memberRepository.findById(authMember.id)
+        return MemberInfoResponse(findMember!!.nickname)
     }
 }

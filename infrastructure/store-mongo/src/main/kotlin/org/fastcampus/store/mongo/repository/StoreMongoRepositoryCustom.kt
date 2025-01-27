@@ -6,7 +6,6 @@ import org.fastcampus.store.mongo.document.StoreDocument
 import org.fastcampus.store.mongo.document.toModel
 import org.fastcampus.store.mongo.utils.DistanceUtils
 import org.fastcampus.store.repository.StoreRepository
-import org.springframework.context.annotation.Lazy
 import org.springframework.data.geo.Metrics
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
@@ -27,6 +26,14 @@ internal class StoreMongoRepositoryCustom(
         return storeMongoRepository.findById(storeId)
             ?.map { it.toModel() }
             ?.orElse(null)
+    }
+
+    override fun findOwnerIdByStoreId(storeId: String): String? {
+        val query = Query(Criteria.where("id").`is`(storeId))
+            .also { it.fields().include("ownerId").exclude("_id") }
+
+        val result = mongoTemplate.findOne(query, OwnerIdProjection::class.java, "stores")
+        return result?.ownerId
     }
 
     override fun findStoreNearbyAndCondition(
@@ -63,3 +70,7 @@ internal class StoreMongoRepositoryCustom(
         return geoResults.map { StoreWithDistance(it.content.toModel(), DistanceUtils.formatDistance(it.distance)) }
     }
 }
+
+internal data class OwnerIdProjection(
+    val ownerId: String,
+)

@@ -12,4 +12,6 @@ interface StoreRedisRepository {
     fun saveDistanceBetweenUserByStore(userKey: String, storeKey: String, distance: Double)
 
     fun saveUserLocation(userKey: String, coordinates: Coordinates)
+
+    fun getSuggestions(affix: String, page: Int, size: Int): List<String>?
 }
