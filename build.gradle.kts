@@ -1,5 +1,3 @@
-@file:Suppress("LABEL_NAME_CLASH")
-
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -70,22 +68,8 @@ subprojects {
         finalizedBy("jacocoTestReport")
     }
 
-    tasks.register<JacocoReport>("jacocoRootReport") {
-        subprojects {
-            this@subprojects.plugins.withType<JacocoPlugin>().configureEach {
-                this@subprojects.tasks.matching {
-                    it.extensions.findByType<JacocoTaskExtension>() != null
-                }
-                    .configureEach {
-                        sourceSets(this@subprojects.the<SourceSetContainer>().named("main").get())
-                        executionData(this)
-                    }
-            }
-        }
-
+    tasks.jacocoTestReport {
         reports {
-            xml.outputLocation.set(File("${rootProject.projectDir}/build/reports/jacoco/jacocoTestReport.xml"))
-            html.outputLocation.set(File("${rootProject.projectDir}/build/reports/jacoco/html"))
             xml.required.set(true)
             html.required.set(true)
         }

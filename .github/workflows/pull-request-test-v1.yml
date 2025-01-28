@@ -131,11 +131,6 @@ jobs:
           ./gradlew :$TARGET_MODULE:test --parallel
           echo "target_module=$TARGET_MODULE" >> $GITHUB_ENV
 
-      - name: Create jacoco Test Report
-        run: |
-          chmod +x ./gradlew
-          ./gradlew jacocoRootReport
-
       - name: Coverage Report as Comment to the PR
         uses: madrapps/jacoco-report@v1.6.1
         with:
@@ -145,6 +140,6 @@ jobs:
           min-coverage-overall: 60
           min-coverage-changed-files: 60
           paths: |
-            ${{ github.workspace }}/**/build/reports/jacoco/jacocoTestReport.xml
+            ${{ github.workspace }}/${{ matrix.module }}/build/reports/jacoco/jacocoTestReport.xml
           extra-info: |
             Target Module: ${{ matrix.module }}
