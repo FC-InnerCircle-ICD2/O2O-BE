@@ -132,6 +132,32 @@ class StoreServiceTest {
     }
 
     @Test
+    fun `getTrendKeywords should return trend keywords in order`() {
+        // given
+        val keywords = mapOf(
+            "마초갈비" to 5L,
+            "마라공방" to 4L,
+            "마우디브런치바" to 3L,
+            "마당재한우국밥" to 2L,
+            "마장동고기집 답십리점" to 1L,
+        )
+        val keywordList = listOf("마초갈비", "마라공방", "마우디브런치바", "마당재한우국밥", "마장동고기집 답십리점")
+
+        `when`(storeRedisRepository.getTrendKeywords()).thenReturn(keywords)
+
+        // when
+        val result = storeService.getTrendKeywords()
+
+        // then
+        expectThat(result) {
+            result?.trendKeywords?.forEachIndexed { index, trendKeyword ->
+                get { trendKeyword.keyword }.isEqualTo(keywordList[index])
+                get { trendKeyword.order }.isEqualTo(index + 1)
+            }
+        }
+    }
+
+    @Test
     fun `getStoreSuggestions should return paginated store suggestions`() {
         // given
         val affix = "치킨"

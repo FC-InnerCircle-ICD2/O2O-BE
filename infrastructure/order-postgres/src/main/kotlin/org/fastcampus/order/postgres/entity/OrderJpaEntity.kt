@@ -9,7 +9,7 @@ import jakarta.persistence.Table
 import org.fastcampus.common.entity.BaseEntity
 import org.fastcampus.order.entity.Order
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 /**
  * Created by brinst07 on 25. 1. 11..
