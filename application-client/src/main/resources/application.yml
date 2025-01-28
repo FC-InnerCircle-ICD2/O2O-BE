@@ -11,6 +11,7 @@ spring:
       - payment-postgres
       - store-mongo
       - store-redis
+      - aws
 logging:
   level:
     org.hibernate.SQL: trace
