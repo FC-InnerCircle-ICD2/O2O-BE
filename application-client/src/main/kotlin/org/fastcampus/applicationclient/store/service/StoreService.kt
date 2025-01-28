@@ -4,6 +4,8 @@ import org.fastcampus.applicationclient.store.controller.dto.response.CategoryIn
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeyword
+import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
 import org.fastcampus.applicationclient.store.mapper.StoreMapper.toCategoryInfo
 import org.fastcampus.applicationclient.store.mapper.StoreMapper.toStoreInfo
 import org.fastcampus.applicationclient.store.mapper.calculateDeliveryTime
@@ -97,5 +99,33 @@ class StoreService(
     fun getStoreSuggestions(affix: String, page: Int, size: Int): CursorDTO<String> {
         val storeNameList = storeRedisRepository.getSuggestions(affix, page, size) ?: return CursorDTO(emptyList(), null)
         return storeNameList.paginate(page, size)
+    }
+
+    @Transactional(readOnly = true)
+    fun getTrendKeywords(): TrendKeywordsResponse? {
+        val keywords = storeRedisRepository.getTrendKeywords()
+        return keywords?.let {
+            TrendKeywordsResponse(
+                keywords.entries
+                    .sortedByDescending { it.value }
+                    .mapIndexed { index, map ->
+                        TrendKeyword(
+                            keyword = map.key,
+                            order = index + 1,
+                        )
+                    },
+            )
+        }
+    }
+
+    @Transactional
+    fun search(keyword: String): Boolean {
+        val storeNameExist = storeRedisRepository.existsByName(keyword)
+        if (storeNameExist == true) { // 가게 이름이 검색어와 일치하는 가게가 있을 경우
+            storeRedisRepository.addSearch(keyword)
+            return true
+        } else {
+            return false
+        }
     }
 }
