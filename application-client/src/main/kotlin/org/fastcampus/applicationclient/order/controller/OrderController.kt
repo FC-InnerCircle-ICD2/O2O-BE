@@ -29,8 +29,9 @@ class OrderController(
         @RequestParam keyword: String,
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "5") size: Int,
+        @AuthenticationPrincipal authMember: AuthMember,
     ): ResponseEntity<APIResponseDTO<CursorDTO<OrderResponse>>> {
-        val response = orderService.getOrders(1, keyword, page - 1, size)
+        val response = orderService.getOrders(authMember.id, keyword, page - 1, size)
         return ResponseEntity
             .ok(APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response))
     }
