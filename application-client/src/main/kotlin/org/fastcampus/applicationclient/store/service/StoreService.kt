@@ -38,7 +38,7 @@ class StoreService(
     fun getStoreInfo(storeId: String, userCoordinates: Coordinates): StoreInfo =
         storeRepository.findById(storeId)?.run {
             val deliveryInfo = calculateDeliveryDetails(storeId, userCoordinates)
-            toStoreInfo(deliveryInfo["deliveryTime"] as String)
+            toStoreInfo(deliveryInfo["deliveryTime"] as String, deliveryInfo["distance"] as Double)
         } ?: throw StoreException.StoreNotFoundException(storeId)
 
     @Transactional(readOnly = true)
@@ -54,12 +54,13 @@ class StoreService(
 
             mapOf(
                 "storeId" to storeId,
-                "distance" to "%.2f km".format(distance),
+                "distance" to distance,  // 원본 거리값 (미터 단위)
                 "deliveryTime" to "$deliveryTime 분",
             ).apply {
                 logger.info("Delivery time calculation result: $this")
             }
         }
+
 
     private fun getStoreCoordinates(storeId: String) = storeRepository.fetchStoreCoordinates(storeId, storeRedisRepository)
 

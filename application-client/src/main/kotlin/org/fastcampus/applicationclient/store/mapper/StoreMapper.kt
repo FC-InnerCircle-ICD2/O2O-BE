@@ -16,7 +16,7 @@ object StoreMapper {
         )
     }
 
-    fun Store.toStoreInfo(deliveryTime: String): StoreInfo =
+    fun Store.toStoreInfo(deliveryTime: String, deliveryDistance: Double): StoreInfo =
         StoreInfo(
             id = id ?: "unknown",
             name = name ?: "unknown",
@@ -24,6 +24,7 @@ object StoreMapper {
             rating = 3.8,
             reviewCount = 3000,
             deliveryTime = deliveryTime,
+            deliveryDistance = deliveryDistance,
             freeDelivery = true,
             address = address ?: "unknown",
             latitude = latitude ?: 0.0,
