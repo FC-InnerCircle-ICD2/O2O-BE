@@ -5,6 +5,19 @@ tasks.getByName("bootJar") {
     enabled = true
 }
 
+tasks.named<Test>("test").configure {
+    val envFile = File(rootProject.projectDir, ".env")
+
+    if (envFile.exists()) {
+        envFile.readLines()
+            .filter { it.isNotEmpty() && !it.startsWith("#") }
+            .forEach { line ->
+                val (key, value) = line.split("=", limit = 2)
+                environment(key, value)
+            }
+    }
+}
+
 dependencies {
     implementation(project(":domains:member"))
     implementation(project(":domains:store"))
