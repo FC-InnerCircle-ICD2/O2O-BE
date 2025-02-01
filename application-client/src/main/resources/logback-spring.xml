@@ -14,7 +14,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="!local &amp; !default">
+    <springProfile name="!local &amp; !default &amp; !test">
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_PATH}/${TODAY}_${LOG_FILE_NAME}.log</file>
 
