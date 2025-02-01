@@ -54,13 +54,12 @@ class StoreService(
 
             mapOf(
                 "storeId" to storeId,
-                "distance" to distance,  // 원본 거리값 (미터 단위)
+                "distance" to distance, // 원본 거리값 (미터 단위)
                 "deliveryTime" to "$deliveryTime 분",
             ).apply {
                 logger.info("Delivery time calculation result: $this")
             }
         }
-
 
     private fun getStoreCoordinates(storeId: String) = storeRepository.fetchStoreCoordinates(storeId, storeRedisRepository)
 
