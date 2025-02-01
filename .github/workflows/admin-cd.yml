@@ -7,6 +7,7 @@ on:
     paths:
       - 'application-admin/**'
       - 'application-admin/build.gradle'
+  workflow_dispatch:
 
 jobs:
   admin-build:
