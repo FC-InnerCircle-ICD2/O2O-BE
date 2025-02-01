@@ -4,4 +4,4 @@ EXPOSE 8081
 
 COPY ./build/libs/application-client-1.0-SNAPSHOT.jar client-app.jar
 
-ENTRYPOINT ["java", "-jar", "/client-app.jar", "--spring.profiles.active=dev"]
+ENTRYPOINT ["java", "-jar", "-Duser.timezone=Asia/Seoul", "/client-app.jar", "--spring.profiles.active=dev"]
