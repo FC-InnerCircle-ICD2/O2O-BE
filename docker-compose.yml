@@ -17,16 +17,35 @@ services:
       - o2o-network
   order-postgres:
     container_name: order-postgres
-    image: yong7317/postgres-o2o:latest
+    image: postgres:17.2
     ports:
       - '5432:5432'
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: o2o
+    networks:
+      - o2o-network
+  migrate-postgres:
+    image: flyway/flyway:7
+    container_name: migrate-postgres
+    environment:
+      - FLYWAY_DB_URL=jdbc:postgresql://order-postgres/o2o
+      - FLYWAY_DB_USER=root
+      - FLYWAY_DB_PASSWORD=root
+    command: migrate
+    volumes:
+      - ./flyway/flyway.conf:/flyway/conf/flyway.conf
+      - ./flyway/migration:/flyway/sql
     networks:
       - o2o-network
 #  app-client:
 #    container_name: app-client
 #    image: yong7317/application-client:latest
 #    ports:
-#      - '8081:8081'
+#      - '8083:8081'
+#    volumes:
+#      - /home/ec2-user/backend/log:/var/log
 #    networks:
 #      - o2o-network
 #    depends_on:
@@ -37,7 +56,9 @@ services:
 #    container_name: app-admin
 #    image: yong7317/application-admin:latest
 #    ports:
-#      - '8082:8082'
+#      - '8084:8082'
+#    volumes:
+#      - /home/ec2-user/backend/log:/var/log
 #    networks:
 #      - o2o-network
 #    depends_on:

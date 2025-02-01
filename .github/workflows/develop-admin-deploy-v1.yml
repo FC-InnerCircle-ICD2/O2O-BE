@@ -41,6 +41,16 @@ jobs:
           push: true
           tags: yong7317/application-admin:latest
 
+      - name: Copy Flyway files to EC2
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          source: "flyway/"
+          target: ${{ secrets.EC2_FLYWAY_DIR }}
+
       - name: SSH and Deploy
         uses: appleboy/ssh-action@v0.1.8
         with:
