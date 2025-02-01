@@ -10,8 +10,6 @@ spring:
       - payment-postgres
       - store-mongo
       - store-redis
-  jpa:
-    open-in-view: false
 
 logging:
   level:
