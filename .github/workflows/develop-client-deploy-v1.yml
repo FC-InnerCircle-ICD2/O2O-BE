@@ -48,6 +48,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            cd backend
             docker stop app-client || true
             docker rm app-client || true
             docker pull yong7317/application-client:latest
