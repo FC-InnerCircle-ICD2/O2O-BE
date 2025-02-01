@@ -3,11 +3,12 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/o2o
     username: root
     password: root
     driver-class-name: org.postgresql.Driver
   jpa:
+    open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -22,11 +23,12 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:postgresql://order-postgres:5432/postgres
+    url: jdbc:postgresql://order-postgres:5432/o2o
     username: root
     password: root
     driver-class-name: org.postgresql.Driver
   jpa:
+    open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
