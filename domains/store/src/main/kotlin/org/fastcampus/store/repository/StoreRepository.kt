@@ -18,5 +18,5 @@ interface StoreRepository {
         searchName: String?,
         page: Int,
         size: Int,
-    ): List<StoreWithDistance>?
+    ): Pair<List<StoreWithDistance>, Boolean>
 }

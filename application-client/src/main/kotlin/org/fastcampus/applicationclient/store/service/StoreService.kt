@@ -110,7 +110,8 @@ class StoreService(
     ): CursorDTO<StoreInfo>? {
         return storeRepository
             .findStoreNearbyAndCondition(latitude, longitude, category, searchCondition, page, size)
-            ?.map { it.store.toStoreInfo(it.distance) }
-            ?.paginate(page, size)
+            .first
+            .map { it.store.toStoreInfo(it.distance) }
+            .paginate(page, size)
     }
 }

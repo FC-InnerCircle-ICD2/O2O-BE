@@ -82,13 +82,13 @@ class StoreController(
 
     @GetMapping("/list")
     fun getStoresByNearyByAndCondition(
-        @RequestParam(value = "latitude") latitude: Double,
-        @RequestParam(value = "longitude") longitude: Double,
+        @RequestHeader("X-User-Lat") userLat: Double,
+        @RequestHeader("X-User-Lng") userLng: Double,
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "5") size: Int,
         @RequestParam(required = false) category: Store.Category?,
         @RequestParam(required = false) searchCondition: String?,
     ): ResponseEntity<CursorDTO<StoreInfo>> {
-        return ResponseEntity.ok(storeService.getStoresByNearByAndCondition(latitude, longitude, page, size, category, searchCondition))
+        return ResponseEntity.ok(storeService.getStoresByNearByAndCondition(userLat, userLng, page, size, category, searchCondition))
     }
 }

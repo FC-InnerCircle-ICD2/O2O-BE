@@ -42,38 +42,35 @@ internal class StoreMongoRepositoryCustom(
         searchName: String?,
         page: Int,
         size: Int,
-    ): List<StoreWithDistance>? {
-        // 기본 geoNear 쿼리 생성
+    ): Pair<List<StoreWithDistance>, Boolean> { // 결과와 다음 페이지 존재 여부를 반환
         val nearQuery = NearQuery.near(longitude, latitude)
             .spherical(true)
             .maxDistance(5.0, Metrics.KILOMETERS)
 
-        // 추가 조건 정의
         val query = Query()
 
-        // 카테고리 조건 추가
         category?.let {
             query.addCriteria(Criteria.where("category").`is`(it.code))
         }
 
-        // 이름 조건 추가
         searchName?.let {
-            query.addCriteria(Criteria.where("name").regex(".*$it.*", "i")) // 대소문자 구분 없이 검색
+            query.addCriteria(Criteria.where("name").regex(".*$it.*", "i"))
         }
 
-        // 페이지네이션 추가 (skip과 limit)
         val skip = page * size
         query.skip(skip.toLong())
-        query.limit(size)
+        query.limit(size + 1) // 요청 크기보다 하나 더 가져옴
 
-        // NearQuery에 추가 조건을 연결
         nearQuery.query(query)
 
-        // geoNear 실행
         val geoResults = mongoTemplate.geoNear(nearQuery, StoreDocument::class.java)
 
-        // 결과 매핑 및 반환
-        return geoResults.map { StoreWithDistance(it.content.toModel(), it.distance.value.toString()) }
+        // `size + 1`개 데이터를 가져오고, 마지막 데이터를 제외한 리스트 반환
+        val stores = geoResults.map { StoreWithDistance(it.content.toModel(), it.distance.value.toString()) }
+        val hasNext = stores.size > size // 가져온 데이터가 요청한 size보다 크다면 다음 페이지가 있음
+        val content = stores.take(size) // 실제 반환할 데이터는 요청한 size만큼
+
+        return Pair(content, hasNext)
     }
 }
 
