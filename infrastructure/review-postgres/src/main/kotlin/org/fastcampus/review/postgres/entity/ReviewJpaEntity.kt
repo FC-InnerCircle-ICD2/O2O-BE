@@ -17,7 +17,6 @@ import org.fastcampus.review.entity.Review.DeliveryQuality
 class ReviewJpaEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
     val id: Long? = null,
     @Column(name = "ORDER_ID", nullable = false, length = 255)
     val orderId: String,
