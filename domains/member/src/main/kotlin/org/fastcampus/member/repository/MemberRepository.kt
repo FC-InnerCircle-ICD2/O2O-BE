@@ -9,7 +9,7 @@ import org.fastcampus.member.entity.Member
 interface MemberRepository {
     fun save(member: Member): Member?
 
-    fun findBySignname(signname: String): Member
+    fun findBySignname(signname: String): Member?
 
     fun findByRoleAndSignname(role: Role, signname: String): Member?
 
