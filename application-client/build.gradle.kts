@@ -6,7 +6,7 @@ tasks.getByName("bootJar") {
 }
 
 tasks.named<Test>("test").configure {
-    val envFile = File(rootProject.projectDir, ".env")
+    val envFile = File(rootProject.projectDir, "application-client/.env")
 
     if (envFile.exists()) {
         envFile.readLines()
