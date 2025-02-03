@@ -14,6 +14,10 @@ import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
 import org.fastcampus.order.repository.OrderRepository
 import org.slf4j.LoggerFactory
+import org.springframework.dao.OptimisticLockingFailureException
+import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.Recover
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -56,9 +60,25 @@ class OrderService(
     }
 
     fun acceptOrder(orderId: String) {
+        acceptOrderWithRetry(orderId)
+    }
+
+    // 주문수락은 주문취소에 대해서 race condition 이 발생하기에 낙관적락으로 동시성 이슈 처리
+    @Retryable(
+        value = [OptimisticLockingFailureException::class],
+        maxAttempts = 3,
+        backoff = Backoff(delay = 1000),
+        recover = "recoverRaceConditionOnOrder",
+    )
+    private fun acceptOrderWithRetry(orderId: String) {
         val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
         order.accept()
         orderRepository.save(order)
+    }
+
+    @Recover
+    private fun recoverRaceConditionOnOrder(orderId: String) {
+        throw OrderException.OrderCanNotAccept(orderId)
     }
 
     private fun convertIntoOrderInquiryResponse(order: Order): OrderInquiryResponse {

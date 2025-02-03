@@ -86,10 +86,10 @@ class OrderServiceTest {
     @Test
     fun `must change order status to accept when admin accept order`() {
         // given
-        val order = createOrderFixture()
-        order.status = Order.Status.RECEIVE
+        val order = createOrderFixture().copy(status = Order.Status.RECEIVE)
 
         `when`(orderRepository.findById(order.id)).thenReturn(order)
+        `when`(orderRepository.save(order)).thenReturn(order)
 
         // when
         orderService.acceptOrder(order.id)
@@ -103,8 +103,7 @@ class OrderServiceTest {
     @Test
     fun `must throw exception when admin try to accept order witch has not receive status`() {
         // given
-        val order = createOrderFixture()
-        order.status = Order.Status.CANCEL
+        val order = createOrderFixture().copy(status = Order.Status.CANCEL)
 
         `when`(orderRepository.findById(order.id)).thenReturn(order)
 
