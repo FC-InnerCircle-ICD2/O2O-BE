@@ -1,6 +1,7 @@
 package org.fastcampus.applicationclient.store.service
 
 import org.fastcampus.applicationclient.store.mapper.fetchDistance
+import org.fastcampus.store.entity.Menu
 import org.fastcampus.store.entity.Store
 import org.fastcampus.store.entity.StoreMenuCategory
 import org.fastcampus.store.exception.StoreException
@@ -16,10 +17,11 @@ import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import strikt.api.expectThat
 import strikt.api.expectThrows
+import strikt.assertions.get
 import strikt.assertions.hasSize
-import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
-import strikt.assertions.isNotNull
+import strikt.assertions.isFalse
+import strikt.assertions.isTrue
 import strikt.assertions.message
 
 @ExtendWith(MockitoExtension::class)
@@ -76,24 +78,102 @@ class StoreServiceTest {
     }
 
     @Test
-    fun `getCategories should return paginated categories`() {
+    fun `getCategories should return categories`() {
         // given
-        val storeId = "test-store-id"
-        val store = createTestStoreWithCategories(storeId)
+        val storeId = "store-123"
+        val testStore = Store(
+            _id = "mongo-id-123",
+            address = "서울 강남구 테헤란로 123",
+            border = "050-1234-5678",
+            breakTime = "15:00~17:00",
+            category = Store.Category.KOREAN_CUISINE,
+            id = storeId,
+            name = "테스트 가게",
+            latitude = 37.123456,
+            jibunAddress = "서울 강남구 역삼동 123-4",
+            longitude = 127.123456,
+            ownerId = "owner-123",
+            tel = "02-1234-5678",
+            imageThumbnail = "thumbnail.jpg",
+            imageMain = "main.jpg",
+            status = Store.Status.OPEN,
+            roadAddress = "서울 강남구 테헤란로 123",
+            storeMenuCategory = listOf(
+                StoreMenuCategory(
+                    id = "cat-1",
+                    name = "인기 메뉴",
+                    storeId = storeId,
+                    menu = listOf(
+                        Menu(
+                            id = "menu-1",
+                            name = "떡볶이",
+                            price = "12000",
+                            desc = "매콤한 떡볶이",
+                            imgUrl = "tteok.jpg",
+                            isSoldOut = false,
+                            isHided = false,
+                            menuCategoryId = "cat-1",
+                            menuOptionGroup = emptyList(),
+                            order = 1L,
+                        ),
+                    ),
+                    order = 1L,
+                ),
+                StoreMenuCategory(
+                    id = "cat-2",
+                    name = "세트 메뉴",
+                    storeId = storeId,
+                    menu = listOf(
+                        Menu(
+                            id = "menu-2",
+                            name = "떡볶이 세트",
+                            price = "15000",
+                            desc = "떡볶이+김밥 세트",
+                            imgUrl = "set.jpg",
+                            isSoldOut = true,
+                            isHided = false,
+                            menuCategoryId = "cat-2",
+                            menuOptionGroup = emptyList(),
+                            order = 2L,
+                        ),
+                    ),
+                    order = 2L,
+                ),
+            ),
+        )
 
-        `when`(storeRepository.findById(storeId)).thenReturn(store)
+        `when`(storeRepository.findById(storeId)).thenReturn(testStore)
 
         // when
-        val result = storeService.getCategories(storeId, 1, 1)
+        val result = storeService.getCategories(storeId)
 
         // then
         expectThat(result) {
-            get { content }.hasSize(1)
-            get { nextCursor }.isEqualTo(2)
-            get { content.first() }.and {
-                get { categoryId }.isEqualTo("cat1")
-                get { categoryName }.isEqualTo("Category 1")
-                get { menus }.isNotNull().isEmpty()
+            hasSize(2)
+            and {
+                get(0).and {
+                    get { categoryId }.isEqualTo("cat-1")
+                    get { categoryName }.isEqualTo("인기 메뉴")
+                    get { menus }.hasSize(1).and {
+                        get(0).and {
+                            get { id }.isEqualTo("menu-1")
+                            get { name }.isEqualTo("떡볶이")
+                            get { price }.isEqualTo(12000)
+                            get { description }.isEqualTo("매콤한 떡볶이")
+                            get { imageUrl }.isEqualTo("tteok.jpg")
+                            get { soldOut }.isFalse()
+                        }
+                    }
+                }
+                get(1).and {
+                    get { categoryId }.isEqualTo("cat-2")
+                    get { categoryName }.isEqualTo("세트 메뉴")
+                    get { menus }.hasSize(1).and {
+                        get(0).and {
+                            get { soldOut }.isTrue()
+                        }
+                    }
+                }
             }
         }
     }

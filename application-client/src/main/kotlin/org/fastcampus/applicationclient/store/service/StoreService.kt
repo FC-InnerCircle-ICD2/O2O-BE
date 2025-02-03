@@ -1,6 +1,6 @@
 package org.fastcampus.applicationclient.store.service
 
-import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.CategoryResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
@@ -42,9 +42,8 @@ class StoreService(
         } ?: throw StoreException.StoreNotFoundException(storeId)
 
     @Transactional(readOnly = true)
-    fun getCategories(storeId: String, page: Int, size: Int): CursorDTO<CategoryInfo> =
+    fun getCategories(storeId: String): List<CategoryResponse> =
         storeRepository.findById(storeId)?.storeMenuCategory?.map { it.toCategoryInfo() }
-            ?.paginate(page, size)
             ?: throw StoreException.StoreNotFoundException(storeId)
 
     fun calculateDeliveryDetails(storeId: String, userCoordinates: Coordinates): Map<String, Any> =
