@@ -1,0 +1,21 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  cloud:
+    aws:
+      s3:
+        bucket: "test-bucket"
+      stack:
+        auto: false
+      region.static: "ap-northeast-2"
+      credentials:
+        accessKey: "test-access-key"
+        secretKey: "test-secret-key"
+
+logging:
+  level:
+    org.hibernate.SQL: trace
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    org.fastcampus: debug

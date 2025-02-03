@@ -3,7 +3,7 @@
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
     <timestamp key="TODAY" datePattern="yyyy-MM-dd" />
 
-    <springProfile name="local | default">
+    <springProfile name="local | default | test">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
                 <pattern>${LOG_CONSOLE_PATTERN}</pattern>
@@ -14,7 +14,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="!local &amp; !default">
+    <springProfile name="!local &amp; !default &amp; !test">
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_PATH}/${TODAY}_${LOG_FILE_NAME}.log</file>
 
