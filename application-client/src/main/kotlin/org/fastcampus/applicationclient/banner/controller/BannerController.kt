@@ -4,12 +4,14 @@ import org.fastcampus.applicationclient.banner.controller.dto.response.BannerRes
 import org.fastcampus.common.dto.APIResponseDTO
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/banners")
+@CrossOrigin(origins = ["http://13.124.27.138"])
 class BannerController {
     @GetMapping
     fun getBanners(): ResponseEntity<APIResponseDTO<List<BannerResponse>>> {
