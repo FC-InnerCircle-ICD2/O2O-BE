@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Repository
@@ -73,5 +74,14 @@ class OrderJpaRepositoryCustom(
             totalItems = orderJpaEntities.totalElements,
             hasNext = orderJpaEntities.hasNext(),
         )
+    }
+
+    override fun findReviewableOrders(userId: Long, cursor: LocalDateTime): List<Order> {
+        val today = LocalDateTime.now()
+        val threeDaysAgo = LocalDate.now().minusDays(3).atStartOfDay()
+        return orderJpaRepository.findByUserIdAndOrderTimeAfter(userId, cursor, today)
+            .filter { it.orderTime >= threeDaysAgo }
+            .map { it.toModel() }
+            .toList()
     }
 }
