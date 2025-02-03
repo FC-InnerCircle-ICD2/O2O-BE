@@ -24,6 +24,8 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: o2o
+      TZ: Asia/Seoul
+      PGTZ: Asia/Seoul
     networks:
       - o2o-network
   migrate-postgres:
