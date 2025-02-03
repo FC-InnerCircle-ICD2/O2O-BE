@@ -13,4 +13,8 @@ class ReviewRepositoryCustom(
     override fun save(review: Review): Review {
         return reviewJpaRepository.save(review.toJpaEntity()).toModel()
     }
+
+    override fun findByOrderIdIn(orderIds: List<String>): List<Review> {
+        return reviewJpaRepository.findByOrderIdIn(orderIds)
+    }
 }
