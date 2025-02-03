@@ -19,16 +19,12 @@ class MemberRepositoryCustom(
         return memberJpaRepository.save(member.toJpaEntity()).toModel()
     }
 
-    override fun findBySignname(signname: String): Member {
-        return memberJpaRepository.findBySignname(
-            signname,
-        ).map { it.toModel() }.orElseThrow { UserNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다") }
+    override fun findBySignname(signname: String): Member? {
+        return memberJpaRepository.findBySignname(signname).map { it.toModel() }.orElse(null)
     }
 
-    override fun findByRoleAndSignname(role: Role, signname: String): Member {
-        return memberJpaRepository.findByRoleAndSignname(role, signname).map {
-            it.toModel()
-        }.orElseThrow { UserNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다") }
+    override fun findByRoleAndSignname(role: Role, signname: String): Member? {
+        return memberJpaRepository.findByRoleAndSignname(role, signname).map { it.toModel() }.orElse(null)
     }
 
     override fun findById(id: Long): Member {
