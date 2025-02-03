@@ -15,7 +15,6 @@ class WebMvcConfig {
                     .allowedOrigins("*")
                     .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD")
                     .allowedHeaders("*")
-                    .allowCredentials(true)
             }
         }
     }
