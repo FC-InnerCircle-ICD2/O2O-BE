@@ -35,7 +35,7 @@ class JwtAuthenticationFilter(
     private val secretKey: String,
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
     init {
-        setFilterProcessesUrl("/api/login")
+        setFilterProcessesUrl("/api/v1/auth/login")
     }
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
