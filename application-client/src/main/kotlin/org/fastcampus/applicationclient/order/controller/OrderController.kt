@@ -1,6 +1,7 @@
 package org.fastcampus.applicationclient.order.controller
 
 import org.fastcampus.applicationclient.config.security.dto.AuthMember
+import org.fastcampus.applicationclient.config.security.dto.JwtAuthenticated
 import org.fastcampus.applicationclient.order.controller.dto.request.OrderCreationRequest
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderCreationResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderDetailResponse
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 class OrderController(
     private val orderService: OrderService,
 ) {
+    @JwtAuthenticated
     @GetMapping
     fun getOrders(
         @RequestParam keyword: String,
@@ -45,6 +47,7 @@ class OrderController(
             .ok(APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response))
     }
 
+    @JwtAuthenticated
     @PostMapping
     fun createOrder(
         @RequestBody orderCreationRequest: OrderCreationRequest,
