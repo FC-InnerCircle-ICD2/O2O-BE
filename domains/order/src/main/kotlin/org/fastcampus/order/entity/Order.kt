@@ -34,6 +34,13 @@ data class Order(
         this.status = Status.ACCEPT
     }
 
+    fun cancel() {
+        if (this.status != Status.RECEIVE) {
+            throw OrderException.OrderCanNotCancelled(this.id)
+        }
+        this.status = Status.CANCEL
+    }
+
     enum class Status(
         val code: String,
         val desc: String,
