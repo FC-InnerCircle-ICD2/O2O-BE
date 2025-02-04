@@ -23,6 +23,7 @@
             <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/order-postgres" />
             <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/order-redis" />
             <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/payment-postgres" />
+            <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/review-postgres" />
             <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/store-mongo" />
             <option value="$PROJECT_DIR$/../../이너써클/O2O-BE/infrastructure/store-redis" />
           </set>
