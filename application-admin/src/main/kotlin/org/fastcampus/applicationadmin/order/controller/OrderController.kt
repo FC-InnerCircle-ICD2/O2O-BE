@@ -45,7 +45,7 @@ class OrderController(
 
     @PatchMapping("/{orderId}/accept")
     fun acceptOrder(
-        @PathVariable orderId: String,
+        @PathVariable("orderId") orderId: String,
     ): ResponseEntity<APIResponseDTO<Nothing?>> {
         orderService.acceptOrder(orderId)
         return ResponseEntity

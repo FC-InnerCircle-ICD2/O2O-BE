@@ -60,9 +60,10 @@ class OrderController(
         return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response)
     }
 
+    @JwtAuthenticated
     @PatchMapping("/{orderId}/cancel")
     fun cancelOrder(
-        @PathVariable orderId: String,
+        @PathVariable("orderId") orderId: String,
         @AuthenticationPrincipal authMember: AuthMember,
     ): APIResponseDTO<Nothing?> {
         orderCancellationService.cancelOrder(orderId)

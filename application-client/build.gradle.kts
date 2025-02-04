@@ -40,5 +40,4 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1")
     implementation("com.auth0:java-jwt:4.2.1")
-    implementation("org.springframework.retry:spring-retry")
 }
