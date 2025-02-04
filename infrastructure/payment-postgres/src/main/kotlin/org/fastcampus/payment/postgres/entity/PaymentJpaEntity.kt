@@ -23,6 +23,9 @@ class PaymentJpaEntity(
     val type: Type,
     @Column(name = "PAYMENT_PRICE")
     val paymentPrice: Long?,
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS")
+    val status: Payment.Status,
 ) : BaseEntity()
 
 fun Payment.toJpaEntity() =
@@ -30,6 +33,7 @@ fun Payment.toJpaEntity() =
         id,
         type,
         paymentPrice,
+        status,
     )
 
 fun PaymentJpaEntity.toModel() =
@@ -37,4 +41,5 @@ fun PaymentJpaEntity.toModel() =
         id,
         type,
         paymentPrice,
+        status,
     )

@@ -1,5 +1,10 @@
 server:
   port: 8081
+  servlet:
+    session:
+      cookie:
+        same-site: None
+        secure: true
 
 spring:
   profiles:
@@ -11,6 +16,7 @@ spring:
       - payment-postgres
       - store-mongo
       - store-redis
+      - aws
 logging:
   level:
     org.hibernate.SQL: trace

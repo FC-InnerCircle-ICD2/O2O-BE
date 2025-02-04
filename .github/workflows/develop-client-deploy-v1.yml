@@ -59,6 +59,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd backend
+            echo "S3_BUCKET_NAME=${{ secrets.S3_ACCESS_KEY }}" > .env
+            echo "S3_REGION=${{ secrets.S3_BUCKET_NAME }}" >> .env
+            echo "S3_ACCESS_KEY=${{ secrets.S3_REGION }}" >> .env
+            echo "S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }}" >> .env
             docker stop app-client || true
             docker rm app-client || true
             docker pull yong7317/application-client:latest

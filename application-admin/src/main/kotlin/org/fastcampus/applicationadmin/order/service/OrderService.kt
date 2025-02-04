@@ -61,6 +61,12 @@ class OrderService(
         orderRepository.save(order)
     }
 
+    fun refuseOrder(orderId: String) {
+        val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
+        order.refuse()
+        orderRepository.save(order)
+    }
+
     private fun convertIntoOrderInquiryResponse(order: Order): OrderInquiryResponse {
         val orderMenus: List<OrderMenu> = orderMenuRepository.findByOrderId(order.id)
         val orderMenuInquiryResponses: List<OrderMenuInquiryResponse> =
