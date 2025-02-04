@@ -62,6 +62,12 @@ class OrderService(
     fun acceptOrder(orderId: String) {
         acceptOrderWithRetry(orderId)
     }
+    
+    fun refuseOrder(orderId: String) {
+        val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
+        order.refuse()
+        orderRepository.save(order)
+    }
 
     // 주문수락은 주문취소에 대해서 race condition 이 발생하기에 낙관적락으로 동시성 이슈 처리
     @Retryable(
@@ -75,8 +81,7 @@ class OrderService(
         order.accept()
         orderRepository.save(order)
     }
-
-    @Recover
+        
     private fun recoverRaceConditionOnOrder(orderId: String) {
         throw OrderException.OrderCanNotAccept(orderId)
     }

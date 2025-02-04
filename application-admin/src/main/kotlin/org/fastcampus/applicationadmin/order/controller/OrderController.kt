@@ -51,4 +51,11 @@ class OrderController(
         return ResponseEntity
             .ok(APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null))
     }
+
+    @PatchMapping("/{orderId}/refuse")
+    fun refuseOrder(
+        @PathVariable orderId: String,
+    ): ResponseEntity<APIResponseDTO<Unit>> {
+        return ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, orderService.refuseOrder(orderId)))
+    }
 }
