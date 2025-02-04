@@ -13,5 +13,5 @@ interface MemberRepository {
 
     fun findByRoleAndSignname(role: Role, signname: String): Member?
 
-    fun findById(id: Long): Member?
+    fun findById(id: Long): Member
 }
