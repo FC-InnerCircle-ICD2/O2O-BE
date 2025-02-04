@@ -45,6 +45,6 @@ class MemberService(
 
     fun info(authMember: AuthMember): MemberInfoResponse? {
         val findMember = memberRepository.findById(authMember.id)
-        return MemberInfoResponse(findMember!!.nickname)
+        return MemberInfoResponse(findMember.signname, findMember.nickname)
     }
 }
