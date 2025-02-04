@@ -34,6 +34,14 @@ data class Order(
         this.status = Status.ACCEPT
     }
 
+    fun refuse() {
+        // 주문접수상태만 주문거절가능
+        if (!this.status.equals(Status.RECEIVE)) {
+            throw OrderException.OrderCanNotAccept(this.id)
+        }
+        this.status = Status.REFUSE
+    }
+
     enum class Status(
         val code: String,
         val desc: String,
