@@ -16,3 +16,5 @@ logging:
     org.hibernate.SQL: trace
     org.hibernate.type.descriptor.sql.BasicBinder: trace
     org.fastcampus: debug
+    org.springframework.data.mongodb.core: DEBUG
+    org.mongodb.driver: DEBUG
