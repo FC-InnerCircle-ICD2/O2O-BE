@@ -1,15 +1,15 @@
 package org.fastcampus.applicationclient.store.mapper
 
-import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
-import org.fastcampus.applicationclient.store.controller.dto.response.MenuInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.CategoryResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.store.entity.Menu
 import org.fastcampus.store.entity.Store
 import org.fastcampus.store.entity.StoreMenuCategory
 
 object StoreMapper {
-    fun StoreMenuCategory.toCategoryInfo(): CategoryInfo {
-        return CategoryInfo(
+    fun StoreMenuCategory.toCategoryInfo(): CategoryResponse {
+        return CategoryResponse(
             categoryId = this.id ?: "unknown",
             categoryName = this.name ?: "unknown",
             menus = this.menu?.map { it.toMenuResponse() } ?: emptyList(),
@@ -32,15 +32,14 @@ object StoreMapper {
             phone = tel ?: "unknown",
         )
 
-    private fun Menu.toMenuResponse(): MenuInfo {
-        return MenuInfo(
+    private fun Menu.toMenuResponse(): MenuOptionInfo {
+        return MenuOptionInfo(
             id = this.id ?: "unknown",
             name = this.name ?: "unknown",
-            price = this.price ?: "가격 정보 없음",
+            price = this.price?.replace(",", "")?.toInt() ?: -1,
             description = this.desc ?: "",
             imageUrl = this.imgUrl ?: "unknown",
-            isSoldOut = this.isSoldOut,
-            menuOptionGroupIds = this.menuOptionGroup?.map { it.id ?: "" } ?: emptyList(),
+            soldOut = this.isSoldOut,
         )
     }
 }

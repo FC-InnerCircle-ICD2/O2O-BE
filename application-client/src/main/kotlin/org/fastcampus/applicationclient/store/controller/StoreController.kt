@@ -1,6 +1,6 @@
 package org.fastcampus.applicationclient.store.controller
 
-import org.fastcampus.applicationclient.store.controller.dto.response.CategoryInfo
+import org.fastcampus.applicationclient.store.controller.dto.response.CategoryResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
@@ -67,10 +67,8 @@ class StoreController(
     @GetMapping("/{id}/menus")
     fun getCategories(
         @PathVariable id: String,
-        @RequestParam(defaultValue = "1") page: Int,
-        @RequestParam(defaultValue = "5") size: Int,
-    ): ResponseEntity<CursorDTO<CategoryInfo>> {
-        return ResponseEntity.ok(storeService.getCategories(id, page, size))
+    ): APIResponseDTO<List<CategoryResponse>> {
+        return APIResponseDTO(HttpStatus.OK.value(), "success", storeService.getCategories(id))
     }
 
     @GetMapping("/suggestion")
