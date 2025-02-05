@@ -38,7 +38,7 @@ class OrderService(
 ) {
     @Transactional(readOnly = true)
     fun getOrders(userId: Long, keyword: String, page: Int, size: Int): CursorDTO<OrderResponse> {
-        val orders = orderRepository.findByUserId(userId, if (page == 0) 0 else page, size)
+        val orders = orderRepository.findByUserIdExcludingWaitStatus(userId, if (page == 0) 0 else page, size)
         return CursorDTO(
             content = orders.content.map { order ->
                 val store = storeRepository.findById(requireNotNull(order.storeId))

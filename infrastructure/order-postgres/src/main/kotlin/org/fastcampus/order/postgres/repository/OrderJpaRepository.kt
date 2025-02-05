@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query
 import java.time.LocalDateTime
 
 interface OrderJpaRepository : JpaRepository<OrderJpaEntity, String> {
-    fun findByUserId(userId: Long, pageable: Pageable): Page<OrderJpaEntity>
+    fun findByUserIdAndStatusNot(userId: Long, status: Order.Status, pageable: Pageable): Page<OrderJpaEntity>
 
     fun findByStoreIdAndStatusInAndOrderTimeBetween(
         storeId: String,
