@@ -28,4 +28,6 @@ open class OrderException(message: String) : RuntimeException(message) {
     data class SoldOutMenu(val menuId: String) : OrderException("품절 메뉴가 존재합니다.")
 
     data class MenuNotFound(val menuId: String) : OrderException("메뉴 정보를 찾을 수 없습니다.")
+
+    class AddressRequired() : OrderException("도로명 주소와 지번 주소중 하나는 필수 입니다.")
 }

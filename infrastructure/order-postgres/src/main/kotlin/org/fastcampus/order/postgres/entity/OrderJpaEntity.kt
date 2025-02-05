@@ -54,6 +54,10 @@ class OrderJpaEntity(
     val deliveryPrice: Long? = 0L,
     @Column(name = "PAYMENT_PRICE")
     val paymentPrice: Long,
+    @Column(name = "EXCLUDING_SPOON_AND_FORK")
+    val excludingSpoonAndFork: Boolean = true,
+    @Column(name = "REQUEST_TO_RIDER")
+    val requestToRider: String? = null,
 ) : BaseEntity()
 
 fun Order.toJpaEntity() =
@@ -75,6 +79,8 @@ fun Order.toJpaEntity() =
         orderPrice,
         deliveryPrice,
         paymentPrice,
+        excludingSpoonAndFork,
+        requestToRider,
     )
 
 fun OrderJpaEntity.toModel() =
@@ -96,4 +102,6 @@ fun OrderJpaEntity.toModel() =
         orderPrice,
         deliveryPrice,
         paymentPrice,
+        excludingSpoonAndFork,
+        requestToRider,
     )

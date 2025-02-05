@@ -11,6 +11,8 @@ data class OrderDetailResponse(
     val roadAddress: String?,
     val jibunAddress: String?,
     val detailAddress: String?,
+    val excludingSpoonAndFork: Boolean,
+    val requestToRider: String?,
     val orderPrice: Long,
     val deliveryPrice: Long?,
     val deliveryCompleteTime: LocalDateTime?,

@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.order.service
 
+import org.apache.commons.lang3.StringUtils
 import org.fastcampus.applicationclient.order.controller.dto.request.OrderCreationRequest
 import org.fastcampus.order.exception.OrderException
 import org.fastcampus.store.entity.Menu
@@ -19,6 +20,12 @@ class OrderCreationValidator {
          * @return <메뉴 ID, 메뉴정보> MAP
          */
         fun validate(storeEntity: Store, orderCreationRequest: OrderCreationRequest): Map<String, Menu> {
+            val roadAddress = orderCreationRequest.roadAddress
+            val jubunAddress = orderCreationRequest.jibunAddress
+            if (StringUtils.isBlank(roadAddress) && StringUtils.isBlank(jubunAddress)) {
+                throw OrderException.AddressRequired()
+            }
+
             if (storeEntity.isClosed()) {
                 throw OrderException.StoreClosed(storeEntity.id!!)
             }

@@ -15,6 +15,8 @@ data class OrderInquiryResponse(
     val roadAddress: String?,
     val jibunAddress: String?,
     val detailAddress: String?,
+    val excludingSpoonAndFork: Boolean,
+    val requestToRider: String?,
     val orderMenuInquiryResponses: List<OrderMenuInquiryResponse>,
 ) {
     companion object {
@@ -32,6 +34,8 @@ data class OrderInquiryResponse(
                 roadAddress = order.roadAddress ?: "",
                 jibunAddress = order.jibunAddress ?: "",
                 detailAddress = order.detailAddress ?: "",
+                excludingSpoonAndFork = order.excludingSpoonAndFork,
+                requestToRider = order.requestToRider,
                 orderMenuInquiryResponses = orderMenuInquiryResponses,
             )
         }
