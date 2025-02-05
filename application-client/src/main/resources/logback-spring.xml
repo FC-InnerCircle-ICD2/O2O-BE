@@ -45,10 +45,10 @@
 
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
                 <fileNamePattern>
-                    ${LOG_PATH}/error/%d{yyyy-MM-dd}_${LOG_FILE_NAME}_%i.log
+                    ${LOG_PATH}/error/%d{yyyy-MM-dd}_${LOG_FILE_NAME}_%i.log.gz
                 </fileNamePattern>
                 <maxFileSize>10MB</maxFileSize>
-                <maxHistory>7</maxHistory>
+                <maxHistory>2</maxHistory>
             </rollingPolicy>
         </appender>
 
