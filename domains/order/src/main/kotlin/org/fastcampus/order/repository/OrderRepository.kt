@@ -19,7 +19,7 @@ interface OrderRepository {
 
     fun update(id: Long): Order
 
-    fun findByUserId(userId: Long, page: Int, size: Int): CursorDTO<Order>
+    fun findByUserIdExcludingWaitStatus(userId: Long, page: Int, size: Int): CursorDTO<Order>
 
     fun findByStoreIdAndStatusesWithPeriod(
         storeId: String,

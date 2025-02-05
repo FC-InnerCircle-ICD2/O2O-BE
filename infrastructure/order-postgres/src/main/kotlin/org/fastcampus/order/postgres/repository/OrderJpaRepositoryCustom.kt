@@ -41,9 +41,9 @@ class OrderJpaRepositoryCustom(
         TODO("Not yet implemented")
     }
 
-    override fun findByUserId(userId: Long, page: Int, size: Int): CursorDTO<Order> {
+    override fun findByUserIdExcludingWaitStatus(userId: Long, page: Int, size: Int): CursorDTO<Order> {
         val pageable: Pageable = PageRequest.of(page, size, Sort.by("orderTime").descending())
-        val orderJpaEntities: Page<OrderJpaEntity> = orderJpaRepository.findByUserId(userId, pageable)
+        val orderJpaEntities: Page<OrderJpaEntity> = orderJpaRepository.findByUserIdAndStatusNot(userId, Order.Status.WAIT, pageable)
         return CursorDTO(
             content = orderJpaEntities.content.map { it.toModel() },
             nextCursor = if (orderJpaEntities.nextPageable().sort.isSorted) orderJpaEntities.nextPageable().pageNumber else null,
