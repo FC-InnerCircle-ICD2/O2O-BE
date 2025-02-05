@@ -34,6 +34,13 @@ data class Order(
         this.status = Status.ACCEPT
     }
 
+    fun cancel() {
+        if (this.status != Status.RECEIVE) {
+            throw OrderException.OrderCanNotCancelled(this.id)
+        }
+        this.status = Status.CANCEL
+    }
+
     fun refuse() {
         // 주문접수상태만 주문거절가능
         if (!this.status.equals(Status.RECEIVE)) {
