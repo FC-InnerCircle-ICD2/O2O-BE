@@ -32,7 +32,7 @@ class OrderController(
     fun getOrders(
         @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") startDate: LocalDate,
         @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") endDate: LocalDate,
-        @RequestParam(required = true) status: Order.ClientStatus,
+        @RequestParam(required = true) status: List<Order.ClientStatus>,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "5") size: Int,
         @AuthenticationPrincipal authMember: AuthMember,
@@ -40,9 +40,9 @@ class OrderController(
         logger.info(
             "parameters in order inquiry: userId: ${authMember.id}, startDate: $startDate, endDate: $endDate, status: $status",
         )
-        val response = orderService.getOrdersByStoreIdAndStatusWithPeriod(
+        val response = orderService.getOrdersByStatusesWithPeriod(
             authMember.id,
-            status.toOrderStatus(),
+            status,
             startDate,
             endDate,
             page,

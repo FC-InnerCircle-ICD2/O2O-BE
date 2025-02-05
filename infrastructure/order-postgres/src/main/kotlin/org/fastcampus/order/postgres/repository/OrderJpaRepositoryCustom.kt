@@ -50,9 +50,9 @@ class OrderJpaRepositoryCustom(
         )
     }
 
-    override fun findByStoreIdAndStatusWithPeriod(
+    override fun findByStoreIdAndStatusesWithPeriod(
         storeId: String,
-        status: Order.Status,
+        status: List<Order.Status>,
         startDateTime: LocalDateTime,
         endDateTime: LocalDateTime,
         page: Int,
@@ -60,7 +60,7 @@ class OrderJpaRepositoryCustom(
     ): OffSetBasedDTO<Order> {
         val pageable: Pageable = PageRequest.of(page, size, Sort.by("orderTime").descending())
         val orderJpaEntities: Page<Order> =
-            orderJpaRepository.findByStoreIdAndStatusAndOrderTimeBetween(
+            orderJpaRepository.findByStoreIdAndStatusInAndOrderTimeBetween(
                 storeId,
                 status,
                 startDateTime,

@@ -21,9 +21,9 @@ interface OrderRepository {
 
     fun findByUserId(userId: Long, page: Int, size: Int): CursorDTO<Order>
 
-    fun findByStoreIdAndStatusWithPeriod(
+    fun findByStoreIdAndStatusesWithPeriod(
         storeId: String,
-        status: Order.Status,
+        status: List<Order.Status>,
         startDateTime: LocalDateTime,
         endDateTime: LocalDateTime,
         page: Int,
