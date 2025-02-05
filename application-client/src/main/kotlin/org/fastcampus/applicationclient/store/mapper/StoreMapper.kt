@@ -1,7 +1,7 @@
 package org.fastcampus.applicationclient.store.mapper
 
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryResponse
-import org.fastcampus.applicationclient.store.controller.dto.response.MenuResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.store.entity.Menu
 import org.fastcampus.store.entity.Store
@@ -32,8 +32,8 @@ object StoreMapper {
             phone = tel ?: "unknown",
         )
 
-    private fun Menu.toMenuResponse(): MenuResponse {
-        return MenuResponse(
+    private fun Menu.toMenuResponse(): MenuOptionInfo {
+        return MenuOptionInfo(
             id = this.id ?: "unknown",
             name = this.name ?: "unknown",
             price = this.price?.replace(",", "")?.toInt() ?: -1,
