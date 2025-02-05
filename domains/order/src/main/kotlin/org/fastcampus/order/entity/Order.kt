@@ -25,6 +25,8 @@ data class Order(
     val orderPrice: Long,
     val deliveryPrice: Long?,
     val paymentPrice: Long,
+    val excludingSpoonAndFork: Boolean = true,
+    val requestToRider: String? = null,
 ) {
     fun accept() {
         // 주문접수상태만 주문수락가능

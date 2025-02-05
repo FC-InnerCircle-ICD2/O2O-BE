@@ -147,6 +147,8 @@ class OrderService(
                 roadAddress = orderCreationRequest.roadAddress,
                 jibunAddress = orderCreationRequest.jibunAddress,
                 detailAddress = orderCreationRequest.detailAddress,
+                excludingSpoonAndFork = orderCreationRequest.excludingSpoonAndFork ?: true,
+                requestToRider = orderCreationRequest.requestToRider,
                 tel = "010-1234-5678",
                 status = Order.Status.WAIT,
                 orderTime = LocalDateTime.now(),
