@@ -29,4 +29,6 @@ interface OrderRepository {
         page: Int,
         size: Int,
     ): OffSetBasedDTO<Order>
+
+    fun findReviewableOrders(userId: Long, cursor: LocalDateTime): List<Order>
 }

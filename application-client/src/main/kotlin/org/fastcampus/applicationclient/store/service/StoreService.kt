@@ -3,6 +3,7 @@ package org.fastcampus.applicationclient.store.service
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionResponse
+import org.fastcampus.applicationclient.store.controller.dto.response.MenuResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeyword
 import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
@@ -20,6 +21,7 @@ import org.fastcampus.store.repository.StoreRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import kotlin.random.Random
 
 /**
  * Created by brinst07 on 25. 1. 11..
@@ -62,31 +64,38 @@ class StoreService(
 
     private fun getStoreCoordinates(storeId: String) = storeRepository.fetchStoreCoordinates(storeId, storeRedisRepository)
 
-    fun getMenusOptions(storeId: String, menuId: String): List<MenuOptionGroupsResponse> {
-        logger.info("Call findAllMenuOptionGroup storeId: $storeId, menuId: $menuId")
-        val test = storeRepository.findById(storeId)
-        logger.info(test.toString())
-
-        val menuOptionGroupInfo = storeRepository.findById(storeId)
+    @Transactional(readOnly = true)
+    fun getMenusOptions(storeId: String, menuId: String): MenuResponse {
+        val menuInfo = storeRepository.findById(storeId)
             ?.storeMenuCategory
             ?.flatMap { it.menu ?: emptyList() }
-            ?.filter { it.id == menuId }
-            ?.flatMap { it.menuOptionGroup ?: emptyList() }
-            ?: throw IllegalArgumentException("Store id: $storeId menu id: $menuId not found")
-        val response = menuOptionGroupInfo.map { menuOptionGroup ->
-            MenuOptionGroupsResponse(
-                id = menuOptionGroup.id ?: "",
-                name = menuOptionGroup.name ?: "",
-                minSel = menuOptionGroup.minSel?.toString() ?: "0",
-                maxSel = menuOptionGroup.maxSel?.toString() ?: "0",
-                order = menuOptionGroup.order ?: 0L,
-                menuOptions = menuOptionGroup.menuOption?.map { menu ->
-                    MenuOptionResponse(
-                        id = menu.id ?: "",
-                        name = menu.name ?: "",
-                        price = "${menu.price}원",
-                        isSoldOut = menu.isSoldOut,
-                        order = menu.order ?: 0L,
+            ?.find { it.id == menuId }
+            ?: throw StoreException.StoreNotFoundException(storeId)
+        val response = menuInfo.let { menu ->
+            MenuResponse(
+                menuId = menu.id ?: "",
+                name = menu.name ?: "",
+                price = menu.price ?: "0",
+                desc = menu.desc ?: "",
+                imgUrl = menu.imgUrl ?: "",
+                isSoldOut = menu.isSoldOut,
+                isBest = Random.nextBoolean(),
+                isManyOrder = Random.nextBoolean(),
+                menuOptionGroups = menu.menuOptionGroup?.map { optionGroup ->
+                    MenuOptionGroupsResponse(
+                        id = optionGroup.id ?: "",
+                        name = optionGroup.name ?: "",
+                        type = if (optionGroup.maxSel!! > 1) "checkbox" else "radio",
+                        minSel = optionGroup.minSel?.toLong() ?: 1,
+                        maxSel = optionGroup.maxSel?.toLong() ?: 1,
+                        options = optionGroup.menuOption?.map { option ->
+                            MenuOptionResponse(
+                                id = option.id ?: "",
+                                name = option.name ?: "",
+                                price = option.price ?: 0,
+                                isSoldOut = option.isSoldOut,
+                            )
+                        } ?: emptyList(),
                     )
                 } ?: emptyList(),
             )

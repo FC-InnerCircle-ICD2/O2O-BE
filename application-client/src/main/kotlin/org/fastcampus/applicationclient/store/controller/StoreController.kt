@@ -1,7 +1,9 @@
 package org.fastcampus.applicationclient.store.controller
 
+
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
+
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
 import org.fastcampus.applicationclient.store.service.StoreService
@@ -52,7 +54,7 @@ class StoreController(
     fun getMenusOptions(
         @PathVariable storeId: String,
         @PathVariable menuId: String,
-    ): APIResponseDTO<List<MenuOptionGroupsResponse>> {
+    ): APIResponseDTO<MenuResponse> {
         logger.info("Received request for menu options groups. storeId: $storeId menusId: $menuId")
         return try {
             val response = storeService.getMenusOptions(storeId, menuId)

@@ -13,6 +13,7 @@ import org.fastcampus.applicationclient.config.security.dto.request.JwtLoginRequ
 import org.fastcampus.applicationclient.config.security.dto.response.JwtLoginResponse
 import org.fastcampus.applicationclient.config.security.service.JwtService
 import org.fastcampus.applicationclient.config.security.util.JwtLoginResponseUtil
+import org.fastcampus.applicationclient.member.exception.MemberExceptionResult
 import org.fastcampus.member.code.Role
 import org.fastcampus.member.repository.MemberRepository
 import org.springframework.http.HttpStatus
@@ -34,7 +35,7 @@ class JwtAuthenticationFilter(
     private val secretKey: String,
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
     init {
-        setFilterProcessesUrl("/api/login")
+        setFilterProcessesUrl("/api/v1/auth/login")
     }
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
@@ -55,6 +56,7 @@ class JwtAuthenticationFilter(
 
             val role = Role.USER
             memberRepository.findByRoleAndSignname(role, requireNotNull(loginRequest.signname))
+                ?: throw InternalAuthenticationServiceException(MemberExceptionResult.NOT_FOUND_MEMBER.message)
 
             val authenticationToken = UsernamePasswordAuthenticationToken(
                 loginRequest.signname,
