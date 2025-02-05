@@ -62,5 +62,6 @@ jobs:
             echo "${{ secrets.ENV_PROPERTIES }}" > .env
             docker stop app-admin || true
             docker rm app-admin || true
+            docker rmi yong7317/application-admin:latest || true
             docker pull yong7317/application-admin:latest
             docker-compose up -d

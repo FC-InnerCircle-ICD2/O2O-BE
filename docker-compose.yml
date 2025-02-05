@@ -3,7 +3,7 @@ version: "3.8"
 services:
   store-mongo:
     container_name: store-mongo
-    image: brinst07/mongo-o2o:latest
+    image: yong7317/mongo-o2o:latest
     ports:
       - '27017:27017'
     networks:
