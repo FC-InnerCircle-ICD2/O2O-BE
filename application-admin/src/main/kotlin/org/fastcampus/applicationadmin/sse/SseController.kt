@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 class SseController(
     private val sseManager: SseManager,
 ) {
-    @GetMapping("/event-stream", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    @GetMapping("/v1/event-stream", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun connectSse(
         @AuthenticationPrincipal authMember: AuthMember,
     ): SseEmitter {
