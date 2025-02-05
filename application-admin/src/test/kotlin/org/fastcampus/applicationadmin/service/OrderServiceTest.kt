@@ -50,7 +50,7 @@ class OrderServiceTest {
     fun `should return orders by storeId and period`() {
         // given
         val storeId: String = UUID.randomUUID().toString()
-        val status = Order.Status.RECEIVE
+        val status = listOf(Order.ClientStatus.NEW)
         val startDate = LocalDate.of(2025, 1, 16)
         val endDate = LocalDate.of(2025, 1, 16)
         val page = 0
@@ -62,7 +62,7 @@ class OrderServiceTest {
         val orderMenuOptionGroup = createOrderMenuOptionGroupFixture(orderMenuId = requireNotNull(orderMenu.id))
         val orderMenuOption = createOrderMenuOptionFixture(orderMenuOptionGroupId = requireNotNull(orderMenuOptionGroup.id))
 
-        `when`(orderRepository.findByStoreIdAndStatusWithPeriod(storeId, status, startDate.atStartOfDay(), endDate.atTime(23, 59, 59), page, size))
+        `when`(orderRepository.findByStoreIdAndStatusesWithPeriod(storeId, status.map { it.toOrderStatus() }, startDate.atStartOfDay(), endDate.atTime(23, 59, 59), page, size))
             .thenReturn(OffSetBasedDTO(listOf(order), page, 0, 1, false))
         `when`(orderMenuRepository.findByOrderId(orderId = order.id))
             .thenReturn(listOf(orderMenu))
@@ -72,7 +72,7 @@ class OrderServiceTest {
             .thenReturn(listOf(orderMenuOption))
 
         // when
-        val result: OffSetBasedDTO<OrderInquiryResponse> = orderService.getOrdersByStoreIdAndStatusWithPeriod(userId, status, startDate, endDate, page, size)
+        val result: OffSetBasedDTO<OrderInquiryResponse> = orderService.getOrdersByStatusesWithPeriod(userId, status, startDate, endDate, page, size)
 
         // then
         expectThat {
@@ -83,7 +83,7 @@ class OrderServiceTest {
             expectThat(result.hasNext).isFalse()
         }
 
-        verify(orderRepository).findByStoreIdAndStatusWithPeriod(storeId, status, startDate.atStartOfDay(), endDate.atTime(23, 59, 59), page, size)
+        verify(orderRepository).findByStoreIdAndStatusesWithPeriod(storeId, status.map { it.toOrderStatus() }, startDate.atStartOfDay(), endDate.atTime(23, 59, 59), page, size)
         verify(orderMenuRepository).findByOrderId(orderId = order.id)
         verify(orderMenuOptionGroupRepository).findByOrderMenuId(orderMenuId = orderMenu.id!!)
         verify(orderMenuOptionRepository).findByOrderMenuOptionGroupId(orderMenuOptionGroupId = orderMenuOptionGroup.id!!)

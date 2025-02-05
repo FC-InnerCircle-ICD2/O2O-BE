@@ -32,9 +32,9 @@ class OrderService(
     }
 
     @Transactional(readOnly = true)
-    fun getOrdersByStoreIdAndStatusWithPeriod(
+    fun getOrdersByStatusesWithPeriod(
         ownerId: Long,
-        status: Order.Status,
+        status: List<Order.ClientStatus>,
         startDate: LocalDate,
         endDate: LocalDate,
         page: Int,
@@ -43,7 +43,16 @@ class OrderService(
         val storeId = storeRepository.findByOwnerId(ownerId.toString()) ?: throw OrderException.StoreNotFound(ownerId.toString())
         val startOfDay = startDate.atStartOfDay()
         val endOfDay = endDate.atTime(23, 59, 59)
-        val orders = orderRepository.findByStoreIdAndStatusWithPeriod(storeId, status, startOfDay, endOfDay, page, size)
+        val orders = orderRepository.findByStoreIdAndStatusesWithPeriod(
+            storeId,
+            status.map {
+                it.toOrderStatus()
+            },
+            startOfDay,
+            endOfDay,
+            page,
+            size,
+        )
 
         logger.info("order ids of inquiry result: {}", orders.content.joinToString(",") { it.id })
 

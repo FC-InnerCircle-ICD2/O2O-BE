@@ -11,9 +11,9 @@ import java.time.LocalDateTime
 interface OrderJpaRepository : JpaRepository<OrderJpaEntity, String> {
     fun findByUserId(userId: Long, pageable: Pageable): Page<OrderJpaEntity>
 
-    fun findByStoreIdAndStatusAndOrderTimeBetween(
+    fun findByStoreIdAndStatusInAndOrderTimeBetween(
         storeId: String,
-        status: Order.Status,
+        status: List<Order.Status>,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         pageable: Pageable,
