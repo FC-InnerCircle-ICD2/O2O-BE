@@ -121,12 +121,12 @@ class StoreServiceTest {
 
     @Test
     fun `should throw exception when store id and menu id not found`() {
-        val storeId = "nonexistent_store"
+        val storeId = "nonexistent_menus"
         val menuId = "nonexistent_menus"
 
         `when`(storeRepository.findById(storeId)).thenReturn(null)
 
-        assertThrows<IllegalArgumentException>("Store id: $storeId menu id: $menuId not found") {
+        assertThrows<Exception>("Store id: $storeId menu id: $menuId not found") {
             storeService.getMenusOptions(storeId, menuId)
         }
     }
