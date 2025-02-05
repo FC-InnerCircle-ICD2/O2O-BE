@@ -72,6 +72,8 @@ class OrderService(
             roadAddress = order.roadAddress,
             jibunAddress = order.jibunAddress,
             detailAddress = order.detailAddress,
+            excludingSpoonAndFork = order.excludingSpoonAndFork,
+            requestToRider = order.requestToRider,
             orderPrice = order.orderPrice,
             deliveryPrice = order.deliveryPrice,
             deliveryCompleteTime = order.deliveryCompleteTime,
