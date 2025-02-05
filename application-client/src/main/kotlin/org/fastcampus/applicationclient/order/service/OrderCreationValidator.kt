@@ -21,7 +21,7 @@ class OrderCreationValidator {
          */
         fun validate(storeEntity: Store, orderCreationRequest: OrderCreationRequest): Map<String, Menu> {
             val roadAddress = orderCreationRequest.roadAddress
-            val jubunAddress = orderCreationRequest.roadAddress
+            val jubunAddress = orderCreationRequest.jibunAddress
             if (StringUtils.isBlank(roadAddress) && StringUtils.isBlank(jubunAddress)) {
                 throw OrderException.AddressRequired()
             }
