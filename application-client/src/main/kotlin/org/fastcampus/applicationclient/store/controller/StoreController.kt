@@ -6,7 +6,6 @@ import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
-import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.store.redis.Coordinates
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -74,10 +73,8 @@ class StoreController(
     @GetMapping("/suggestion")
     fun getStoreSuggestion(
         @RequestParam(defaultValue = "") affix: String,
-        @RequestParam(defaultValue = "1") page: Int,
-        @RequestParam(defaultValue = "5") size: Int,
-    ): ResponseEntity<APIResponseDTO<CursorDTO<String>>> {
-        val response = storeService.getStoreSuggestions(affix, page, size)
+    ): ResponseEntity<APIResponseDTO<List<String>>> {
+        val response = storeService.getStoreSuggestions(affix)
         return ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", response))
     }
 

@@ -13,7 +13,7 @@ interface StoreRedisRepository {
 
     fun saveUserLocation(userKey: String, coordinates: Coordinates)
 
-    fun getSuggestions(affix: String, page: Int, size: Int): List<String>?
+    fun getSuggestions(affix: String): List<String>?
 
     fun addSearch(keyword: String)
 

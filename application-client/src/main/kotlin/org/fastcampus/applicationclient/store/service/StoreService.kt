@@ -12,8 +12,6 @@ import org.fastcampus.applicationclient.store.mapper.StoreMapper.toStoreInfo
 import org.fastcampus.applicationclient.store.mapper.calculateDeliveryTime
 import org.fastcampus.applicationclient.store.mapper.fetchDistance
 import org.fastcampus.applicationclient.store.mapper.fetchStoreCoordinates
-import org.fastcampus.applicationclient.store.utils.PaginationUtils.paginate
-import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.store.exception.StoreException
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
@@ -104,9 +102,8 @@ class StoreService(
     }
 
     @Transactional(readOnly = true)
-    fun getStoreSuggestions(affix: String, page: Int, size: Int): CursorDTO<String> {
-        val storeNameList = storeRedisRepository.getSuggestions(affix, page, size) ?: return CursorDTO(emptyList(), null)
-        return storeNameList.paginate(page, size)
+    fun getStoreSuggestions(affix: String): List<String> {
+        return storeRedisRepository.getSuggestions(affix)?.take(5) ?: return emptyList()
     }
 
     @Transactional(readOnly = true)
