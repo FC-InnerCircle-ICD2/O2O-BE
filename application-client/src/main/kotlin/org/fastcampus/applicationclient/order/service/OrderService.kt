@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.order.service
 
+import org.fastcampus.applicationclient.aop.OrderMetered
 import org.fastcampus.applicationclient.order.controller.dto.request.OrderCreationRequest
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderCreationResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderDetailResponse
@@ -37,6 +38,7 @@ class OrderService(
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
 ) {
     @Transactional(readOnly = true)
+    @OrderMetered
     fun getOrders(userId: Long, keyword: String, page: Int, size: Int): CursorDTO<OrderResponse> {
         val orders = orderRepository.findByUserIdExcludingWaitStatus(userId, if (page == 0) 0 else page, size)
         return CursorDTO(
@@ -59,6 +61,7 @@ class OrderService(
     }
 
     @Transactional(readOnly = true)
+    @OrderMetered
     fun getOrder(orderId: String): OrderDetailResponse {
         val order = requireNotNull(orderRepository.findById(orderId))
         val payment = requireNotNull(paymentRepository.findById(order.paymentId))
@@ -113,6 +116,7 @@ class OrderService(
     }
 
     @Transactional
+    @OrderMetered
     fun createOrder(userId: Long, orderCreationRequest: OrderCreationRequest): OrderCreationResponse {
         // 스토어 검색
         val storeEntity = (storeRepository.findById(orderCreationRequest.storeId))

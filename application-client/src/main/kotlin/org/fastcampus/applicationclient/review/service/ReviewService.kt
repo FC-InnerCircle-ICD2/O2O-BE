@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.review.service
 
+import org.fastcampus.applicationclient.aop.ReviewMetered
 import org.fastcampus.applicationclient.config.security.dto.AuthMember
 import org.fastcampus.applicationclient.review.controller.dto.ReviewCreateRequest
 import org.fastcampus.applicationclient.review.controller.dto.WritableReviewResponse
@@ -21,6 +22,7 @@ class ReviewService(
     private val storeRepository: StoreRepository,
 ) {
     @Transactional
+    @ReviewMetered
     fun addReview(dto: ReviewCreateRequest, imageFile: MultipartFile?, user: AuthMember) {
         reviewValidator.validate(dto, user.id)
 
@@ -34,6 +36,7 @@ class ReviewService(
     }
 
     @Transactional(readOnly = true)
+    @ReviewMetered
     fun findWritableReview(user: AuthMember, cursor: LocalDateTime, size: Int): TimeBasedCursorDTO<WritableReviewResponse> {
         val orders = orderRepository.findReviewableOrders(user.id, cursor)
         val orderIds = orders.map { it.id }
