@@ -241,22 +241,19 @@ class StoreServiceTest {
     fun `getStoreSuggestions should return paginated store suggestions`() {
         // given
         val affix = "치킨"
-        val page = 1
-        val size = 5
         val storeNameList = listOf(
             "림스치킨", "BHC치킨", "교촌치킨", "피자나라 치킨공주", "가마치통닭", "계동치킨",
-            "훌랄라차킨", "멕시카나치킨", "찬&찬치킨", "바른치킨", "치킨플러스", "처갓집 양념치킨",
+            "훌랄라치킨", "멕시카나치킨", "찬&찬치킨", "바른치킨", "치킨플러스", "처갓집 양념치킨",
         )
 
-        `when`(storeRedisRepository.getSuggestions(affix, page, size)).thenReturn(storeNameList)
+        `when`(storeRedisRepository.getSuggestions(affix)).thenReturn(storeNameList)
 
         // when
-        val result = storeService.getStoreSuggestions(affix, page, size)
+        val result = storeService.getStoreSuggestions(affix)
 
         // then
         expectThat(result) {
-            get { content }.hasSize(5)
-            get { nextCursor }.isEqualTo(2)
+            get { result }.hasSize(5)
         }
     }
 
