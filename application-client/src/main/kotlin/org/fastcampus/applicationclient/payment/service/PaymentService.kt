@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.payment.service
 
+import org.fastcampus.applicationclient.aop.OrderMetered
 import org.fastcampus.applicationclient.order.service.event.OrderNotificationEvent
 import org.fastcampus.applicationclient.payment.controller.dto.request.OrderPaymentApproveRequest
 import org.fastcampus.order.entity.Order
@@ -17,6 +18,7 @@ class PaymentService(
     private val eventPublisher: ApplicationEventPublisher,
 ) {
     @Transactional
+    @OrderMetered
     fun approveOrderPayment(userId: Long, request: OrderPaymentApproveRequest) {
         val order = orderRepository.findById(request.orderId)
             ?: throw PaymentException.OrderNotFound(request.orderId)

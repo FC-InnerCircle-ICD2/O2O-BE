@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.store.service
 
+import org.fastcampus.applicationclient.aop.StoreMetered
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionGroupsResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuOptionResponse
@@ -37,6 +38,7 @@ class StoreService(
     }
 
     @Transactional(readOnly = true)
+    @StoreMetered
     fun getStoreInfo(storeId: String, userCoordinates: Coordinates): StoreInfo =
         storeRepository.findById(storeId)?.run {
             val deliveryInfo = calculateDeliveryDetails(storeId, userCoordinates)
@@ -44,6 +46,7 @@ class StoreService(
         } ?: throw StoreException.StoreNotFoundException(storeId)
 
     @Transactional(readOnly = true)
+    @StoreMetered
     fun getCategories(storeId: String): List<CategoryResponse> =
         storeRepository.findById(storeId)?.storeMenuCategory?.map { it.toCategoryInfo() }
             ?: throw StoreException.StoreNotFoundException(storeId)
@@ -65,6 +68,7 @@ class StoreService(
     private fun getStoreCoordinates(storeId: String) = storeRepository.fetchStoreCoordinates(storeId, storeRedisRepository)
 
     @Transactional(readOnly = true)
+    @StoreMetered
     fun getMenusOptions(storeId: String, menuId: String): MenuResponse {
         val menuInfo = storeRepository.findById(storeId)
             ?.storeMenuCategory
@@ -104,12 +108,14 @@ class StoreService(
     }
 
     @Transactional(readOnly = true)
+    @StoreMetered
     fun getStoreSuggestions(affix: String, page: Int, size: Int): CursorDTO<String> {
         val storeNameList = storeRedisRepository.getSuggestions(affix, page, size) ?: return CursorDTO(emptyList(), null)
         return storeNameList.paginate(page, size)
     }
 
     @Transactional(readOnly = true)
+    @StoreMetered
     fun getTrendKeywords(): TrendKeywordsResponse? {
         val keywords = storeRedisRepository.getTrendKeywords()
         return keywords?.let {
@@ -127,6 +133,7 @@ class StoreService(
     }
 
     @Transactional
+    @StoreMetered
     fun search(keyword: String): Boolean {
         val storeNameExist = storeRedisRepository.existsByName(keyword)
         if (storeNameExist == true) { // 가게 이름이 검색어와 일치하는 가게가 있을 경우

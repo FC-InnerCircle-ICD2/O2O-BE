@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.member.service
 
+import org.fastcampus.applicationclient.aop.MemberMetered
 import org.fastcampus.applicationclient.config.security.dto.AuthMember
 import org.fastcampus.applicationclient.member.dto.request.MemberJoinRequest
 import org.fastcampus.applicationclient.member.dto.response.MemberInfoResponse
@@ -21,6 +22,7 @@ class MemberService(
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
 ) {
+    @MemberMetered
     fun join(memberJoinRequest: MemberJoinRequest): MemberJoinResponse {
         val role = Role.USER
         val createMember =
@@ -43,6 +45,7 @@ class MemberService(
         return MemberJoinResponse(savedMember?.id)
     }
 
+    @MemberMetered
     fun info(authMember: AuthMember): MemberInfoResponse? {
         val findMember = memberRepository.findById(authMember.id)
         return MemberInfoResponse(findMember.signname, findMember.nickname)
