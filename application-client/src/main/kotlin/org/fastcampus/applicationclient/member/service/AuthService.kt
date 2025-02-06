@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.member.service
 
+import org.fastcampus.applicationclient.aop.MemberMetered
 import org.fastcampus.applicationclient.config.security.dto.JwtDTO
 import org.fastcampus.applicationclient.config.security.dto.response.JwtLoginResponse
 import org.fastcampus.applicationclient.config.security.service.JwtService
@@ -20,6 +21,7 @@ class AuthService(
     @Value("\${security.secret.key}")
     private val secretKey: String,
 ) {
+    @MemberMetered
     fun refresh(authRefreshRequest: AuthRefreshRequest): JwtLoginResponse {
         val accessToken = authRefreshRequest.accessToken.replace(JwtDTO.TOKEN_PREFIX, "").trim()
         val refreshToken = authRefreshRequest.refreshToken.replace(JwtDTO.TOKEN_PREFIX, "").trim()
@@ -64,6 +66,7 @@ class AuthService(
         return JwtLoginResponse(createdAccessToken, createdRefreshToken, accessTokenExpiration, refreshTokenExpiration)
     }
 
+    @MemberMetered
     fun logout(authLogoutRequest: AuthLogoutRequest) {
         val accessToken = authLogoutRequest.accessToken.replace(JwtDTO.TOKEN_PREFIX, "").trim()
         val refreshToken = authLogoutRequest.refreshToken.replace(JwtDTO.TOKEN_PREFIX, "").trim()

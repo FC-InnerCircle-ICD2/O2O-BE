@@ -68,6 +68,73 @@ services:
 #      - store-redis
 #      - order-postgres
 
+  prometheus:
+    image: prom/prometheus:v2.53.3
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus-prod.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.listen-address=:9090'
+    restart: unless-stopped
+    networks:
+      - o2o-network
+
+  grafana:
+    image: grafana/grafana-oss:11.5.1
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+      - loki
+    restart: unless-stopped
+    networks:
+      - o2o-network
+
+  loki:
+    image: grafana/loki:3.3.2
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+    networks:
+      - o2o-network
+  promtail:
+    image: grafana/promtail:2.8.0
+    container_name: promtail
+    volumes:
+      - ./promtail/config.yml:/etc/promtail/config.yml
+      - /var/log:/var/log
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    restart: unless-stopped
+    networks:
+      - o2o-network
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+
 networks:
   o2o-network:
     driver: bridge
