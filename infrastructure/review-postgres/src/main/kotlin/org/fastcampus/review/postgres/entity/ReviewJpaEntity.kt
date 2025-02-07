@@ -73,4 +73,5 @@ fun ReviewJpaEntity.toModel() =
         deliveryQuality = this.deliveryQuality,
         adminUserId = this.adminUserId,
         adminReviewContent = this.adminReviewContent,
+        createdAt = this.createdAt,
     )

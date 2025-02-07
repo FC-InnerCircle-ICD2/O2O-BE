@@ -1,5 +1,6 @@
 package org.fastcampus.review.repository
 
+import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.review.entity.Review
 
 interface ReviewRepository {
@@ -7,5 +8,5 @@ interface ReviewRepository {
 
     fun findByOrderIdIn(orderIds: List<String>): List<Review>
 
-    fun findByUserId(memberId: Long): List<Review>
+    fun findByUserId(memberId: Long, page: Int, size: Int): CursorDTO<Review>
 }

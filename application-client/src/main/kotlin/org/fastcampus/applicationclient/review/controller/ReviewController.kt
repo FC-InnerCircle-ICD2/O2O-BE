@@ -7,6 +7,7 @@ import org.fastcampus.applicationclient.review.controller.dto.WritableReviewResp
 import org.fastcampus.applicationclient.review.controller.dto.WrittenReviewResponse
 import org.fastcampus.applicationclient.review.service.ReviewService
 import org.fastcampus.common.dto.APIResponseDTO
+import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.common.dto.TimeBasedCursorDTO
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -50,9 +51,9 @@ class ReviewController(
     @GetMapping
     fun getWrittenReview(
         @AuthenticationPrincipal user: AuthMember,
-        @RequestParam("cursor") cursor: LocalDateTime,
-        @RequestParam("size") size: Int,
-    ): APIResponseDTO<TimeBasedCursorDTO<WrittenReviewResponse>> {
-        return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, reviewService.findWrittenReview(user, cursor, size))
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "5") size: Int,
+    ): APIResponseDTO<CursorDTO<WrittenReviewResponse>> {
+        return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, reviewService.findWrittenReview(user, page - 1, size))
     }
 }
