@@ -43,13 +43,14 @@ class ClientExceptionHandler {
         val errors = ex.bindingResult.fieldErrors.associate { error ->
             error.field to (error.defaultMessage ?: "Invalid value")
         }
+        val firstErrorMessage = errors.values.firstOrNull() ?: "Invalid request"
 
         logger.error("Validation failed: $errors")
         return ResponseEntity.badRequest().body(
             APIResponseDTO(
                 HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.reasonPhrase,
-                errors,
+                firstErrorMessage,
+                null,
             ),
         )
     }
@@ -61,12 +62,13 @@ class ClientExceptionHandler {
         val enum = MemberExceptionResult.UNAUTHORIZED_ACCESS
         val httpStatus = enum.httpStatus
         val errors = mapOf("request" to enum.message)
+        val firstErrorMessage = errors.values.firstOrNull() ?: "Invalid request"
 
         return ResponseEntity.status(httpStatus).body(
             APIResponseDTO(
                 httpStatus.value(),
-                httpStatus.reasonPhrase,
-                errors,
+                firstErrorMessage,
+                null,
             ),
         )
     }
@@ -88,8 +90,7 @@ class ClientExceptionHandler {
         logger.error("handleOrderException: {}", exception.toString(), exception)
         val memberExceptionResult = exception.memberExceptionResult
         val httpStatus = memberExceptionResult.httpStatus
-        val errors = mapOf("error" to memberExceptionResult.message)
-        return ResponseEntity.status(httpStatus).body(APIResponseDTO(httpStatus.value(), httpStatus.reasonPhrase, errors))
+        return ResponseEntity.status(httpStatus).body(APIResponseDTO(httpStatus.value(), memberExceptionResult.message, null))
     }
 
     @ExceptionHandler(OrderException::class)
