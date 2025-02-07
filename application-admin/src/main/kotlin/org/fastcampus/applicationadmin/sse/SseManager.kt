@@ -9,16 +9,17 @@ import java.util.concurrent.ConcurrentHashMap
 class SseManager {
     fun manage(key: String, emitter: SseEmitter) {
         emitter.onError {
-            logger.error("SSE onError [{}]", key)
+            logger.error("SSE onError id: [{}], emitter: [{}]", key, emitter)
         }
         emitter.onTimeout {
-            logger.debug("SSE onTimeout [{}]", key)
+            logger.debug("SSE onTimeout id: [{}], emitter: [{}]", key, emitter)
         }
         emitter.onCompletion {
+            logger.debug("SSE onCompletion id: [{}], emitter: [{}]", key, emitter)
             val removeTarget = emitters[key]
             // 연속 요청으로 최신 세션이 저장되어 있을 때, 과거의 세션 종료가 최신 세션을 지우지 못하도록 함
             if (removeTarget == emitter) {
-                logger.debug("SSE onCompletion id: [{}], emitter: [{}]", key, removeTarget)
+                logger.debug("[{}] emitter 제거", removeTarget)
                 emitters.remove(key)
             }
         }
