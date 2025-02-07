@@ -78,7 +78,8 @@ class JwtAuthenticationFilter(
         }
 
         val errors = mapOf("error" to errorMessage)
-        JwtLoginResponseUtil.sendResponse(response, HttpStatus.BAD_REQUEST, errors)
+        val firstErrorMessage = errors.values.firstOrNull() ?: "Invalid request"
+        JwtLoginResponseUtil.sendErrorResponse(response, HttpStatus.BAD_REQUEST, firstErrorMessage)
     }
 
     override fun successfulAuthentication(

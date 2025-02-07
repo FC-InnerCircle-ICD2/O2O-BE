@@ -76,10 +76,10 @@ class JwtAuthorizationFilter(
     }
 
     private fun sendResponse(response: HttpServletResponse, exceptionEnum: MemberExceptionResult) {
-        JwtLoginResponseUtil.sendResponse(
+        JwtLoginResponseUtil.sendErrorResponse(
             response,
             exceptionEnum.httpStatus,
-            mapOf("error" to exceptionEnum.message),
+            exceptionEnum.message,
         )
     }
 }
