@@ -17,4 +17,8 @@ class ReviewRepositoryCustom(
     override fun findByOrderIdIn(orderIds: List<String>): List<Review> {
         return reviewJpaRepository.findByOrderIdIn(orderIds)
     }
+
+    override fun findByUserId(memberId: Long): List<Review> {
+        return reviewJpaRepository.findByUserId(memberId)
+    }
 }

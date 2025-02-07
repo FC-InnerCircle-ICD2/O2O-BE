@@ -80,18 +80,18 @@ Authorization: {{accessToken}}
 %}
 
 ### 리뷰 가능한 주문 조회 (Cursor 기반 페이징)
-GET http://localhost:8081/api/v1/review/writable?cursor=2025-02-02T14:00:00&size=10
+GET http://localhost:8081/api/v1/reviews/writable?cursor=2025-02-02T14:00:00&size=10
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 
 ### 리뷰 등록 (파일 + JSON 데이터 전송)
-POST http://localhost:8081/api/v1/review
+POST http://localhost:8081/api/v1/reviews
 Content-Type: multipart/form-data; boundary=boundary
 Authorization: Bearer {{accessToken}}
 
 --boundary
-Content-Disposition: form-data; name="review"
+Content-Disposition: form-data; name="reviews"
 Content-Type: application/json
 
 {
@@ -100,7 +100,7 @@ Content-Type: application/json
     "content": "The food was delicious and delivery was quick.",
     "totalScore": 5,
     "tasteScore": 5,
-    "quantityScore": 4,
+    "amountScore": 4,
     "deliveryQuality": "GOOD"
 }
 

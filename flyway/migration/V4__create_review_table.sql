@@ -7,7 +7,7 @@ CREATE TABLE reviews
     client_review_content    TEXT         NOT NULL,
     total_score              INT          NOT NULL CHECK (total_score BETWEEN 0 AND 5),
     taste_score              INT          NOT NULL CHECK (taste_score BETWEEN 0 AND 5),
-    quantity_score           INT          NOT NULL CHECK (quantity_score BETWEEN 0 AND 5),
+    amount_score             INT          NOT NULL CHECK (amount_score BETWEEN 0 AND 5),
     representative_image_uri VARCHAR(500),
     delivery_quality         VARCHAR(50) CHECK (delivery_quality IN ('GOOD', 'BAD')),
     admin_user_id            BIGINT,

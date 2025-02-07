@@ -1,5 +1,7 @@
 package org.fastcampus.review.entity
 
+import java.time.LocalDateTime
+
 class Review(
     val id: Long? = null,
     val orderId: String,
@@ -8,11 +10,12 @@ class Review(
     val clientReviewContent: String,
     val totalScore: Int,
     val tasteScore: Int,
-    val quantityScore: Int,
+    val amountScore: Int,
     val representativeImageUri: String? = null,
     val deliveryQuality: DeliveryQuality? = null,
     val adminUserId: Long? = null,
     val adminReviewContent: String? = null,
+    val createdAt: LocalDateTime? = null,
 ) {
     enum class DeliveryQuality(
         val code: String,

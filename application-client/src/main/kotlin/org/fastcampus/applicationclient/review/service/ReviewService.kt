@@ -1,9 +1,9 @@
 package org.fastcampus.applicationclient.review.service
 
-import org.fastcampus.applicationclient.aop.ReviewMetered
 import org.fastcampus.applicationclient.config.security.dto.AuthMember
 import org.fastcampus.applicationclient.review.controller.dto.ReviewCreateRequest
 import org.fastcampus.applicationclient.review.controller.dto.WritableReviewResponse
+import org.fastcampus.applicationclient.review.controller.dto.WrittenReviewResponse
 import org.fastcampus.common.dto.TimeBasedCursorDTO
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.review.repository.ReviewRepository
@@ -22,7 +22,6 @@ class ReviewService(
     private val storeRepository: StoreRepository,
 ) {
     @Transactional
-    @ReviewMetered
     fun addReview(dto: ReviewCreateRequest, imageFile: MultipartFile?, user: AuthMember) {
         reviewValidator.validate(dto, user.id)
 
@@ -36,7 +35,6 @@ class ReviewService(
     }
 
     @Transactional(readOnly = true)
-    @ReviewMetered
     fun findWritableReview(user: AuthMember, cursor: LocalDateTime, size: Int): TimeBasedCursorDTO<WritableReviewResponse> {
         val orders = orderRepository.findReviewableOrders(user.id, cursor)
         val orderIds = orders.map { it.id }
@@ -64,6 +62,38 @@ class ReviewService(
         return TimeBasedCursorDTO(
             content = response,
             if (response.isNotEmpty()) response.last().orderTime else null,
+        )
+    }
+
+    @Transactional(readOnly = true)
+    fun findWrittenReview(user: AuthMember, cursor: LocalDateTime, size: Int): TimeBasedCursorDTO<WrittenReviewResponse> {
+        val findReviews = reviewRepository.findByUserId(user.id)
+
+        val response = mutableListOf<WrittenReviewResponse>()
+        for (review in findReviews) {
+            val store = review.storeId.let { storeRepository.findById(it) }
+            if (store == null) continue
+            val order = review.orderId.let { orderRepository.findById(it) }
+            if (order == null) continue
+            response.add(
+                WrittenReviewResponse.of(
+                    store.id,
+                    store.name,
+                    requireNotNull(review.createdAt),
+                    requireNotNull(store.imageMain),
+                    requireNotNull(order.orderSummary),
+                    review.totalScore,
+                    review.tasteScore,
+                    review.amountScore,
+                    requireNotNull(review.representativeImageUri),
+                    review.clientReviewContent,
+                ),
+            )
+        }
+
+        return TimeBasedCursorDTO(
+            content = response,
+            if (response.isNotEmpty()) response.last().createTime else null,
         )
     }
 }

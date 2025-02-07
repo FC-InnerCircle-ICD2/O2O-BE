@@ -23,7 +23,7 @@ class ReviewValidator(
         }
 
         // 점수 범위 검증 (0~5점)
-        val scores = listOf(dto.totalScore, dto.tasteScore, dto.quantityScore)
+        val scores = listOf(dto.totalScore, dto.tasteScore, dto.amountScore)
         if (scores.any { it < 0 || it > 5 }) {
             throw ReviewException.InvalidScore(scores) // 점수가 범위를 벗어날 때 예외
         }

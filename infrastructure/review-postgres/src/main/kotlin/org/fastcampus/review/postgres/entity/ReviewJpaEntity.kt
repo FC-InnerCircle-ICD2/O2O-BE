@@ -30,8 +30,8 @@ class ReviewJpaEntity(
     val totalScore: Int,
     @Column(name = "TASTE_SCORE", nullable = false)
     val tasteScore: Int,
-    @Column(name = "QUANTITY_SCORE", nullable = false)
-    val quantityScore: Int,
+    @Column(name = "AMOUNT_SCORE", nullable = false)
+    val amountScore: Int,
     @Column(name = "REPRESENTATIVE_IMAGE_URI", nullable = true, length = 500)
     val representativeImageUri: String? = null,
     @Enumerated(EnumType.STRING)
@@ -52,7 +52,7 @@ fun Review.toJpaEntity() =
         clientReviewContent = this.clientReviewContent,
         totalScore = this.totalScore,
         tasteScore = this.tasteScore,
-        quantityScore = this.quantityScore,
+        amountScore = this.amountScore,
         representativeImageUri = this.representativeImageUri,
         deliveryQuality = this.deliveryQuality,
         adminUserId = this.adminUserId,
@@ -68,7 +68,7 @@ fun ReviewJpaEntity.toModel() =
         clientReviewContent = this.clientReviewContent,
         totalScore = this.totalScore,
         tasteScore = this.tasteScore,
-        quantityScore = this.quantityScore,
+        amountScore = this.amountScore,
         representativeImageUri = this.representativeImageUri,
         deliveryQuality = this.deliveryQuality,
         adminUserId = this.adminUserId,
