@@ -26,8 +26,7 @@ class ReviewImageUploader(
     fun upload(fullPath: String, imageFile: MultipartFile): String {
         this.validate(imageFile)
         val fileExtensionName = this.getFileExtension(imageFile.originalFilename ?: "")
-//        val imageFullPath = "$rootFolderName/$fullPath$fileExtensionName"
-        val imageFullPath = "$rootFolderName/$fullPath.$fileExtensionName" // 점 추가
+        val imageFullPath = "$rootFolderName/$fullPath.$fileExtensionName"
         val imageUri = "https://$bucketName.s3.amazonaws.com/$imageFullPath"
         try {
             imageFile.inputStream.use { inputStream ->
@@ -48,7 +47,6 @@ class ReviewImageUploader(
     private fun validate(file: MultipartFile) {
         require(!file.isEmpty) { "파일이 비어 있습니다." }
 
-//        require(file.size > maxFileSize) { "파일 크기는 10MB 이하만 허용됩니다." }
         require(file.size <= maxFileSize) { "파일 크기는 10MB 이하만 허용됩니다." }
 
         val originalFilename = file.originalFilename
@@ -59,18 +57,12 @@ class ReviewImageUploader(
             allowedExtensions.contains(fileExtension.lowercase(Locale.getDefault())),
         ) { "지원하지 않는 파일 형식입니다. (jpg, jpeg, png, gif 만 가능)" }
 
-//        val contentType = file.contentType
-//        require(!(contentType == null || !contentType.startsWith("image/"))) { "이미지 파일만 업로드할 수 있습니다." }
         val contentType = file.contentType ?: ""
         require(contentType.startsWith("image/") || allowedExtensions.contains(getFileExtension(file.originalFilename!!).lowercase())) {
             "이미지 파일만 업로드할 수 있습니다."
         }
     }
 
-//    private fun getFileExtension(fileName: String): String {
-//        val index = fileName.lastIndexOf('.')
-//        return if (index == -1) "" else fileName.substring(index)
-//    }
     private fun getFileExtension(fileName: String): String {
         val index = fileName.lastIndexOf('.')
         return if (index == -1) "" else fileName.substring(index + 1) // 점을 제외하고 반환
