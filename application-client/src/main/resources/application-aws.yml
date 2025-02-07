@@ -19,13 +19,13 @@ spring:
   cloud:
     aws:
       s3:
-        bucket: test-bucket
+        bucket: default-bucket
       stack:
         auto: false
       region.static: ap-northeast-2
       credentials:
-        accessKey: test-access-key
-        secretKey: test-secret-key
+        accessKey: default-access-key
+        secretKey: default-secret-key
 
 ---
 

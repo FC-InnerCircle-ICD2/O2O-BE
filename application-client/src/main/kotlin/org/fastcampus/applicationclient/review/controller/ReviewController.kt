@@ -4,8 +4,10 @@ import org.fastcampus.applicationclient.config.security.dto.AuthMember
 import org.fastcampus.applicationclient.config.security.dto.JwtAuthenticated
 import org.fastcampus.applicationclient.review.controller.dto.ReviewCreateRequest
 import org.fastcampus.applicationclient.review.controller.dto.WritableReviewResponse
+import org.fastcampus.applicationclient.review.controller.dto.WrittenReviewResponse
 import org.fastcampus.applicationclient.review.service.ReviewService
 import org.fastcampus.common.dto.APIResponseDTO
+import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.common.dto.TimeBasedCursorDTO
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -19,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 
 @RestController
-@RequestMapping("/api/v1/review")
+@RequestMapping("/api/v1/reviews")
 class ReviewController(
     private val reviewService: ReviewService,
 ) {
@@ -35,7 +37,7 @@ class ReviewController(
     }
 
     @JwtAuthenticated
-    @GetMapping("/writable")
+    @GetMapping("/reviewable")
     fun gerReviewableOrder(
         @AuthenticationPrincipal user: AuthMember,
         @RequestParam("cursor") cursor: LocalDateTime,
@@ -43,5 +45,15 @@ class ReviewController(
     ): APIResponseDTO<TimeBasedCursorDTO<WritableReviewResponse>> {
         val findWritableReviews = reviewService.findWritableReview(user, cursor, size)
         return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, findWritableReviews)
+    }
+
+    @JwtAuthenticated
+    @GetMapping
+    fun getWrittenReview(
+        @AuthenticationPrincipal user: AuthMember,
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "5") size: Int,
+    ): APIResponseDTO<CursorDTO<WrittenReviewResponse>> {
+        return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, reviewService.findWrittenReview(user, page - 1, size))
     }
 }

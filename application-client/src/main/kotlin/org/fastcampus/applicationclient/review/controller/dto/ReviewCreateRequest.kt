@@ -9,7 +9,7 @@ data class ReviewCreateRequest(
     val content: String,
     val totalScore: Int,
     val tasteScore: Int,
-    val quantityScore: Int,
+    val amountScore: Int,
     val deliveryQuality: DeliveryQuality? = null,
     var representativeImageUri: String? = null,
 ) {
@@ -21,7 +21,7 @@ data class ReviewCreateRequest(
             clientReviewContent = content,
             totalScore = totalScore,
             tasteScore = tasteScore,
-            quantityScore = quantityScore,
+            amountScore = amountScore,
             deliveryQuality = deliveryQuality,
             representativeImageUri = representativeImageUri,
         )

@@ -38,6 +38,7 @@ class RefundManager(
 
     private fun requestRefund(refund: Refund): Boolean {
         // TODO 결제 PG사 연동 관련으로 차후 결제 API 명세서가 나오면 작성 진행
+        log.info(refund.toString())
         return true
     }
 }
