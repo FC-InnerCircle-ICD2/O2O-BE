@@ -44,12 +44,14 @@ class ClientExceptionHandler {
             error.field to (error.defaultMessage ?: "Invalid value")
         }
 
+        val firstErrorMessage = errors.values.firstOrNull() ?: "Invalid request"
+
         logger.error("Validation failed: $errors")
         return ResponseEntity.badRequest().body(
             APIResponseDTO(
                 HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.reasonPhrase,
-                errors,
+                firstErrorMessage,
+                null,
             ),
         )
     }
