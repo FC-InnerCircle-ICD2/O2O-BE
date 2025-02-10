@@ -4,6 +4,7 @@ import org.fastcampus.applicationclient.store.controller.dto.response.CategoryIn
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
+import org.fastcampus.applicationclient.store.docs.StoreControllerDocs
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
@@ -28,13 +29,13 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/stores")
 class StoreController(
     private val storeService: StoreService,
-) {
+) : StoreControllerDocs {
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(StoreController::class.java)
     }
 
     @GetMapping("/{id}")
-    fun getStoreDetails(
+    override fun getStoreDetails(
         @PathVariable id: String,
         @RequestHeader("X-User-Lat") userLat: Double,
         @RequestHeader("X-User-Lng") userLng: Double,
@@ -49,7 +50,7 @@ class StoreController(
     }
 
     @GetMapping("/{storeId}/menus/{menuId}/options")
-    fun getMenusOptions(
+    override fun getMenusOptions(
         @PathVariable storeId: String,
         @PathVariable menuId: String,
     ): APIResponseDTO<MenuResponse> {
@@ -65,7 +66,7 @@ class StoreController(
     }
 
     @GetMapping("/{id}/menus")
-    fun getCategories(
+    override fun getCategories(
         @PathVariable id: String,
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "5") size: Int,
@@ -74,7 +75,7 @@ class StoreController(
     }
 
     @GetMapping("/suggestion")
-    fun getStoreSuggestion(
+    override fun getStoreSuggestion(
         @RequestParam(defaultValue = "") affix: String,
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "5") size: Int,
@@ -84,14 +85,14 @@ class StoreController(
     }
 
     @GetMapping("/trend")
-    fun getTrendKeywords(): ResponseEntity<APIResponseDTO<TrendKeywordsResponse>>? {
+    override fun getTrendKeywords(): ResponseEntity<APIResponseDTO<TrendKeywordsResponse>>? {
         val response = storeService.getTrendKeywords()
         logger.info("Successfully retrieved trend keywords: $response")
         return ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", response))
     }
 
     @PostMapping("/search")
-    fun search(
+    override fun search(
         @RequestBody keyword: String,
     ): ResponseEntity<APIResponseDTO<String>> {
         val addCount = storeService.search(keyword)
