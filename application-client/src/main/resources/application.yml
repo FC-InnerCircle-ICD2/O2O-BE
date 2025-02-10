@@ -1,14 +1,48 @@
+server:
+  port: 8081
+  servlet:
+    session:
+      cookie:
+        same-site: None
+        secure: true
+
 spring:
+  application:
+    name: application-client
   profiles:
     active: local
     include:
       - member-postgres
+      - member-redis
       - order-postgres
       - payment-postgres
       - store-mongo
       - store-redis
+      - aws
+
 logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   level:
     org.hibernate.SQL: trace
     org.hibernate.type.descriptor.sql.BasicBinder: trace
     org.fastcampus: debug
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  metrics:
+    enable:
+      hikaricp: true
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        hikaricp: true
+        http.server.requests: true
+      slo:
+        http.server.requests: 50ms, 100ms, 200ms

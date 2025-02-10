@@ -40,4 +40,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-/.idea/
+
+### env file ###
+application-client/.env

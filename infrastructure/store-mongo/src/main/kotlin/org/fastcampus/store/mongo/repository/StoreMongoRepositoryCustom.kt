@@ -3,6 +3,7 @@ package org.fastcampus.store.mongo.repository
 import org.fastcampus.store.entity.Store
 import org.fastcampus.store.entity.StoreWithDistance
 import org.fastcampus.store.mongo.document.StoreDocument
+import org.fastcampus.store.exception.StoreException
 import org.fastcampus.store.mongo.document.toModel
 import org.fastcampus.store.repository.StoreRepository
 import org.springframework.data.geo.Metrics
@@ -33,6 +34,11 @@ internal class StoreMongoRepositoryCustom(
 
         val result = mongoTemplate.findOne(query, OwnerIdProjection::class.java, "stores")
         return result?.ownerId
+    }
+
+    override fun findByOwnerId(ownerId: String): String? {
+        val store = storeMongoRepository.findByOwnerId(ownerId) ?: throw StoreException.StoreNotFoundException(ownerId)
+        return store.id
     }
 
     override fun findStoreNearbyAndCondition(

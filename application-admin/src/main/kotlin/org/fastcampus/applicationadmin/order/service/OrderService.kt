@@ -13,6 +13,7 @@ import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
 import org.fastcampus.order.repository.OrderRepository
+import org.fastcampus.store.repository.StoreRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,23 +25,34 @@ class OrderService(
     private val orderMenuRepository: OrderMenuRepository,
     private val orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository,
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
+    private val storeRepository: StoreRepository,
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(OrderService::class.java)
     }
 
     @Transactional(readOnly = true)
-    fun getOrdersByStoreIdAndStatusWithPeriod(
-        storeId: String,
-        status: Order.Status,
+    fun getOrdersByStatusesWithPeriod(
+        ownerId: Long,
+        status: List<Order.ClientStatus>,
         startDate: LocalDate,
         endDate: LocalDate,
         page: Int,
         size: Int,
     ): OffSetBasedDTO<OrderInquiryResponse> {
+        val storeId = storeRepository.findByOwnerId(ownerId.toString()) ?: throw OrderException.StoreNotFound(ownerId.toString())
         val startOfDay = startDate.atStartOfDay()
         val endOfDay = endDate.atTime(23, 59, 59)
-        val orders = orderRepository.findByStoreIdAndStatusWithPeriod(storeId, status, startOfDay, endOfDay, page, size)
+        val orders = orderRepository.findByStoreIdAndStatusesWithPeriod(
+            storeId,
+            status.map {
+                it.toOrderStatus()
+            },
+            startOfDay,
+            endOfDay,
+            page,
+            size,
+        )
 
         logger.info("order ids of inquiry result: {}", orders.content.joinToString(",") { it.id })
 
@@ -58,6 +70,12 @@ class OrderService(
     fun acceptOrder(orderId: String) {
         val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
         order.accept()
+        orderRepository.save(order)
+    }
+
+    fun refuseOrder(orderId: String) {
+        val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
+        order.refuse()
         orderRepository.save(order)
     }
 

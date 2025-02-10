@@ -12,7 +12,21 @@ object JwtLoginResponseUtil {
     fun sendResponse(response: HttpServletResponse, httpStatus: HttpStatus, body: Any) {
         try {
             val objectMapper = ObjectMapper()
-            val responseDto = APIResponseDTO(httpStatus.value(), null, body)
+            val responseDto = APIResponseDTO(httpStatus.value(), httpStatus.reasonPhrase, body)
+            val responseBody = objectMapper.writeValueAsString(responseDto)
+            response.contentType = "application/json; charset=utf-8"
+            response.status = httpStatus.value()
+            response.writer.println(responseBody)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            log.error("서버 파싱 에러")
+        }
+    }
+
+    fun sendErrorResponse(response: HttpServletResponse, httpStatus: HttpStatus, errorMessage: String) {
+        try {
+            val objectMapper = ObjectMapper()
+            val responseDto = APIResponseDTO(httpStatus.value(), errorMessage, null)
             val responseBody = objectMapper.writeValueAsString(responseDto)
             response.contentType = "application/json; charset=utf-8"
             response.status = httpStatus.value()

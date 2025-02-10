@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Repository
@@ -40,18 +41,18 @@ class OrderJpaRepositoryCustom(
         TODO("Not yet implemented")
     }
 
-    override fun findByUserId(userId: Long, page: Int, size: Int): CursorDTO<Order> {
+    override fun findByUserIdExcludingWaitStatus(userId: Long, page: Int, size: Int): CursorDTO<Order> {
         val pageable: Pageable = PageRequest.of(page, size, Sort.by("orderTime").descending())
-        val orderJpaEntities: Page<OrderJpaEntity> = orderJpaRepository.findByUserId(userId, pageable)
+        val orderJpaEntities: Page<OrderJpaEntity> = orderJpaRepository.findByUserIdAndStatusNot(userId, Order.Status.WAIT, pageable)
         return CursorDTO(
             content = orderJpaEntities.content.map { it.toModel() },
             nextCursor = if (orderJpaEntities.nextPageable().sort.isSorted) orderJpaEntities.nextPageable().pageNumber else null,
         )
     }
 
-    override fun findByStoreIdAndStatusWithPeriod(
+    override fun findByStoreIdAndStatusesWithPeriod(
         storeId: String,
-        status: Order.Status,
+        status: List<Order.Status>,
         startDateTime: LocalDateTime,
         endDateTime: LocalDateTime,
         page: Int,
@@ -59,7 +60,7 @@ class OrderJpaRepositoryCustom(
     ): OffSetBasedDTO<Order> {
         val pageable: Pageable = PageRequest.of(page, size, Sort.by("orderTime").descending())
         val orderJpaEntities: Page<Order> =
-            orderJpaRepository.findByStoreIdAndStatusAndOrderTimeBetween(
+            orderJpaRepository.findByStoreIdAndStatusInAndOrderTimeBetween(
                 storeId,
                 status,
                 startDateTime,
@@ -73,5 +74,14 @@ class OrderJpaRepositoryCustom(
             totalItems = orderJpaEntities.totalElements,
             hasNext = orderJpaEntities.hasNext(),
         )
+    }
+
+    override fun findReviewableOrders(userId: Long, cursor: LocalDateTime): List<Order> {
+        val today = LocalDateTime.now()
+        val threeDaysAgo = LocalDate.now().minusDays(3).atStartOfDay()
+        return orderJpaRepository.findByUserIdAndOrderTimeAfter(userId, cursor, today)
+            .filter { it.orderTime >= threeDaysAgo }
+            .map { it.toModel() }
+            .toList()
     }
 }

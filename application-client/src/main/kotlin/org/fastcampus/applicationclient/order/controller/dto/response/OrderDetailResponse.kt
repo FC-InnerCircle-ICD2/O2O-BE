@@ -4,6 +4,7 @@ import java.time.LocalDateTime
 
 data class OrderDetailResponse(
     val orderId: String,
+    val storeName: String,
     val status: Map<String, String>,
     val orderTime: LocalDateTime,
     val isDeleted: Boolean,
@@ -11,6 +12,8 @@ data class OrderDetailResponse(
     val roadAddress: String?,
     val jibunAddress: String?,
     val detailAddress: String?,
+    val excludingSpoonAndFork: Boolean,
+    val requestToRider: String?,
     val orderPrice: Long,
     val deliveryPrice: Long?,
     val deliveryCompleteTime: LocalDateTime?,

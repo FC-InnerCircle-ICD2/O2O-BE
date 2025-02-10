@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8082
 
 spring:
   profiles:
@@ -10,11 +10,11 @@ spring:
       - payment-postgres
       - store-mongo
       - store-redis
-  jpa:
-    open-in-view: false
 
 logging:
   level:
     org.hibernate.SQL: trace
     org.hibernate.type.descriptor.sql.BasicBinder: trace
     org.fastcampus: debug
+    org.springframework.data.mongodb.core: DEBUG
+    org.mongodb.driver: DEBUG

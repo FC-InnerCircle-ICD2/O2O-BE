@@ -9,4 +9,6 @@ interface StoreMongoRepository : MongoRepository<StoreDocument, ObjectId> {
     fun findByCategory(category: String): List<StoreDocument>
 
     fun findById(id: String): Optional<StoreDocument>?
+
+    fun findByOwnerId(ownerId: String): StoreDocument?
 }

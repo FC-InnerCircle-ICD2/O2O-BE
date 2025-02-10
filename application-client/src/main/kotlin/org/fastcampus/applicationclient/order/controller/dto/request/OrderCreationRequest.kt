@@ -5,9 +5,11 @@ import org.fastcampus.payment.entity.Payment
 
 data class OrderCreationRequest(
     val storeId: String,
-    val roadAddress: String,
-    val jibunAddress: String,
+    val roadAddress: String?,
+    val jibunAddress: String?,
     val detailAddress: String,
+    val excludingSpoonAndFork: Boolean? = true,
+    val requestToRider: String? = null,
     val orderType: Order.Type,
     val paymentType: Payment.Type,
     val orderMenus: List<OrderMenu>,

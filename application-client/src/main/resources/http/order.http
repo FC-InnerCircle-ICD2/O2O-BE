@@ -1,5 +1,5 @@
 ### 회원가입
-POST http://localhost:8080/api/v1/members/join
+POST http://localhost:8081/api/v1/members/join
 Content-Type: application/json
 
 {
@@ -11,7 +11,7 @@ Content-Type: application/json
 }
 
 ### 로그인
-POST http://localhost:8080/api/login
+POST http://localhost:8081/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -23,7 +23,7 @@ Content-Type: application/json
 %}
 
 ### 주문생성
-POST http://localhost:8080/api/v1/orders
+POST http://localhost:8081/api/v1/orders
 Content-Type: application/json
 Authorization: {{accessToken}}
 
@@ -79,7 +79,7 @@ Authorization: {{accessToken}}
 %}
 
 ### 결제승인
-POST http://localhost:8080/api/v1/payments/approve
+POST http://localhost:8081/api/v1/payments/approve
 Content-Type: application/json
 Authorization: {{accessToken}}
 
@@ -88,3 +88,8 @@ Authorization: {{accessToken}}
     "orderId": "{{orderId}}",
     "amount": {{totalPrice}}
 }
+
+### 주문취소
+PATCH http://localhost:8081/api/v1/orders/{{orderId}}/cancel
+Content-Type: application/json
+Authorization: {{accessToken}}

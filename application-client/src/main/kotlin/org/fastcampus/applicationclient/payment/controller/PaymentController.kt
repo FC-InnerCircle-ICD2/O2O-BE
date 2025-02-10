@@ -1,6 +1,7 @@
 package org.fastcampus.applicationclient.payment.controller
 
 import org.fastcampus.applicationclient.config.security.dto.AuthMember
+import org.fastcampus.applicationclient.config.security.dto.JwtAuthenticated
 import org.fastcampus.applicationclient.payment.controller.dto.request.OrderPaymentApproveRequest
 import org.fastcampus.applicationclient.payment.service.PaymentService
 import org.fastcampus.common.dto.APIResponseDTO
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 class PaymentController(
     private val paymentService: PaymentService,
 ) {
+    @JwtAuthenticated
     @PostMapping("/approve")
     fun approveOrderPayment(
         @RequestBody orderPaymentApproveRequest: OrderPaymentApproveRequest,

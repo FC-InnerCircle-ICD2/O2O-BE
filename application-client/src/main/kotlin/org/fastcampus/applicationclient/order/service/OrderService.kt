@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.order.service
 
+import org.fastcampus.applicationclient.aop.OrderMetered
 import org.fastcampus.applicationclient.order.controller.dto.request.OrderCreationRequest
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderCreationResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderDetailResponse
@@ -37,8 +38,9 @@ class OrderService(
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
 ) {
     @Transactional(readOnly = true)
+    @OrderMetered
     fun getOrders(userId: Long, keyword: String, page: Int, size: Int): CursorDTO<OrderResponse> {
-        val orders = orderRepository.findByUserId(userId, if (page == 0) 0 else page, size)
+        val orders = orderRepository.findByUserIdExcludingWaitStatus(userId, if (page == 0) 0 else page, size)
         return CursorDTO(
             content = orders.content.map { order ->
                 val store = storeRepository.findById(requireNotNull(order.storeId))
@@ -59,12 +61,15 @@ class OrderService(
     }
 
     @Transactional(readOnly = true)
+    @OrderMetered
     fun getOrder(orderId: String): OrderDetailResponse {
         val order = requireNotNull(orderRepository.findById(orderId))
         val payment = requireNotNull(paymentRepository.findById(order.paymentId))
         val orderMenus = orderMenuRepository.findByOrderId(order.id)
+        val storeName = storeRepository.findById(storeId = requireNotNull(order.storeId))?.name
         return OrderDetailResponse(
             orderId = order.id,
+            storeName = storeName ?: "",
             status = mapOf("code" to order.status.code, "desc" to order.status.desc),
             orderTime = order.orderTime,
             isDeleted = order.isDeleted,
@@ -72,6 +77,8 @@ class OrderService(
             roadAddress = order.roadAddress,
             jibunAddress = order.jibunAddress,
             detailAddress = order.detailAddress,
+            excludingSpoonAndFork = order.excludingSpoonAndFork,
+            requestToRider = order.requestToRider,
             orderPrice = order.orderPrice,
             deliveryPrice = order.deliveryPrice,
             deliveryCompleteTime = order.deliveryCompleteTime,
@@ -111,6 +118,7 @@ class OrderService(
     }
 
     @Transactional
+    @OrderMetered
     fun createOrder(userId: Long, orderCreationRequest: OrderCreationRequest): OrderCreationResponse {
         // 스토어 검색
         val storeEntity = (storeRepository.findById(orderCreationRequest.storeId))
@@ -147,6 +155,8 @@ class OrderService(
                 roadAddress = orderCreationRequest.roadAddress,
                 jibunAddress = orderCreationRequest.jibunAddress,
                 detailAddress = orderCreationRequest.detailAddress,
+                excludingSpoonAndFork = orderCreationRequest.excludingSpoonAndFork ?: true,
+                requestToRider = orderCreationRequest.requestToRider,
                 tel = "010-1234-5678",
                 status = Order.Status.WAIT,
                 orderTime = LocalDateTime.now(),
