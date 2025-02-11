@@ -77,10 +77,9 @@ class OrderJpaRepositoryCustom(
     }
 
     override fun findReviewableOrders(userId: Long, cursor: LocalDateTime): List<Order> {
-        val today = LocalDateTime.now()
+        // 리뷰는 주문 후 3일까지 가능
         val threeDaysAgo = LocalDate.now().minusDays(3).atStartOfDay()
-        return orderJpaRepository.findByUserIdAndOrderTimeAfter(userId, cursor, today)
-            .filter { it.orderTime >= threeDaysAgo }
+        return orderJpaRepository.findByUserIdAndOrderTimeAfterWithCursor(userId, threeDaysAgo, cursor)
             .map { it.toModel() }
             .toList()
     }

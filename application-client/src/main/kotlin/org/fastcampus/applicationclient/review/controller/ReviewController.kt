@@ -2,6 +2,7 @@ package org.fastcampus.applicationclient.review.controller
 
 import org.fastcampus.applicationclient.config.security.dto.AuthMember
 import org.fastcampus.applicationclient.config.security.dto.JwtAuthenticated
+import org.fastcampus.applicationclient.review.controller.docs.ReviewControllerDocs
 import org.fastcampus.applicationclient.review.controller.dto.ReviewCreateRequest
 import org.fastcampus.applicationclient.review.controller.dto.WritableReviewResponse
 import org.fastcampus.applicationclient.review.controller.dto.WrittenReviewResponse
@@ -22,12 +23,12 @@ import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/api/v1/reviews")
-class ReviewController(
+class ReviewController (
     private val reviewService: ReviewService,
-) {
+): ReviewControllerDocs {
     @JwtAuthenticated
     @PostMapping
-    fun createReview(
+    override fun createReview(
         @RequestPart("review") dto: ReviewCreateRequest,
         @RequestPart("image", required = false) imageFile: MultipartFile?,
         @AuthenticationPrincipal user: AuthMember,
@@ -37,7 +38,7 @@ class ReviewController(
     }
 
     @JwtAuthenticated
-    @GetMapping("/reviewable")
+    @GetMapping("/writable")
     fun gerReviewableOrder(
         @AuthenticationPrincipal user: AuthMember,
         @RequestParam("cursor") cursor: LocalDateTime,

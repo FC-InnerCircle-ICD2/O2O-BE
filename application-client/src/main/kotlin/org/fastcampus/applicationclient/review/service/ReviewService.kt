@@ -40,29 +40,29 @@ class ReviewService(
         val orders = orderRepository.findReviewableOrders(user.id, cursor)
         val orderIds = orders.map { it.id }
         val reviewedOrderIds = reviewRepository.findByOrderIdIn(orderIds).map { it.orderId }.toSet()
-        val writableOrders = orders
+        val reviewableOrders = orders
             .filter { it.id !in reviewedOrderIds }
             .sortedByDescending { it.orderTime }
             .take(size)
 
         val response = mutableListOf<WritableReviewResponse>()
-        for (writableOrder in writableOrders) {
-            val store = writableOrder.storeId?.let { storeRepository.findById(it) }
+        for (reviewableOrder in reviewableOrders) {
+            val store = reviewableOrder.storeId?.let { storeRepository.findById(it) }
             if (store == null) continue
             response.add(
                 WritableReviewResponse.of(
                     store.id,
                     store.name,
-                    writableOrder.id,
-                    writableOrder.orderSummary,
-                    writableOrder.orderTime,
+                    reviewableOrder.id,
+                    reviewableOrder.orderSummary,
+                    reviewableOrder.orderTime,
                 ),
             )
         }
 
         return TimeBasedCursorDTO(
             content = response,
-            if (response.isNotEmpty()) response.last().orderTime else null,
+            nextCursor = if (response.isNotEmpty()) response.last().orderTime else null,
         )
     }
 
