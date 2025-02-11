@@ -8,7 +8,6 @@ import org.fastcampus.applicationadmin.config.security.dto.JwtDTO
 import org.fastcampus.applicationadmin.config.security.service.JwtService
 import org.fastcampus.applicationadmin.config.security.util.JwtLoginResponseUtil
 import org.fastcampus.applicationadmin.member.exception.MemberExceptionResult
-import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -40,7 +39,11 @@ class JwtAuthorizationFilter(
 
         // token 만료 검증
         if (jwtService.isTokenExpired(token, secretKey)) {
-            JwtLoginResponseUtil.sendResponse(response, HttpStatus.UNAUTHORIZED, mapOf("error" to "토큰이 만료되었습니다."))
+            JwtLoginResponseUtil.sendResponse(
+                response,
+                MemberExceptionResult.TOKEN_EXPIRED.httpStatus,
+                mapOf("error" to MemberExceptionResult.TOKEN_EXPIRED.message),
+            )
             return
         }
 
