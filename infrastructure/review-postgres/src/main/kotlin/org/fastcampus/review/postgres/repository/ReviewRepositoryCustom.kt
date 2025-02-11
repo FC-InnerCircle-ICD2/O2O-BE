@@ -19,7 +19,7 @@ class ReviewRepositoryCustom(
     }
 
     override fun findByOrderIdIn(orderIds: List<String>): List<Review> {
-        return reviewJpaRepository.findByOrderIdIn(orderIds)
+        return reviewJpaRepository.findByOrderIdIn(orderIds).map { it.toModel() }
     }
 
     override fun findByUserId(memberId: Long, page: Int, size: Int): CursorDTO<Review> {

@@ -11,9 +11,8 @@ data class ReviewCreateRequest(
     val tasteScore: Int,
     val amountScore: Int,
     val deliveryQuality: DeliveryQuality? = null,
-    var representativeImageUri: String? = null,
 ) {
-    fun toModel(userId: Long): Review {
+    fun toModel(userId: Long, imageUri: String? = null): Review {
         return Review(
             orderId = orderId,
             userId = userId,
@@ -23,7 +22,7 @@ data class ReviewCreateRequest(
             tasteScore = tasteScore,
             amountScore = amountScore,
             deliveryQuality = deliveryQuality,
-            representativeImageUri = representativeImageUri,
+            representativeImageUri = imageUri,
         )
     }
 }

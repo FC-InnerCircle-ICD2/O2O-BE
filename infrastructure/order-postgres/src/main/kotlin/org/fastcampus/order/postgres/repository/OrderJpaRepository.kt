@@ -21,12 +21,11 @@ interface OrderJpaRepository : JpaRepository<OrderJpaEntity, String> {
 
     @Query(
         """
-    SELECT o FROM OrderJpaEntity o
-    WHERE o.userId = :userId
-    AND o.orderTime > :cursor
-    AND o.orderTime <= :today
-    ORDER BY o.orderTime DESC
-""",
+        SELECT o FROM OrderJpaEntity o
+        WHERE o.userId = :userId
+        AND o.orderTime >= :orderTime
+        AND o.orderTime < :cursor
+    """,
     )
-    fun findByUserIdAndOrderTimeAfter(userId: Long, cursor: LocalDateTime, today: LocalDateTime): List<OrderJpaEntity>
+    fun findByUserIdAndOrderTimeAfterWithCursor(userId: Long, orderTime: LocalDateTime, cursor: LocalDateTime): List<OrderJpaEntity>
 }
