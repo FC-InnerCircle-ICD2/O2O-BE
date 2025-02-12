@@ -5,6 +5,8 @@ import org.fastcampus.applicationadmin.order.controller.dto.OrderMenuInquiryResp
 import org.fastcampus.applicationadmin.order.controller.dto.OrderMenuOptionGroupInquiryResponse
 import org.fastcampus.applicationadmin.order.controller.dto.OrderMenuOptionInquiryResponse
 import org.fastcampus.common.dto.OffSetBasedDTO
+import org.fastcampus.member.entity.Member
+import org.fastcampus.member.repository.MemberRepository
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOptionGroup
@@ -26,6 +28,7 @@ class OrderService(
     private val orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository,
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
     private val storeRepository: StoreRepository,
+    private val memberRepository: MemberRepository,
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(OrderService::class.java)
@@ -35,14 +38,14 @@ class OrderService(
     fun getOrdersByStatusesWithPeriod(
         ownerId: Long,
         status: List<Order.ClientStatus>,
-        startDate: LocalDate,
-        endDate: LocalDate,
+        startDate: LocalDate?,
+        endDate: LocalDate?,
         page: Int,
         size: Int,
     ): OffSetBasedDTO<OrderInquiryResponse> {
         val storeId = storeRepository.findByOwnerId(ownerId.toString()) ?: throw OrderException.StoreNotFound(ownerId.toString())
-        val startOfDay = startDate.atStartOfDay()
-        val endOfDay = endDate.atTime(23, 59, 59)
+        val startOfDay = startDate?.atStartOfDay()
+        val endOfDay = endDate?.atTime(23, 59, 59)
         val orders = orderRepository.findByStoreIdAndStatusesWithPeriod(
             storeId,
             status.map {
@@ -81,9 +84,10 @@ class OrderService(
 
     private fun convertIntoOrderInquiryResponse(order: Order): OrderInquiryResponse {
         val orderMenus: List<OrderMenu> = orderMenuRepository.findByOrderId(order.id)
+        val user: Member? = order.userId?.let { memberRepository.findById(it) }
         val orderMenuInquiryResponses: List<OrderMenuInquiryResponse> =
             orderMenus.map { orderMenu -> this.convertIntoOrderMenuInquiryResponse(orderMenu) }
-        return OrderInquiryResponse.from(order, orderMenuInquiryResponses)
+        return OrderInquiryResponse.from(order, orderMenuInquiryResponses, user)
     }
 
     private fun convertIntoOrderMenuInquiryResponse(orderMenu: OrderMenu): OrderMenuInquiryResponse {

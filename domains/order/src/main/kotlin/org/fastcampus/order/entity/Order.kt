@@ -68,6 +68,7 @@ data class Order(
                 RECEIVE -> ClientStatus.NEW
                 ACCEPT -> ClientStatus.ONGOING
                 COMPLETED -> ClientStatus.DONE
+                CANCEL -> ClientStatus.CANCEL
                 else -> throw IllegalArgumentException("Unknown status $this")
             }
         }
@@ -80,6 +81,7 @@ data class Order(
         NEW("C1", "신규"),
         ONGOING("C2", "진행중"),
         DONE("C3", "완료"),
+        CANCEL("C4", "취소"),
         ;
 
         fun toOrderStatus(): Status {
@@ -87,6 +89,7 @@ data class Order(
                 NEW -> Status.RECEIVE
                 ONGOING -> Status.ACCEPT
                 DONE -> Status.COMPLETED
+                CANCEL -> Status.CANCEL
             }
         }
     }

@@ -5,20 +5,13 @@ import org.fastcampus.order.postgres.entity.OrderJpaEntity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import java.time.LocalDateTime
 
-interface OrderJpaRepository : JpaRepository<OrderJpaEntity, String> {
+interface OrderJpaRepository : JpaRepository<OrderJpaEntity, String>, JpaSpecificationExecutor<OrderJpaEntity> {
     fun findByUserIdAndStatusNot(userId: Long, status: Order.Status, pageable: Pageable): Page<OrderJpaEntity>
-
-    fun findByStoreIdAndStatusInAndOrderTimeBetween(
-        storeId: String,
-        status: List<Order.Status>,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime,
-        pageable: Pageable,
-    ): Page<OrderJpaEntity>
-
+    
     @Query(
         """
         SELECT o FROM OrderJpaEntity o

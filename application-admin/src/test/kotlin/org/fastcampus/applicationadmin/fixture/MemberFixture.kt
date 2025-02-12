@@ -1,6 +1,6 @@
-package org.fastcampus.applicationclient.fixture
+package org.fastcampus.applicationadmin.fixture
 
-import org.fastcampus.applicationclient.config.security.dto.AuthMember
+import org.fastcampus.applicationadmin.config.security.dto.AuthMember
 import org.fastcampus.member.code.MemberState
 import org.fastcampus.member.code.Role
 import org.fastcampus.member.entity.Member
