@@ -11,6 +11,7 @@ import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.common.dto.TimeBasedCursorDTO
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -23,11 +24,11 @@ import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/api/v1/reviews")
-class ReviewController (
+class ReviewController(
     private val reviewService: ReviewService,
-): ReviewControllerDocs {
+) : ReviewControllerDocs {
     @JwtAuthenticated
-    @PostMapping
+    @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     override fun createReview(
         @RequestPart("review") dto: ReviewCreateRequest,
         @RequestPart("image", required = false) imageFile: MultipartFile?,

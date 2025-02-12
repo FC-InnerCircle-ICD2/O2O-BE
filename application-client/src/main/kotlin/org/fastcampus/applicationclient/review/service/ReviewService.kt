@@ -26,13 +26,14 @@ class ReviewService(
     fun addReview(dto: ReviewCreateRequest, imageFile: MultipartFile?, user: AuthMember) {
         reviewValidator.validate(dto, user.id)
 
+        // 이미지 파일이 존재한다면 S3에 이미지를 전달 후, uri를 받아옴
+        var imageUri: String? = null
         if (imageFile != null) {
             val imageFullPath = dto.storeId + "/" + dto.orderId
-            val imageUri = reviewImageUploader.upload(imageFullPath, imageFile)
-            dto.representativeImageUri = imageUri
+            imageUri = reviewImageUploader.upload(imageFullPath, imageFile)
         }
 
-        reviewRepository.save(dto.toModel(user.id))
+        reviewRepository.save(dto.toModel(user.id, imageUri))
     }
 
     @Transactional(readOnly = true)
