@@ -16,6 +16,7 @@ class Review(
     val adminUserId: Long? = null,
     val adminReviewContent: String? = null,
     val createdAt: LocalDateTime? = null,
+    val updatedAt: LocalDateTime? = null,
 ) {
     enum class DeliveryQuality(
         val code: String,
