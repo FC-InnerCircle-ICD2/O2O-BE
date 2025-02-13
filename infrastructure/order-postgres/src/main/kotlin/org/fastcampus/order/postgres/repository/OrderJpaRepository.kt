@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 interface OrderJpaRepository : JpaRepository<OrderJpaEntity, String>, JpaSpecificationExecutor<OrderJpaEntity> {
     fun findByUserIdAndStatusNot(userId: Long, status: Order.Status, pageable: Pageable): Page<OrderJpaEntity>
-    
+
     @Query(
         """
         SELECT o FROM OrderJpaEntity o

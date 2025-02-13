@@ -70,15 +70,36 @@ class OrderService(
         )
     }
 
-    fun acceptOrder(orderId: String) {
+    fun acceptOrder(orderId: String, ownerId: Long) {
         val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
+        val store = order.storeId?.let { storeRepository.findById(it) } ?: throw OrderException.StoreNotFound(order.storeId.toString())
+
+        if (ownerId.toString() != store.ownerId) {
+            throw OrderException.OrderCanNotAccept(orderId)
+        }
         order.accept()
         orderRepository.save(order)
     }
 
-    fun refuseOrder(orderId: String) {
+    fun refuseOrder(orderId: String, ownerId: Long) {
         val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
+        val store = order.storeId?.let { storeRepository.findById(it) } ?: throw OrderException.StoreNotFound(order.storeId.toString())
+
+        if (ownerId.toString() != store.ownerId) {
+            throw OrderException.OrderCanNotRefuse(orderId)
+        }
         order.refuse()
+        orderRepository.save(order)
+    }
+
+    fun completeOrder(orderId: String, ownerId: Long) {
+        val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
+        val store = order.storeId?.let { storeRepository.findById(it) } ?: throw OrderException.StoreNotFound(order.storeId.toString())
+
+        if (ownerId.toString() != store.ownerId) {
+            throw OrderException.OrderCanNotComplete(orderId)
+        }
+        order.complete()
         orderRepository.save(order)
     }
 

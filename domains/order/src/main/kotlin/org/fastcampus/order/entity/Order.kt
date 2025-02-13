@@ -30,13 +30,14 @@ data class Order(
 ) {
     fun accept() {
         // 주문접수상태만 주문수락가능
-        if (!this.status.equals(Status.RECEIVE)) {
+        if (this.status != Status.RECEIVE) {
             throw OrderException.OrderCanNotAccept(this.id)
         }
         this.status = Status.ACCEPT
     }
 
     fun cancel() {
+        // 주문접수상태만 주문취소가능
         if (this.status != Status.RECEIVE) {
             throw OrderException.OrderCanNotCancelled(this.id)
         }
@@ -45,8 +46,16 @@ data class Order(
 
     fun refuse() {
         // 주문접수상태만 주문거절가능
-        if (!this.status.equals(Status.RECEIVE)) {
-            throw OrderException.OrderCanNotAccept(this.id)
+        if (this.status != Status.RECEIVE) {
+            throw OrderException.OrderCanNotRefuse(this.id)
+        }
+        this.status = Status.REFUSE
+    }
+
+    fun complete() {
+        // 주문수락상태에서 주문완료가능
+        if (this.status != Status.ACCEPT) {
+            throw OrderException.OrderCanNotComplete(this.id)
         }
         this.status = Status.REFUSE
     }
