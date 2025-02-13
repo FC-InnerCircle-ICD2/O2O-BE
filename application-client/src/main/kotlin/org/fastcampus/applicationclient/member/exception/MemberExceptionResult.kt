@@ -11,4 +11,6 @@ enum class MemberExceptionResult(val httpStatus: HttpStatus, val message: String
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
     NOT_FOUND_MEMBER(HttpStatus.BAD_REQUEST, "가입된 아이디를 찾을 수 없습니다."),
     DUPLICATE_MEMBER(HttpStatus.BAD_REQUEST, "이미 가입된 계정이 존재합니다."),
+    DUPLICATE_MEMBER_ADDRESS_TYPE(HttpStatus.BAD_REQUEST, "이미 등록된 타입이 존재합니다."),
+    EXCEEDED_REGISTRABLE_ADDRESS_TYPE(HttpStatus.BAD_REQUEST, "등록할 수 있는 타입이 초과되었습니다."),
 }
