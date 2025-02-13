@@ -32,6 +32,22 @@ object StoreMapper {
             phone = tel ?: "unknown",
         )
 
+    fun Store.toStoreInfo(distance: Double): StoreInfo =
+        StoreInfo(
+            id = id ?: "unknown",
+            name = name ?: "unknown",
+            imageMain = imageMain ?: "unknown",
+            rating = 3.8,
+            reviewCount = 3000,
+            deliveryTime = distance.calculateDeliveryTime().toString(),
+            deliveryDistance = distance,
+            freeDelivery = true,
+            address = address ?: "unknown",
+            latitude = latitude ?: 0.0,
+            longitude = longitude ?: 0.0,
+            phone = tel ?: "unknown",
+        )
+
     private fun Menu.toMenuResponse(): MenuOptionInfo {
         return MenuOptionInfo(
             id = this.id ?: "unknown",

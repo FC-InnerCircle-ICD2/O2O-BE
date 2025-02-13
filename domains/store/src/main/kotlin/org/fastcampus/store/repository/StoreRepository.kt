@@ -23,5 +23,5 @@ interface StoreRepository {
         searchName: String?,
         page: Int,
         size: Int,
-    ): Pair<List<StoreWithDistance>, Boolean>
+    ): Pair<List<StoreWithDistance>, Int?>
 }
