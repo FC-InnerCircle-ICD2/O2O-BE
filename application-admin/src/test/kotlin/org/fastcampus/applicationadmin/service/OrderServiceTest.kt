@@ -1,10 +1,12 @@
 package org.fastcampus.applicationadmin.service
 
+import org.fastcampus.applicationadmin.fixture.createAuthMember
 import org.fastcampus.applicationadmin.fixture.createMember
 import org.fastcampus.applicationadmin.fixture.createOrderFixture
 import org.fastcampus.applicationadmin.fixture.createOrderMenuFixture
 import org.fastcampus.applicationadmin.fixture.createOrderMenuOptionFixture
 import org.fastcampus.applicationadmin.fixture.createOrderMenuOptionGroupFixture
+import org.fastcampus.applicationadmin.fixture.createStore
 import org.fastcampus.applicationadmin.order.controller.dto.OrderInquiryResponse
 import org.fastcampus.applicationadmin.order.service.OrderService
 import org.fastcampus.common.dto.OffSetBasedDTO
@@ -100,16 +102,20 @@ class OrderServiceTest {
     @Test
     fun `must change order status to accept when admin accept order`() {
         // given
-        val order = createOrderFixture().copy(status = Order.Status.RECEIVE)
+        val owner = createAuthMember()
+        val store = createStore(ownerId = owner.id.toString())
+        val order = createOrderFixture().copy(status = Order.Status.RECEIVE, storeId = store.id)
 
         `when`(orderRepository.findById(order.id)).thenReturn(order)
+        `when`(storeRepository.findById(order.storeId!!)).thenReturn(store)
         `when`(orderRepository.save(order)).thenReturn(order)
 
         // when
-        orderService.acceptOrder(order.id)
+        orderService.acceptOrder(order.id, owner.id)
 
         // then
         verify(orderRepository).findById(order.id)
+        verify(storeRepository).findById(order.storeId!!)
         verify(orderRepository).save(order)
         expectThat(order.status).isEqualTo(Order.Status.ACCEPT)
     }
@@ -117,18 +123,22 @@ class OrderServiceTest {
     @Test
     fun `must throw exception when admin try to accept order witch has not receive status`() {
         // given
+        val owner = createAuthMember()
+        val store = createStore(ownerId = owner.id.toString())
         val order = createOrderFixture().copy(status = Order.Status.CANCEL)
 
         `when`(orderRepository.findById(order.id)).thenReturn(order)
+        `when`(storeRepository.findById(order.storeId!!)).thenReturn(store)
 
         // when & then
         expectThrows<OrderException.OrderCanNotAccept> {
-            orderService.acceptOrder(order.id)
+            orderService.acceptOrder(order.id, owner.id)
         }.and {
             get { orderId }.isEqualTo(order.id)
             get { message }.isEqualTo("주문 수락이 불가능한 주문입니다.")
         }
         verify(orderRepository).findById(order.id)
+        verify(storeRepository).findById(order.storeId!!)
         verify(orderRepository, never()).save(order)
     }
 }
