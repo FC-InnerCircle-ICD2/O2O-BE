@@ -35,13 +35,13 @@ class MemberAddressJpaEntity(
     @Column(name = "JIBUN_ADDRESS", nullable = false)
     val jibunAddress: String = "",
     @Column(name = "DETAIL_ADDRESS")
-    val detailAddress: String = "",
+    val detailAddress: String? = "",
     @Column(name = "LATITUDE")
     val latitude: Double,
     @Column(name = "LONGITUDE")
     val longitude: Double,
     @Column(name = "ALIAS")
-    val alias: String = "",
+    val alias: String? = "",
     @Column(name = "IS_DELETED")
     val isDeleted: Boolean,
 ) : BaseEntity()
@@ -68,8 +68,9 @@ fun MemberAddressJpaEntity.toModel() =
         roadAddress,
         jibunAddress,
         detailAddress,
+        alias,
         latitude,
         longitude,
-        alias,
         isDeleted,
+        updatedAt,
     )
