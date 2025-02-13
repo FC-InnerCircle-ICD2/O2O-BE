@@ -24,8 +24,8 @@ interface OrderRepository {
     fun findByStoreIdAndStatusesWithPeriod(
         storeId: String,
         status: List<Order.Status>,
-        startDateTime: LocalDateTime,
-        endDateTime: LocalDateTime,
+        startDateTime: LocalDateTime?,
+        endDateTime: LocalDateTime?,
         page: Int,
         size: Int,
     ): OffSetBasedDTO<Order>

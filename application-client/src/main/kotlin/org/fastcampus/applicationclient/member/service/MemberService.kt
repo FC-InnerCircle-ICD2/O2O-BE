@@ -2,7 +2,10 @@ package org.fastcampus.applicationclient.member.service
 
 import org.fastcampus.applicationclient.aop.MemberMetered
 import org.fastcampus.applicationclient.config.security.dto.AuthMember
+import org.fastcampus.applicationclient.member.dto.request.MemberAddressCreateRequest
 import org.fastcampus.applicationclient.member.dto.request.MemberJoinRequest
+import org.fastcampus.applicationclient.member.dto.response.MemberAddressCreateResponse
+import org.fastcampus.applicationclient.member.dto.response.MemberAddressResponse
 import org.fastcampus.applicationclient.member.dto.response.MemberInfoResponse
 import org.fastcampus.applicationclient.member.dto.response.MemberJoinResponse
 import org.fastcampus.applicationclient.member.exception.MemberException
@@ -10,6 +13,8 @@ import org.fastcampus.applicationclient.member.exception.MemberExceptionResult
 import org.fastcampus.member.code.MemberState
 import org.fastcampus.member.code.Role
 import org.fastcampus.member.entity.Member
+import org.fastcampus.member.entity.MemberAddress
+import org.fastcampus.member.repository.MemberAddressRepository
 import org.fastcampus.member.repository.MemberRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -20,6 +25,7 @@ import org.springframework.stereotype.Service
 @Service
 class MemberService(
     private val memberRepository: MemberRepository,
+    private val memberAddressRepository: MemberAddressRepository,
     private val passwordEncoder: PasswordEncoder,
 ) {
     @MemberMetered
@@ -49,5 +55,29 @@ class MemberService(
     fun info(authMember: AuthMember): MemberInfoResponse? {
         val findMember = memberRepository.findById(authMember.id)
         return MemberInfoResponse(findMember.signname, findMember.nickname)
+    }
+
+    fun createAddress(memberAddressCreateRequest: MemberAddressCreateRequest, authMember: AuthMember): MemberAddressCreateResponse {
+        val createMemberAddress = MemberAddress(
+            null,
+            authMember.id,
+            requireNotNull(memberAddressCreateRequest.addressType),
+            requireNotNull(memberAddressCreateRequest.roadAddress),
+            requireNotNull(memberAddressCreateRequest.jibunAddress),
+            requireNotNull(memberAddressCreateRequest.detailAddress),
+            requireNotNull(memberAddressCreateRequest.latitude),
+            requireNotNull(memberAddressCreateRequest.longitude),
+            requireNotNull(memberAddressCreateRequest.alias),
+            false,
+        )
+        val savedMemberAddress = memberAddressRepository.save(createMemberAddress)
+        return MemberAddressCreateResponse(requireNotNull(savedMemberAddress.id))
+    }
+
+    @MemberMetered
+    fun findAddress(authMember: AuthMember): MemberAddressResponse? {
+        val findMemberAddress = memberAddressRepository.findByUserId(authMember.id)
+        println(findMemberAddress)
+        return MemberAddressResponse(null, null, null, null)
     }
 }

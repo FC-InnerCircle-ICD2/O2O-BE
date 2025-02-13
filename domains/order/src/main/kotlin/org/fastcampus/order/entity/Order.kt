@@ -30,13 +30,14 @@ data class Order(
 ) {
     fun accept() {
         // 주문접수상태만 주문수락가능
-        if (!this.status.equals(Status.RECEIVE)) {
+        if (this.status != Status.RECEIVE) {
             throw OrderException.OrderCanNotAccept(this.id)
         }
         this.status = Status.ACCEPT
     }
 
     fun cancel() {
+        // 주문접수상태만 주문취소가능
         if (this.status != Status.RECEIVE) {
             throw OrderException.OrderCanNotCancelled(this.id)
         }
@@ -45,8 +46,16 @@ data class Order(
 
     fun refuse() {
         // 주문접수상태만 주문거절가능
-        if (!this.status.equals(Status.RECEIVE)) {
-            throw OrderException.OrderCanNotAccept(this.id)
+        if (this.status != Status.RECEIVE) {
+            throw OrderException.OrderCanNotRefuse(this.id)
+        }
+        this.status = Status.REFUSE
+    }
+
+    fun complete() {
+        // 주문수락상태에서 주문완료가능
+        if (this.status != Status.ACCEPT) {
+            throw OrderException.OrderCanNotComplete(this.id)
         }
         this.status = Status.REFUSE
     }
@@ -68,6 +77,7 @@ data class Order(
                 RECEIVE -> ClientStatus.NEW
                 ACCEPT -> ClientStatus.ONGOING
                 COMPLETED -> ClientStatus.DONE
+                CANCEL -> ClientStatus.CANCEL
                 else -> throw IllegalArgumentException("Unknown status $this")
             }
         }
@@ -80,6 +90,7 @@ data class Order(
         NEW("C1", "신규"),
         ONGOING("C2", "진행중"),
         DONE("C3", "완료"),
+        CANCEL("C4", "취소"),
         ;
 
         fun toOrderStatus(): Status {
@@ -87,6 +98,7 @@ data class Order(
                 NEW -> Status.RECEIVE
                 ONGOING -> Status.ACCEPT
                 DONE -> Status.COMPLETED
+                CANCEL -> Status.CANCEL
             }
         }
     }

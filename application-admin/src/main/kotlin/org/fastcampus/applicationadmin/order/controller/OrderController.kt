@@ -30,9 +30,9 @@ class OrderController(
 
     @GetMapping
     fun getOrders(
-        @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") startDate: LocalDate,
-        @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") endDate: LocalDate,
         @RequestParam(required = true) status: List<Order.ClientStatus>,
+        @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") startDate: LocalDate?,
+        @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") endDate: LocalDate?,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "5") size: Int,
         @AuthenticationPrincipal authMember: AuthMember,
@@ -55,8 +55,9 @@ class OrderController(
     @PatchMapping("/{orderId}/accept")
     fun acceptOrder(
         @PathVariable("orderId") orderId: String,
+        @AuthenticationPrincipal authMember: AuthMember,
     ): ResponseEntity<APIResponseDTO<Nothing?>> {
-        orderService.acceptOrder(orderId)
+        orderService.acceptOrder(orderId, authMember.id)
         return ResponseEntity
             .ok(APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null))
     }
@@ -64,7 +65,20 @@ class OrderController(
     @PatchMapping("/{orderId}/refuse")
     fun refuseOrder(
         @PathVariable orderId: String,
+        @AuthenticationPrincipal authMember: AuthMember,
     ): ResponseEntity<APIResponseDTO<Unit>> {
-        return ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, orderService.refuseOrder(orderId)))
+        return ResponseEntity.ok(
+            APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, orderService.refuseOrder(orderId, authMember.id)),
+        )
+    }
+
+    @PatchMapping("/{orderId}/complete")
+    fun completeOrder(
+        @PathVariable("orderId") orderId: String,
+        @AuthenticationPrincipal authMember: AuthMember,
+    ): ResponseEntity<APIResponseDTO<Nothing?>> {
+        orderService.completeOrder(orderId, authMember.id)
+        return ResponseEntity
+            .ok(APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null))
     }
 }

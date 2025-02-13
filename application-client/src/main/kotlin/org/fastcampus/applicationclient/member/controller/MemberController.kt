@@ -3,7 +3,10 @@ package org.fastcampus.applicationclient.member.controller
 import jakarta.validation.Valid
 import org.fastcampus.applicationclient.config.security.dto.AuthMember
 import org.fastcampus.applicationclient.config.security.dto.JwtAuthenticated
+import org.fastcampus.applicationclient.member.dto.request.MemberAddressCreateRequest
 import org.fastcampus.applicationclient.member.dto.request.MemberJoinRequest
+import org.fastcampus.applicationclient.member.dto.response.MemberAddressCreateResponse
+import org.fastcampus.applicationclient.member.dto.response.MemberAddressResponse
 import org.fastcampus.applicationclient.member.dto.response.MemberInfoResponse
 import org.fastcampus.applicationclient.member.dto.response.MemberJoinResponse
 import org.fastcampus.applicationclient.member.service.MemberService
@@ -36,5 +39,22 @@ class MemberController(
         @AuthenticationPrincipal authMember: AuthMember,
     ): APIResponseDTO<MemberInfoResponse> {
         return APIResponseDTO(200, "OK", memberService.info(authMember))
+    }
+
+    @JwtAuthenticated
+    @PostMapping("/address")
+    fun createAddress(
+        @AuthenticationPrincipal authMember: AuthMember,
+        @RequestBody @Valid address: MemberAddressCreateRequest,
+    ): APIResponseDTO<MemberAddressCreateResponse> {
+        return APIResponseDTO(200, "OK", memberService.createAddress(address, authMember))
+    }
+
+    @JwtAuthenticated
+    @GetMapping("/address")
+    fun findAddress(
+        @AuthenticationPrincipal authMember: AuthMember,
+    ): APIResponseDTO<MemberAddressResponse> {
+        return APIResponseDTO(200, "OK", memberService.findAddress(authMember))
     }
 }
