@@ -1,9 +1,9 @@
-name: Deploy to Docker Hub
+name: Deploy Main Client to Docker Hub
 
 on:
   push:
     branches:
-      - develop
+      - main
     paths:
       - 'application-client/**'
       - 'application-client/build.gradle'
@@ -11,6 +11,6 @@ on:
 
 jobs:
   client-build:
-    uses: ./.github/workflows/develop-client-deploy-v1.yml
-    name: "Build and Deploy for Client"
+    uses: ./.github/workflows/main-client-deploy-v1.yml
+    name: "Build and Deploy for Main Client"
     secrets: inherit
