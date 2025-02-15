@@ -53,8 +53,8 @@ jobs:
 
       - name: Upload specific file to S3
         run: |
-          aws s3 cp ./flyway s3://${{ secrets.O2O_BE_BUCKET }}/flyway --recursive
-          aws s3 cp ./.env s3://${{ secrets.O2O_BE_BUCKET }}
+          aws s3 cp ./flyway s3://${{ secrets.O2O_BE_BUCKET }}/flyway/ --recursive
+          aws s3 cp ./.env s3://${{ secrets.O2O_BE_BUCKET }}/
 
       - name: Run Commands using SSM
         run: |
@@ -70,8 +70,7 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --parameters '{"commands":[
                 "aws s3 cp s3://${{ secrets.O2O_BE_BUCKET }}/flyway /home/ec2-user/backend/flyway --recursive",
-                "bash /home/ec2-user/deploy.sh",
-                "echo 'DB Deployment completed!'"
+                "bash /home/ec2-user/deploy.sh"
               ]}'
 
           ASG_NAME="ProdAdminAutoScalingGroup"
