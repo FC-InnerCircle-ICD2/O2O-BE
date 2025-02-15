@@ -2,6 +2,7 @@ package org.fastcampus.applicationclient.payment.service
 
 import org.fastcampus.applicationclient.order.service.event.OrderNotificationEvent
 import org.fastcampus.applicationclient.payment.controller.dto.request.OrderPaymentApproveRequest
+import org.fastcampus.cart.repository.CartRepository
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.payment.entity.Payment
@@ -20,16 +21,19 @@ class PaymentServiceTest {
     private lateinit var paymentService: PaymentService
     private lateinit var paymentRepository: PaymentRepository
     private lateinit var orderRepository: OrderRepository
+    private lateinit var cartRepository: CartRepository
     private lateinit var eventPublisher: ApplicationEventPublisher
 
     @BeforeEach
     fun init() {
         paymentRepository = mock(PaymentRepository::class.java)
         orderRepository = mock(OrderRepository::class.java)
+        cartRepository = mock(CartRepository::class.java)
         eventPublisher = mock(ApplicationEventPublisher::class.java)
         paymentService = PaymentService(
             paymentRepository = paymentRepository,
             orderRepository = orderRepository,
+            cartRepository = cartRepository,
             eventPublisher = eventPublisher,
         )
     }

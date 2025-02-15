@@ -6,4 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository
 
 interface CartMongoRepository : MongoRepository<CartDocument, ObjectId> {
     fun findOneByUserId(userId: Long): CartDocument?
+
+    fun removeByUserId(userId: Long)
 }

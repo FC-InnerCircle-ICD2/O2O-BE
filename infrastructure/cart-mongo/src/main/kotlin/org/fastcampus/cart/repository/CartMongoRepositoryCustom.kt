@@ -16,4 +16,8 @@ class CartMongoRepositoryCustom(
     override fun save(cart: Cart): Cart {
         return cartMongoRepository.save(cart.toDocument()).toModel()
     }
+
+    override fun removeByUserId(userId: Long) {
+        cartMongoRepository.removeByUserId(userId)
+    }
 }

@@ -6,4 +6,6 @@ interface CartRepository {
     fun findByUserId(userId: Long): Cart?
 
     fun save(cart: Cart): Cart
+
+    fun removeByUserId(userId: Long)
 }

@@ -14,7 +14,7 @@ class CartDocument(
     val cartMenuDocuments: List<CartMenuDocument>,
     @Id
     @Field(name = "_id")
-    val _id: ObjectId? = null,
+    val id: ObjectId? = null,
 )
 
 fun CartDocument.toModel(): Cart {
@@ -22,7 +22,7 @@ fun CartDocument.toModel(): Cart {
         userId = userId,
         storeId = storeId,
         orderMenus = cartMenuDocuments.map { it.toModel() },
-        _id = _id.toString(),
+        id = id.toString(),
     )
 }
 
@@ -31,5 +31,6 @@ fun Cart.toDocument(): CartDocument {
         userId = userId,
         storeId = storeId,
         cartMenuDocuments = orderMenus.map { it.toDocument() },
+        id = id?.run { ObjectId(id) },
     )
 }

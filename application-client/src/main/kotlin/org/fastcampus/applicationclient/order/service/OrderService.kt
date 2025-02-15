@@ -125,7 +125,7 @@ class OrderService(
             ?: throw OrderException.StoreNotFound(orderCreationRequest.storeId)
 
         // 주문내역 검사, 메뉴정보 반환받기
-        val targetMenuEntities = OrderCreationValidator.validate(storeEntity, orderCreationRequest)
+        val targetMenuEntities = OrderValidator.checkOrderCreation(storeEntity, orderCreationRequest)
 
         // 주문 메뉴는 여러개 나누어 들어올 수 있다. (동일메뉴 + 다른옵션)
         // 여러개의 주문메뉴, 주문메뉴옵션그룹, 주문메뉴옵션을 생성한다.
@@ -157,7 +157,7 @@ class OrderService(
                 detailAddress = orderCreationRequest.detailAddress,
                 excludingSpoonAndFork = orderCreationRequest.excludingSpoonAndFork ?: true,
                 requestToRider = orderCreationRequest.requestToRider,
-                tel = "010-1234-5678",
+                tel = "01012345678",
                 status = Order.Status.WAIT,
                 orderTime = LocalDateTime.now(),
                 orderSummary = summary,

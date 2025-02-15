@@ -119,7 +119,7 @@ class OrderCreationServiceTest {
                     id = storeMenu.id!!,
                     quantity = Random.nextLong(1L..5L),
                     orderMenuOptionGroups = storeMenu.menuOptionGroup!!.map { menuOptionGroup ->
-                        OrderCreationRequest.OrderMenuOptionGroup(
+                        OrderCreationRequest.OrderMenu.OrderMenuOptionGroup(
                             id = menuOptionGroup.id!!,
                             orderMenuOptionIds = menuOptionGroup.getMenuOptions().map { it.id!! },
                         )
