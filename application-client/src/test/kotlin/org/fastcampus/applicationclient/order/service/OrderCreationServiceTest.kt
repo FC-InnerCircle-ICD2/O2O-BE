@@ -164,6 +164,8 @@ class OrderCreationServiceTest {
                             isHided = false,
                             order = 1,
                             menuCategoryId = null,
+                            isBest = false,
+                            isManyOrder = true,
                             menuOptionGroup = listOf(
                                 MenuOptionGroup(
                                     id = "GROUP-1",
@@ -223,6 +225,8 @@ class OrderCreationServiceTest {
                             isHided = false,
                             order = 2,
                             menuCategoryId = null,
+                            isManyOrder = true,
+                            isBest = true,
                             menuOptionGroup = listOf(
                                 MenuOptionGroup(
                                     id = "GROUP-3",
@@ -282,6 +286,7 @@ class OrderCreationServiceTest {
                     menu = listOf(),
                 ),
             ),
+            minimumOrderAmount = 12000,
         )
     }
 

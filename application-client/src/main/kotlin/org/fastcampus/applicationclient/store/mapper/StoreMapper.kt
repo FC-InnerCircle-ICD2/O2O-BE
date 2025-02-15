@@ -30,6 +30,7 @@ object StoreMapper {
             latitude = latitude ?: 0.0,
             longitude = longitude ?: 0.0,
             phone = tel ?: "unknown",
+            minimumOrderAmount = minimumOrderAmount,
         )
 
     private fun Menu.toMenuResponse(): MenuOptionInfo {
@@ -40,6 +41,8 @@ object StoreMapper {
             description = this.desc ?: "",
             imageUrl = this.imgUrl ?: "unknown",
             soldOut = this.isSoldOut,
+            isBest = isBest,
+            isManyOrder = isManyOrder,
         )
     }
 }
