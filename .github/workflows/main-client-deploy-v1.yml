@@ -60,11 +60,4 @@ jobs:
           aws ssm send-command \
             --instance-ids $INSTANCE_ID \
             --document-name "AWS-RunShellScript" \
-            --parameters 'commands=[
-              "cd /backend",
-              "docker stop app-client || true",
-              "docker rm app-client || true",
-              "docker rmi yong7317/application-client:latest || true",
-              "docker pull yong7317/application-client:latest",
-              "docker-compose up -d"
-            ]'
+            --parameters 'commands=["bash /home/ec2-user/deploy.sh"]'
