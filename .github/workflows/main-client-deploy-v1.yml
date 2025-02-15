@@ -1,0 +1,93 @@
+on:
+  workflow_call:
+
+jobs:
+  client-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Cache Gradle Package
+        uses: actions/cache@v3
+        id: gradle-cache
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Execute Gradle build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :application-client:build --no-daemon
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: ./application-client
+          push: true
+          tags: yong7317/application-client:latest
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Get EC2 Instance IPs from Auto Scaling Group
+        id: get-instance-ips
+        run: |
+          # Auto Scaling Group 이름 설정
+          ASG_NAME="ProdAutoScalingGroup"
+
+          # ASG에 속한 EC2 인스턴스 ID 조회
+          INSTANCE_IDS=$(aws autoscaling describe-auto-scaling-groups \
+            --auto-scaling-group-names $ASG_NAME  \
+            --query "AutoScalingGroups[].Instances[].InstanceId"  \
+            --output text)
+
+          # EC2 인스턴스의 Private IP 조회
+          INSTANCE_IPS=$(aws ec2 describe-instances \
+            --instance-ids $INSTANCE_IDS  \
+            --query "Reservations[].Instances[].PrivateIpAddress" \
+            --output text)
+
+          # 결과를 GitHub Actions 출력으로 저장
+          echo "instance_ips=$INSTANCE_IPS" >> $GITHUB_OUTPUT
+
+      - name: SSH into EC2 Instances and Pull Docker Image
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          # SSH 키 설정
+          mkdir -p ~/.ssh
+          echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          # 각 EC2 인스턴스에 접근하여 Docker 이미지 Pull
+          for IP in ${{ steps.get-instance-ips.outputs.instance_ips }}; do
+            echo "Pulling Docker image on instance: $IP"
+            ssh -o StrictHostKeyChecking=no ec2-user@$IP "
+              cd /backend
+              echo '${{ secrets.ENV_PROPERTIES }}' > .env
+              docker stop app-client || true
+              docker rm app-client || true
+              docker rmi yong7317/application-client:latest || true
+              docker pull yong7317/application-client:latest
+              docker-compose up -d
+            "
+          done
