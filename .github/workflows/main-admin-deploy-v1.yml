@@ -48,16 +48,40 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
+      - name: Set .env File
+        run: echo "${{ secrets.ENV_PROPERTIES }}" > .env
+
+      - name: Upload specific file to S3
+        run: |
+          aws s3 cp ./flyway s3://${{ secrets.O2O_BE_BUCKET }}/flyway --recursive
+          aws s3 cp ./.env s3://${{ secrets.O2O_BE_BUCKET }}
+
       - name: Run Commands using SSM
         run: |
+          DB_INSTANCE_NAME="prod-db-instance"
+
+          DB_INSTANCE_ID=$(aws ec2 describe-instances  \
+            --filters "Name=tag:Name,Values=$DB_INSTANCE_NAME" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output text)
+
+          aws ssm send-command \
+            --instance-ids $DB_INSTANCE_ID \
+            --document-name "AWS-RunShellScript" \
+            --parameters '{"commands":[
+                "aws s3 cp s3://${{ secrets.O2O_BE_BUCKET }}/flyway /home/ec2-user/backend/flyway --recursive",
+                "bash /home/ec2-user/deploy.sh",
+                "echo 'DB Deployment completed!'"
+              ]}'
+
           ASG_NAME="ProdAdminAutoScalingGroup"
 
-          INSTANCE_IDS=$(aws autoscaling describe-auto-scaling-groups \
+          APP_INSTANCE_IDS=$(aws autoscaling describe-auto-scaling-groups \
             --auto-scaling-group-names $ASG_NAME  \
             --query "AutoScalingGroups[].Instances[].InstanceId"  \
             --output text)
 
           aws ssm send-command \
-            --instance-ids $INSTANCE_ID \
+            --instance-ids $APP_INSTANCE_IDS \
             --document-name "AWS-RunShellScript" \
             --parameters 'commands=["bash /home/ec2-user/backend_deploy.sh"]'
