@@ -24,3 +24,17 @@ spring:
       username: root
       password: root
       authentication-database: admin
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  data:
+    mongodb:
+      host: 10.0.4.100
+      port: 27017
+      database: o2o
+      username: root
+      password: root
+      authentication-database: admin

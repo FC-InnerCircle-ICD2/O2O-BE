@@ -27,3 +27,13 @@ spring:
       host: localhost
       port: 6379
 
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  data:
+    redis:
+      host: 10.0.4.100
+      port: 6379
+
