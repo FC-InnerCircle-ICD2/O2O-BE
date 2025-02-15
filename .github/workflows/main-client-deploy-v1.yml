@@ -81,9 +81,8 @@ jobs:
           # 각 EC2 인스턴스에 접근하여 Docker 이미지 Pull
           for IP in ${{ steps.get-instance-ips.outputs.instance_ips }}; do
             echo "Pulling Docker image on instance: $IP"
-            ssh -o StrictHostKeyChecking=no ec2-user@$IP "
+            ssh -o StrictHostKeyChecking=no -J ec2-user@${{ secrets.BASTION_PUBLIC_IP }} ec2-user@$IP "
               cd /backend
-              echo '${{ secrets.ENV_PROPERTIES }}' > .env
               docker stop app-client || true
               docker rm app-client || true
               docker rmi yong7317/application-client:latest || true
