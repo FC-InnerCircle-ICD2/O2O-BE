@@ -48,45 +48,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      - name: Get EC2 Instance IPs from Auto Scaling Group
-        id: get-instance-ips
+      - name: Run Commands using SSM
         run: |
-          # Auto Scaling Group 이름 설정
-          ASG_NAME="ProdAutoScalingGroup"
+          ASG_NAME="ProdClientAutoScalingGroup"
 
-          # ASG에 속한 EC2 인스턴스 ID 조회
           INSTANCE_IDS=$(aws autoscaling describe-auto-scaling-groups \
             --auto-scaling-group-names $ASG_NAME  \
             --query "AutoScalingGroups[].Instances[].InstanceId"  \
             --output text)
 
-          # EC2 인스턴스의 Private IP 조회
-          INSTANCE_IPS=$(aws ec2 describe-instances \
-            --instance-ids $INSTANCE_IDS  \
-            --query "Reservations[].Instances[].PrivateIpAddress" \
-            --output text)
-
-          # 결과를 GitHub Actions 출력으로 저장
-          echo "instance_ips=$INSTANCE_IPS" >> $GITHUB_OUTPUT
-
-      - name: SSH into EC2 Instances and Pull Docker Image
-        env:
-          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-        run: |
-          # SSH 키 설정
-          mkdir -p ~/.ssh
-          echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-          # 각 EC2 인스턴스에 접근하여 Docker 이미지 Pull
-          for IP in ${{ steps.get-instance-ips.outputs.instance_ips }}; do
-            echo "Pulling Docker image on instance: $IP"
-            ssh -o StrictHostKeyChecking=no -J ec2-user@${{ secrets.BASTION_PUBLIC_IP }} ec2-user@$IP "
-              cd /backend
-              docker stop app-client || true
-              docker rm app-client || true
-              docker rmi yong7317/application-client:latest || true
-              docker pull yong7317/application-client:latest
-              docker-compose up -d
-            "
-          done
+          aws ssm send-command \
+            --instance-ids $INSTANCE_ID \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=[
+              "cd /backend",
+              "docker stop app-client || true",
+              "docker rm app-client || true",
+              "docker rmi yong7317/application-client:latest || true",
+              "docker pull yong7317/application-client:latest",
+              "docker-compose up -d"
+            ]'
