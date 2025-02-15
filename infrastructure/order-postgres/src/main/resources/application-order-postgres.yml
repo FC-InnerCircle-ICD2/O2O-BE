@@ -42,3 +42,26 @@ spring:
         use_sql_comments: true
     hibernate:
       ddl-auto: none
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    hikari:
+      pool-name: postgres
+      register-mbeans: true
+    url: jdbc:postgresql://10.0.4.100:5432/o2o
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: true
+    hibernate:
+      ddl-auto: none

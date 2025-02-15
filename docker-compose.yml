@@ -44,8 +44,11 @@ services:
 #  app-client:
 #    container_name: app-client
 #    image: yong7317/application-client:latest
+#    env_file:
+#      - .env
 #    ports:
 #      - '8083:8081'
+#    command: ["java", "-jar", "-Duser.timezone=Asia/Seoul", "/client-app.jar", "--spring.profiles.active=dev"]
 #    volumes:
 #      - /home/ec2-user/backend/log:/var/log
 #    networks:
@@ -59,6 +62,7 @@ services:
 #    image: yong7317/application-admin:latest
 #    ports:
 #      - '8084:8082'
+#    command: ["java", "-jar", "-Duser.timezone=Asia/Seoul", "/admin-app.jar", "--spring.profiles.active=dev"]
 #    volumes:
 #      - /home/ec2-user/backend/log:/var/log
 #    networks:
