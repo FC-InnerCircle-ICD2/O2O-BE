@@ -11,4 +11,8 @@ interface MemberAddressRepository {
     fun countByUserIdAndMemberAddressType(userId: Long, memberAddressType: MemberAddressType): Long
 
     fun findByUserId(userId: Long): List<MemberAddress>
+
+    fun findByUserIdAndIsDefault(userId: Long, isDefault: Boolean): MemberAddress?
+
+    fun findByIdAndUserId(addressId: Long, userId: Long): MemberAddress?
 }

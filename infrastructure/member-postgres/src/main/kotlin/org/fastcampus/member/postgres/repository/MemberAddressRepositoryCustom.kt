@@ -26,4 +26,12 @@ class MemberAddressRepositoryCustom(
     override fun findByUserId(userId: Long): List<MemberAddress> {
         return memberAddressJpaRepository.findByUserId(userId).filter { !it.isDeleted }.map { it.toModel() }.toList()
     }
+
+    override fun findByUserIdAndIsDefault(userId: Long, isDefault: Boolean): MemberAddress? {
+        return memberAddressJpaRepository.findByUserIdAndIsDefault(userId, isDefault).map { it.toModel() }.orElse(null)
+    }
+
+    override fun findByIdAndUserId(addressId: Long, userId: Long): MemberAddress? {
+        return memberAddressJpaRepository.findByIdAndUserId(addressId, userId).map { it.toModel() }.orElse(null)
+    }
 }

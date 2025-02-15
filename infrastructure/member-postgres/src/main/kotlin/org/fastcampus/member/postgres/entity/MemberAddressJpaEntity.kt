@@ -42,6 +42,8 @@ class MemberAddressJpaEntity(
     val longitude: Double,
     @Column(name = "ALIAS")
     val alias: String? = "",
+    @Column(name = "IS_DEFAULT")
+    var isDefault: Boolean,
     @Column(name = "IS_DELETED")
     val isDeleted: Boolean,
 ) : BaseEntity()
@@ -57,6 +59,7 @@ fun MemberAddress.toJpaEntity() =
         latitude,
         longitude,
         alias,
+        isDefault,
         isDeleted,
     )
 
@@ -71,6 +74,7 @@ fun MemberAddressJpaEntity.toModel() =
         alias,
         latitude,
         longitude,
+        isDefault,
         isDeleted,
         updatedAt,
     )

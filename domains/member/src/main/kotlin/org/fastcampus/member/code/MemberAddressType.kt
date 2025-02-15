@@ -6,5 +6,5 @@ package org.fastcampus.member.code
 enum class MemberAddressType(val roleName: String) {
     HOME("집"),
     COMPANY("회사"),
-    OTHERS("기타"),
+    OTHER("기타"),
 }
