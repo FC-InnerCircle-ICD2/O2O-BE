@@ -20,7 +20,6 @@ import org.fastcampus.store.repository.StoreRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import kotlin.random.Random
 
 /**
  * Created by brinst07 on 25. 1. 11..
@@ -81,8 +80,8 @@ class StoreService(
                 desc = menu.desc ?: "",
                 imgUrl = menu.imgUrl ?: "",
                 isSoldOut = menu.isSoldOut,
-                isBest = Random.nextBoolean(),
-                isManyOrder = Random.nextBoolean(),
+                isBest = menu.isBest,
+                isManyOrder = menu.isManyOrder,
                 menuOptionGroups = menu.menuOptionGroup?.map { optionGroup ->
                     MenuOptionGroupsResponse(
                         id = optionGroup.id ?: "",
