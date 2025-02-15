@@ -9,6 +9,7 @@ CREATE TABLE member_address
     latitude                 DOUBLE PRECISION NOT NULL,
     longitude                DOUBLE PRECISION NOT NULL,
     alias                    VARCHAR(255),
+    is_default               BOOLEAN NOT NULL,
     is_deleted               BOOLEAN NOT NULL,
     created_by               VARCHAR(255) NULL,
     updated_by               VARCHAR(255) NULL,

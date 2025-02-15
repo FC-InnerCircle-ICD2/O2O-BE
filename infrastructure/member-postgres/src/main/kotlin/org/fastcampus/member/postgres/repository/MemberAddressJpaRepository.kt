@@ -11,4 +11,8 @@ interface MemberAddressJpaRepository : JpaRepository<MemberAddressJpaEntity, Lon
     fun countByUserIdAndMemberAddressType(userId: Long, memberAddressType: MemberAddressType): Long
 
     fun findByUserId(userId: Long): List<MemberAddressJpaEntity>
+
+    fun findByUserIdAndIsDefault(userId: Long, isDefault: Boolean): Optional<MemberAddressJpaEntity>
+
+    fun findByIdAndUserId(addressId: Long, userId: Long): Optional<MemberAddressJpaEntity>
 }

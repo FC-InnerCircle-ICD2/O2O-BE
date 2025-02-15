@@ -3,10 +3,14 @@ package org.fastcampus.applicationclient.member.service
 import org.fastcampus.applicationclient.aop.MemberMetered
 import org.fastcampus.applicationclient.config.security.dto.AuthMember
 import org.fastcampus.applicationclient.member.dto.request.MemberAddressCreateRequest
+import org.fastcampus.applicationclient.member.dto.request.MemberAddressUpdateRequest
 import org.fastcampus.applicationclient.member.dto.request.MemberJoinRequest
 import org.fastcampus.applicationclient.member.dto.response.MemberAddressCreateResponse
+import org.fastcampus.applicationclient.member.dto.response.MemberAddressDefaultUpdateResponse
+import org.fastcampus.applicationclient.member.dto.response.MemberAddressDeleteResponse
 import org.fastcampus.applicationclient.member.dto.response.MemberAddressDto
 import org.fastcampus.applicationclient.member.dto.response.MemberAddressResponse
+import org.fastcampus.applicationclient.member.dto.response.MemberAddressUpdateResponse
 import org.fastcampus.applicationclient.member.dto.response.MemberInfoResponse
 import org.fastcampus.applicationclient.member.dto.response.MemberJoinResponse
 import org.fastcampus.applicationclient.member.exception.MemberException
@@ -20,7 +24,6 @@ import org.fastcampus.member.repository.MemberAddressRepository
 import org.fastcampus.member.repository.MemberRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 /**
  * Created by kms0902 on 25. 1. 19..
@@ -61,8 +64,9 @@ class MemberService(
     }
 
     fun createAddress(memberAddressCreateRequest: MemberAddressCreateRequest, authMember: AuthMember): MemberAddressCreateResponse {
-        val addressType = memberAddressCreateRequest.memberAddressType
+        deleteDefaultAddressByMemberId(authMember.id)
 
+        val addressType = memberAddressCreateRequest.memberAddressType
         val createMemberAddress = MemberAddress(
             null,
             authMember.id,
@@ -73,8 +77,9 @@ class MemberService(
             memberAddressCreateRequest.alias,
             requireNotNull(memberAddressCreateRequest.latitude),
             requireNotNull(memberAddressCreateRequest.longitude),
-            false,
-            null,
+            isDefault = true,
+            isDeleted = false,
+            updatedAt = null,
         )
 
         if (MemberAddressType.HOME == addressType || MemberAddressType.COMPANY == addressType) {
@@ -84,7 +89,7 @@ class MemberService(
             }
         }
 
-        if (MemberAddressType.OTHERS == addressType) {
+        if (MemberAddressType.OTHER == addressType) {
             val count = memberAddressRepository.countByUserIdAndMemberAddressType(authMember.id, addressType)
             if (4 < count) {
                 throw MemberException(MemberExceptionResult.EXCEEDED_REGISTRABLE_ADDRESS_TYPE)
@@ -100,10 +105,8 @@ class MemberService(
         val findMemberAddress = memberAddressRepository.findByUserId(authMember.id)
 
         var defaultAddress: MemberAddressDto? = null
-        var latestUpdatedAt: LocalDateTime? = null
-
-        val houseList = mutableListOf<MemberAddressDto>()
-        val companyList = mutableListOf<MemberAddressDto>()
+        var house: MemberAddressDto? = null
+        var company: MemberAddressDto? = null
         val othersList = mutableListOf<MemberAddressDto>()
 
         for (address in findMemberAddress) {
@@ -116,24 +119,81 @@ class MemberService(
                 longitude = address.longitude,
             )
 
-            // defaultAddress
-            if (latestUpdatedAt == null || (address.updatedAt != null && requireNotNull(address.updatedAt) > latestUpdatedAt)) {
-                latestUpdatedAt = address.updatedAt
+            if (address.isDefault) {
                 defaultAddress = addressDto
             }
 
             when (address.memberAddressType) {
-                MemberAddressType.HOME -> houseList.add(addressDto)
-                MemberAddressType.COMPANY -> companyList.add(addressDto)
+                MemberAddressType.HOME -> house = addressDto
+                MemberAddressType.COMPANY -> company = addressDto
                 else -> othersList.add(addressDto)
             }
         }
 
         return MemberAddressResponse(
             defaultAddress,
-            houseList.firstOrNull(),
-            companyList.firstOrNull(),
+            house,
+            company,
             othersList,
         )
+    }
+
+    @MemberMetered
+    fun updateAddress(
+        addressId: Long,
+        memberAddressUpdateRequest: MemberAddressUpdateRequest,
+        authMember: AuthMember,
+    ): MemberAddressUpdateResponse {
+        val findMemberAddress = memberAddressRepository.findByIdAndUserId(addressId, authMember.id)
+            ?: throw MemberException(MemberExceptionResult.NOT_FOUND_ADDRESS)
+
+        val updatedAddress = findMemberAddress.copy(
+            roadAddress = memberAddressUpdateRequest.roadAddress,
+            jibunAddress = memberAddressUpdateRequest.jibunAddress,
+            detailAddress = memberAddressUpdateRequest.detailAddress,
+            alias = memberAddressUpdateRequest.alias,
+            latitude = memberAddressUpdateRequest.latitude,
+            longitude = memberAddressUpdateRequest.longitude,
+        )
+
+        memberAddressRepository.save(updatedAddress)
+
+        return MemberAddressUpdateResponse(addressId)
+    }
+
+    @MemberMetered
+    fun updateDefaultAddress(addressId: Long, authMember: AuthMember): MemberAddressDefaultUpdateResponse {
+        val memberId = authMember.id
+        deleteDefaultAddressByMemberId(memberId)
+
+        val findMemberAddress = memberAddressRepository.findByIdAndUserId(addressId, memberId)
+            ?: throw MemberException(MemberExceptionResult.NOT_FOUND_ADDRESS)
+        findMemberAddress.updateIsDefault(true)
+        memberAddressRepository.save(findMemberAddress)
+
+        return MemberAddressDefaultUpdateResponse(requireNotNull(findMemberAddress.id))
+    }
+
+    @MemberMetered
+    fun deleteAddress(addressId: Long, authMember: AuthMember): MemberAddressDeleteResponse {
+        val findMemberAddress = memberAddressRepository.findByIdAndUserId(addressId, authMember.id)
+            ?: throw MemberException(MemberExceptionResult.NOT_FOUND_ADDRESS)
+
+        if (findMemberAddress.isDefault) {
+            throw MemberException(MemberExceptionResult.NOT_ALLOWED_DELETION_DEFAULT_ADDRESS)
+        }
+
+        findMemberAddress.delete()
+        memberAddressRepository.save(findMemberAddress)
+
+        return MemberAddressDeleteResponse(findMemberAddress.id!!)
+    }
+
+    private fun deleteDefaultAddressByMemberId(memberId: Long) {
+        val findMemberAddress = memberAddressRepository.findByUserIdAndIsDefault(memberId, true)
+        if (findMemberAddress != null) {
+            findMemberAddress.updateIsDefault(false)
+            memberAddressRepository.save(findMemberAddress)
+        }
     }
 }
