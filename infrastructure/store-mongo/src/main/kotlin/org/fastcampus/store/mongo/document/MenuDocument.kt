@@ -19,6 +19,8 @@ class MenuDocument(
     @Field(name = "menuOptionGroups")
     val menuOptionGroupDocument: List<MenuOptionGroupDocument>?,
     val order: Long,
+    val isBest: Boolean,
+    val isManyOrder: Boolean,
 )
 
 fun MenuDocument.toModel() =
@@ -33,4 +35,6 @@ fun MenuDocument.toModel() =
         menuCategoryId,
         menuOptionGroupDocument?.map { it.toModel() },
         order,
+        isBest,
+        isManyOrder,
     )

@@ -115,6 +115,8 @@ class StoreServiceTest {
                             menuCategoryId = "cat-1",
                             menuOptionGroup = emptyList(),
                             order = 1L,
+                            isBest = true,
+                            isManyOrder = false,
                         ),
                     ),
                     order = 1L,
@@ -135,11 +137,14 @@ class StoreServiceTest {
                             menuCategoryId = "cat-2",
                             menuOptionGroup = emptyList(),
                             order = 2L,
+                            isBest = false,
+                            isManyOrder = true,
                         ),
                     ),
                     order = 2L,
                 ),
             ),
+            minimumOrderAmount = 13000,
         )
 
         `when`(storeRepository.findById(storeId)).thenReturn(testStore)
@@ -276,6 +281,7 @@ class StoreServiceTest {
             ownerId = null,
             imageThumbnail = null,
             roadAddress = null,
+            minimumOrderAmount = 14000,
         )
 
     private fun createTestStoreWithCategories(storeId: String) =
@@ -312,5 +318,6 @@ class StoreServiceTest {
             status = Store.Status.OPEN,
             roadAddress = null,
             _id = null,
+            minimumOrderAmount = 0,
         )
 }
