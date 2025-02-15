@@ -2,6 +2,7 @@ package org.fastcampus.applicationclient.handler
 
 import org.fastcampus.applicationclient.member.exception.MemberException
 import org.fastcampus.applicationclient.member.exception.MemberExceptionResult
+import org.fastcampus.cart.exception.CartException
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.order.exception.OrderException
 import org.fastcampus.payment.exception.PaymentException
@@ -102,6 +103,12 @@ class ClientExceptionHandler {
     @ExceptionHandler(PaymentException::class)
     fun handlePaymentException(exception: PaymentException): ResponseEntity<APIResponseDTO<*>> {
         logger.error("handlePaymentException: {}", exception.toString(), exception)
+        return ResponseEntity.status(400).body(APIResponseDTO(400, "FAIL", exception.message))
+    }
+
+    @ExceptionHandler(CartException::class)
+    fun handleCartException(exception: CartException): ResponseEntity<APIResponseDTO<*>> {
+        logger.error("handleCartException: {}", exception.toString(), exception)
         return ResponseEntity.status(400).body(APIResponseDTO(400, "FAIL", exception.message))
     }
 }

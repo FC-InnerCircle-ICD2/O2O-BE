@@ -3,7 +3,7 @@ POST http://localhost:8081/api/v1/members/join
 Content-Type: application/json
 
 {
-    "signname": "user@gmail.com",
+    "signname": "user1@gmail.com",
     "password": "1234",
     "nickname": "개발의민족",
     "username": "홍길동",
@@ -15,12 +15,54 @@ POST http://localhost:8081/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "signname": "user@gmail.com",
+    "signname": "user1@gmail.com",
     "password": "1234"
 }
 > {%
     client.global.set("accessToken", response.body.data.accessToken)
 %}
+
+### 장바구니 메뉴 추가 1
+POST http://localhost:8081/api/v1/cart
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+{
+    "storeId": "26466355",
+    "orderMenu": {
+        "menuId": "9e15c3da-cae8-4c25-8b4e-ae21a926f072",
+        "quantity": 1,
+        "orderMenuOptionGroups": [
+            {
+                "id": "62f5ab82-6f9f-4344-964c-9a09a568df62",
+                "orderMenuOptionIds": [
+                    "c5d18e3d-e643-49d6-b089-3dbb5a148800"
+                ]
+            }
+        ]
+    }
+}
+
+### 장바구니 메뉴 추가 2
+POST http://localhost:8081/api/v1/cart
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+{
+    "storeId": "26466355",
+    "orderMenu": {
+        "menuId": "51c20adf-9962-48b7-aaec-65a867d3c0c6",
+        "quantity": 2,
+        "orderMenuOptionGroups": [
+            {
+                "id": "62bd01d0-01a3-4865-852e-a422fbf505a1",
+                "orderMenuOptionIds": [
+                    "75f4c2a6-f4cb-43de-8409-19c229642076"
+                ]
+            }
+        ]
+    }
+}
 
 ### 주문생성
 POST http://localhost:8081/api/v1/orders

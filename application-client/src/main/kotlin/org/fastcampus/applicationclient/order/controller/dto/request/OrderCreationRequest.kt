@@ -18,10 +18,10 @@ data class OrderCreationRequest(
         val id: String,
         val quantity: Long,
         val orderMenuOptionGroups: List<OrderMenuOptionGroup>,
-    )
-
-    data class OrderMenuOptionGroup(
-        val id: String,
-        val orderMenuOptionIds: List<String>,
-    )
+    ) {
+        data class OrderMenuOptionGroup(
+            val id: String,
+            val orderMenuOptionIds: List<String>,
+        )
+    }
 }
