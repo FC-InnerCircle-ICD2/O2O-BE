@@ -69,6 +69,15 @@ GET http://localhost:8081/api/v1/carts
 Content-Type: application/json
 Authorization: {{accessToken}}
 
+### 장바구니 수정(수량만)
+PATCH http://localhost:8081/api/v1/carts
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+{
+    "cartId": 0,
+    "quantity": 1
+}
 
 ### 주문생성
 POST http://localhost:8081/api/v1/orders
