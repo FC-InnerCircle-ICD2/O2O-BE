@@ -1,6 +1,10 @@
 package org.fastcampus.applicationclient.order.service
 
 import org.fastcampus.applicationclient.order.controller.dto.request.OrderCreationRequest
+import org.fastcampus.member.code.MemberState
+import org.fastcampus.member.code.Role
+import org.fastcampus.member.entity.Member
+import org.fastcampus.member.repository.MemberRepository
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOption
@@ -29,6 +33,7 @@ import kotlin.random.Random
 import kotlin.random.nextLong
 
 class OrderCreationServiceTest {
+    private lateinit var memberRepository: MemberRepository
     private lateinit var orderRepository: OrderRepository
     private lateinit var storeRepository: StoreRepository
     private lateinit var paymentRepository: PaymentRepository
@@ -39,6 +44,7 @@ class OrderCreationServiceTest {
 
     @BeforeEach
     fun init() {
+        memberRepository = mock(MemberRepository::class.java)
         orderRepository = mock(OrderRepository::class.java)
         storeRepository = mock(StoreRepository::class.java)
         paymentRepository = mock(PaymentRepository::class.java)
@@ -46,6 +52,7 @@ class OrderCreationServiceTest {
         orderMenuOptionGroupRepository = mock(OrderMenuOptionGroupRepository::class.java)
         orderMenuOptionRepository = mock(OrderMenuOptionRepository::class.java)
         orderService = OrderService(
+            memberRepository = memberRepository,
             orderRepository = orderRepository,
             storeRepository = storeRepository,
             paymentRepository = paymentRepository,
@@ -58,6 +65,16 @@ class OrderCreationServiceTest {
     @Test
     fun `createOrder return correct response`() {
         // given
+        val member = Member(
+            id = 1,
+            role = Role.USER,
+            state = MemberState.JOIN,
+            signname = "abc",
+            password = "",
+            nickname = "",
+            phone = "01012345678",
+            username = "abc",
+        )
         val store = createStore()
         val storeId = store.id!!
 
@@ -67,10 +84,12 @@ class OrderCreationServiceTest {
 
         val requestTotalPrice = calculateRequestMenuTotalPrice(request, menuMap)
 
+        `when`(memberRepository.findById(member.id!!))
+            .thenReturn(member)
         `when`(storeRepository.findById(storeId))
             .thenReturn(store)
         `when`(paymentRepository.save(any()))
-            .thenAnswer { (it.arguments[0] as Payment).copy(id = 1) }
+            .thenAnswer { (it.arguments[0] as Payment).copy(id = member.id) }
         `when`(orderRepository.save(any()))
             .thenAnswer { it.arguments[0] }
         `when`(orderMenuRepository.save(any()))
@@ -286,7 +305,7 @@ class OrderCreationServiceTest {
                     menu = listOf(),
                 ),
             ),
-            minimumOrderAmount = 12000,
+            minimumOrderAmount = 1000,
         )
     }
 
