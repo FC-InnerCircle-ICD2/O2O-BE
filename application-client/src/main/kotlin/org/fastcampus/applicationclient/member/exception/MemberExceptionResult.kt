@@ -15,4 +15,5 @@ enum class MemberExceptionResult(val httpStatus: HttpStatus, val message: String
     EXCEEDED_REGISTRABLE_ADDRESS_TYPE(HttpStatus.BAD_REQUEST, "등록할 수 있는 타입이 초과되었습니다."),
     NOT_FOUND_ADDRESS(HttpStatus.NOT_FOUND, "등록된 주소를 찾을 수 없습니다."),
     NOT_ALLOWED_DELETION_DEFAULT_ADDRESS(HttpStatus.BAD_REQUEST, "기본 주소는 삭제할 수 없습니다."),
+    INVALID_REQUIRED_ADDRESS(HttpStatus.BAD_REQUEST, "기본 주소를 입력해 주세요."),
 }

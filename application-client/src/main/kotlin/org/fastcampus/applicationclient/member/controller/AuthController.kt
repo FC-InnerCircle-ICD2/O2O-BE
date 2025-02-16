@@ -4,6 +4,8 @@ import jakarta.validation.Valid
 import org.fastcampus.applicationclient.config.security.dto.response.JwtLoginResponse
 import org.fastcampus.applicationclient.member.dto.request.AuthLogoutRequest
 import org.fastcampus.applicationclient.member.dto.request.AuthRefreshRequest
+import org.fastcampus.applicationclient.member.dto.request.MemberJoinRequest
+import org.fastcampus.applicationclient.member.dto.response.MemberJoinResponse
 import org.fastcampus.applicationclient.member.service.AuthService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,6 +21,13 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     private val authService: AuthService,
 ) {
+    @PostMapping("/join")
+    fun join(
+        @RequestBody @Valid memberJoinRequestDto: MemberJoinRequest,
+    ): APIResponseDTO<MemberJoinResponse> {
+        return APIResponseDTO(200, "OK", authService.join(memberJoinRequestDto))
+    }
+
     @PostMapping("/refresh")
     fun refresh(
         @RequestBody @Valid authRefreshRequest: AuthRefreshRequest,
