@@ -9,6 +9,7 @@ import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuO
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderResponse
 import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.member.repository.MemberRepository
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOption
@@ -26,10 +27,12 @@ import org.fastcampus.store.repository.StoreRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Service
 class OrderService(
+    private val memberRepository: MemberRepository,
     private val orderRepository: OrderRepository,
     private val storeRepository: StoreRepository,
     private val paymentRepository: PaymentRepository,
@@ -120,6 +123,9 @@ class OrderService(
     @Transactional
     @OrderMetered
     fun createOrder(userId: Long, orderCreationRequest: OrderCreationRequest): OrderCreationResponse {
+        // 사용자 정보 조회
+        val loginMember = memberRepository.findById(userId)
+
         // 스토어 검색
         val storeEntity = (storeRepository.findById(orderCreationRequest.storeId))
             ?: throw OrderException.StoreNotFound(orderCreationRequest.storeId)
@@ -136,20 +142,29 @@ class OrderService(
         // 옵션 가격 전체 합
         val sumOfOptionPrice = tempOrderMenus.sumOf { it.calculateOptionTotalPricePerMenuUnit() * it.menuQuantity }
 
+        // 전체 주문금액
+        val totalPrice = sumOfOrderMenuPrice + sumOfOptionPrice
+        if (totalPrice < storeEntity.minimumOrderAmount) {
+            throw OrderException.MinimumOrderAmountNotSatisfied()
+        }
+
         // 결제 생성, 저장 - TODO 결제에 orderId 가 있어야 할 것 같다.
         val savedPayment = paymentRepository.save(
             Payment(
                 type = orderCreationRequest.paymentType,
-                paymentPrice = sumOfOrderMenuPrice + sumOfOptionPrice, // 메뉴가격 + 옵션가격
+                paymentPrice = totalPrice, // 메뉴가격 + 옵션가격
             ),
         )
 
+        val time = LocalDateTime.now()
+        val today = time.toLocalDate().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+        val uuid8charsInFront = UUID.randomUUID().toString().uppercase().substring(0..7)
         // 주문 생성, 저장
         val menuSize = tempOrderMenus.size
         val summary = if (menuSize == 1) tempOrderMenus[0].menuName else "${tempOrderMenus[0].menuName} 외 ${menuSize - 1}개"
         val savedOrder = orderRepository.save(
             Order(
-                id = UUID.randomUUID().toString(),
+                id = "$today-$uuid8charsInFront",
                 storeId = storeEntity.id,
                 userId = userId,
                 roadAddress = orderCreationRequest.roadAddress,
@@ -157,17 +172,17 @@ class OrderService(
                 detailAddress = orderCreationRequest.detailAddress,
                 excludingSpoonAndFork = orderCreationRequest.excludingSpoonAndFork ?: true,
                 requestToRider = orderCreationRequest.requestToRider,
-                tel = "01012345678",
+                tel = loginMember.phone,
                 status = Order.Status.WAIT,
-                orderTime = LocalDateTime.now(),
+                orderTime = time,
                 orderSummary = summary,
                 type = orderCreationRequest.orderType,
                 paymentId = savedPayment.id!!,
                 isDeleted = false,
                 deliveryCompleteTime = null,
                 deliveryPrice = 0L,
-                orderPrice = savedPayment.paymentPrice!!,
-                paymentPrice = savedPayment.paymentPrice!!,
+                orderPrice = totalPrice,
+                paymentPrice = totalPrice,
             ),
         )
         // 주문 메뉴, 옵션그룹, 옵션 저장

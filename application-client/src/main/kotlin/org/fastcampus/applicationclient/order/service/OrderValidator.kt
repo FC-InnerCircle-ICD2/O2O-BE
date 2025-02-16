@@ -20,6 +20,10 @@ class OrderValidator {
          * @return 주문요청에 대한 <메뉴 ID, DB 메뉴정보> MAP
          */
         fun checkOrderCreation(storeEntity: Store, orderCreationRequest: OrderCreationRequest): Map<String, Menu> {
+            if (orderCreationRequest.orderMenus.isEmpty()) {
+                throw OrderException.MissingOrderMenu()
+            }
+
             // 주소입력 체크
             val roadAddress = orderCreationRequest.roadAddress
             val jubunAddress = orderCreationRequest.jibunAddress
