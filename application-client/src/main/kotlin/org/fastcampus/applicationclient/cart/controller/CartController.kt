@@ -1,9 +1,11 @@
 package org.fastcampus.applicationclient.cart.controller
 
+import org.fastcampus.applicationclient.cart.controller.dto.request.CartMenuDeletionRequest
 import org.fastcampus.applicationclient.cart.controller.dto.request.CartMenuInsertionRequest
 import org.fastcampus.applicationclient.cart.controller.dto.request.CartUpdateRequest
 import org.fastcampus.applicationclient.cart.controller.dto.response.CartResponse
 import org.fastcampus.applicationclient.cart.controller.dto.response.CartUpdateResponse
+import org.fastcampus.applicationclient.cart.service.CartMenuDeletionService
 import org.fastcampus.applicationclient.cart.service.CartMenuInsertionService
 import org.fastcampus.applicationclient.cart.service.CartReadService
 import org.fastcampus.applicationclient.cart.service.CartUpdateService
@@ -12,6 +14,7 @@ import org.fastcampus.applicationclient.config.security.dto.JwtAuthenticated
 import org.fastcampus.common.dto.APIResponseDTO
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,6 +28,7 @@ class CartController(
     private val cartMenuInsertionService: CartMenuInsertionService,
     private val cartReadService: CartReadService,
     private val cartUpdateService: CartUpdateService,
+    private val cartMenuDeletionService: CartMenuDeletionService,
 ) {
     @JwtAuthenticated
     @PostMapping
@@ -53,5 +57,15 @@ class CartController(
     ): APIResponseDTO<CartUpdateResponse> {
         val response = cartUpdateService.updateCart(authMember.id, request)
         return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response)
+    }
+
+    @JwtAuthenticated
+    @DeleteMapping
+    fun deleteCartMenu(
+        @AuthenticationPrincipal authMember: AuthMember,
+        @RequestBody request: CartMenuDeletionRequest,
+    ): APIResponseDTO<Void> {
+        cartMenuDeletionService.deleteCartMenu(authMember.id, request.cartIds)
+        return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null)
     }
 }

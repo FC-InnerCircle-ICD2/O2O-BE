@@ -79,6 +79,15 @@ Authorization: {{accessToken}}
     "quantity": 1
 }
 
+### 장바구니 삭제
+DELETE http://localhost:8081/api/v1/carts
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+{
+    "cartIds": [0, 1, 2]
+}
+
 ### 주문생성
 POST http://localhost:8081/api/v1/orders
 Content-Type: application/json
