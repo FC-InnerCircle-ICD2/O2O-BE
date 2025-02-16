@@ -11,6 +11,7 @@ import org.springframework.boot.runApplication
         "org.fastcampus.member",
         "org.fastcampus.payment",
         "org.fastcampus.review",
+        "org.fastcampus.cart",
     ],
 )
 class ApplicationClientApplication

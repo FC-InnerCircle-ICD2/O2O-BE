@@ -1,0 +1,16 @@
+name: Deploy Develop Client to Docker Hub
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'application-client/**'
+      - 'application-client/build.gradle'
+  workflow_dispatch:
+
+jobs:
+  client-build:
+    uses: ./.github/workflows/develop-client-deploy-v1.yml
+    name: "Build and Deploy for Develop Client"
+    secrets: inherit

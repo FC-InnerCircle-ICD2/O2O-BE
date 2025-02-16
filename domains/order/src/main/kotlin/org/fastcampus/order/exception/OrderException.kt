@@ -1,6 +1,8 @@
 package org.fastcampus.order.exception
 
 open class OrderException(message: String) : RuntimeException(message) {
+    class MinimumOrderAmountNotSatisfied() : OrderException("최소 주문금액이 충족되지 않습니다.")
+
     data class OrderNotFound(val orderId: String) : OrderException("주문을 찾을 수 없습니다.")
 
     data class OrderCanNotAccept(val orderId: String) : OrderException("주문 수락이 불가능한 주문입니다.")

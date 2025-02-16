@@ -13,6 +13,7 @@ data class StoreInfo(
     val latitude: Double,
     val longitude: Double,
     val phone: String?,
+    val minimumOrderAmount: Long,
 )
 
 data class CategoryInfo(
@@ -59,4 +60,6 @@ data class MenuOptionInfo(
     val imageUrl: String,
     val price: Int, // String -> Int 변환 필요
     val soldOut: Boolean, // 필드명 변경 (isSoldOut -> soldout)
+    val isBest: Boolean,
+    val isManyOrder: Boolean,
 )

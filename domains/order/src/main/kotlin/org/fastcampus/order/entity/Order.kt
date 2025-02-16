@@ -57,7 +57,7 @@ data class Order(
         if (this.status != Status.ACCEPT) {
             throw OrderException.OrderCanNotComplete(this.id)
         }
-        this.status = Status.REFUSE
+        this.status = Status.COMPLETED
     }
 
     enum class Status(

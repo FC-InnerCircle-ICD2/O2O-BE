@@ -34,6 +34,7 @@ class StoreDocument(
     val jibunAddress: String?,
     @Field(name = "storeMenuCategory")
     val storeMenuCategoryDocument: List<StoreMenuCategoryDocument>? = null,
+    val minimumOrderAmount: Long,
 )
 
 fun StoreDocument.toModel() =
@@ -55,4 +56,5 @@ fun StoreDocument.toModel() =
         status,
         roadAddress,
         storeMenuCategoryDocument?.map { it.toModel() },
+        minimumOrderAmount,
     )

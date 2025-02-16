@@ -40,5 +40,6 @@ fun createStore(
         status = status,
         roadAddress = roadAddress,
         storeMenuCategory = storeMenuCategory,
+        minimumOrderAmount = 12000,
     )
 }

@@ -1,4 +1,4 @@
-name: Deploy to Docker Hub
+name: Deploy Develop Admin to Docker Hub
 
 on:
   push:
@@ -12,5 +12,5 @@ on:
 jobs:
   admin-build:
     uses: ./.github/workflows/develop-admin-deploy-v1.yml
-    name: "Build and Deploy for Admin"
+    name: "Build and Deploy for Develop Admin"
     secrets: inherit
