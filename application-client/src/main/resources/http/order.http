@@ -23,7 +23,7 @@ Content-Type: application/json
 %}
 
 ### 장바구니 메뉴 추가 1
-POST http://localhost:8081/api/v1/cart
+POST http://localhost:8081/api/v1/carts
 Content-Type: application/json
 Authorization: {{accessToken}}
 
@@ -44,7 +44,7 @@ Authorization: {{accessToken}}
 }
 
 ### 장바구니 메뉴 추가 2
-POST http://localhost:8081/api/v1/cart
+POST http://localhost:8081/api/v1/carts
 Content-Type: application/json
 Authorization: {{accessToken}}
 
@@ -63,6 +63,12 @@ Authorization: {{accessToken}}
         ]
     }
 }
+
+### 장바구니 조회
+GET http://localhost:8081/api/v1/carts
+Content-Type: application/json
+Authorization: {{accessToken}}
+
 
 ### 주문생성
 POST http://localhost:8081/api/v1/orders
