@@ -1,7 +1,11 @@
 package org.fastcampus.review.exception
 
 open class ReviewException(message: String) : RuntimeException(message) {
+    data class NotFoundReview(val reviewId: Long) : ReviewException("리뷰를 찾을 수 없습니다. reviewId: $reviewId")
+
     data class NotMatchedUser(val userId: Long) : ReviewException("리뷰 등록 요청이 불가능한 유저입니다. userId: $userId")
+
+    data class NotMatchedOwner(val ownerId: Long) : ReviewException("리뷰 답글 요청이 불가능한 유저입니다. ownerId: $ownerId")
 
     data class ContentLength(val content: String) : ReviewException("리뷰는 5자 이상이어야 합니다., content: $content")
 

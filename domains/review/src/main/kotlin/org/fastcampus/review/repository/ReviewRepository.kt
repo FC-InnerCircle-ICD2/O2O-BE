@@ -20,4 +20,6 @@ interface ReviewRepository {
         page: Int,
         size: Int,
     ): CursorDTO<Review>
+
+    fun findById(reviewId: Long): Review
 }

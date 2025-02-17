@@ -1,10 +1,13 @@
 package org.fastcampus.applicationadmin.review.service
 
+import org.fastcampus.applicationadmin.config.security.dto.AuthMember
 import org.fastcampus.applicationadmin.order.service.component.OrderReader
 import org.fastcampus.applicationadmin.review.controller.dto.ReviewInquiryResponse
+import org.fastcampus.applicationadmin.review.controller.dto.ReviewReplyRequest
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.member.repository.MemberRepository
 import org.fastcampus.review.entity.Review
+import org.fastcampus.review.exception.ReviewException
 import org.fastcampus.review.repository.ReviewRepository
 import org.fastcampus.store.repository.StoreRepository
 import org.slf4j.LoggerFactory
@@ -38,6 +41,16 @@ class ReviewService(
             result.add(ReviewInquiryResponse.of(review, order, user))
         }
         return CursorDTO(content = result, nextCursor = reviews.nextCursor)
+    }
+
+    fun replyReview(reviewId: Long, owner: AuthMember, requestDto: ReviewReplyRequest) {
+        val review = reviewRepository.findById(reviewId)
+        val storeId = storeRepository.findByOwnerId(ownerId = owner.id.toString())
+        if (review.storeId != storeId) {
+            throw ReviewException.NotMatchedOwner(owner.id)
+        }
+        review.reply(owner.id, requestDto.content)
+        reviewRepository.save(review)
     }
 
     companion object {
