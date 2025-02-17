@@ -2,6 +2,7 @@ package org.fastcampus.review.postgres.repository
 
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.review.entity.Review
+import org.fastcampus.review.exception.ReviewException
 import org.fastcampus.review.postgres.entity.ReviewJpaEntity
 import org.fastcampus.review.postgres.entity.toJpaEntity
 import org.fastcampus.review.postgres.entity.toModel
@@ -11,6 +12,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
@@ -20,6 +22,10 @@ class ReviewRepositoryCustom(
 ) : ReviewRepository {
     override fun save(review: Review): Review {
         return reviewJpaRepository.save(review.toJpaEntity()).toModel()
+    }
+
+    override fun findById(reviewId: Long): Review {
+        return reviewJpaRepository.findByIdOrNull(reviewId)?.toModel() ?: throw ReviewException.NotFoundReview(reviewId)
     }
 
     override fun findByOrderIdIn(orderIds: List<String>): List<Review> {

@@ -21,6 +21,8 @@ interface ReviewRepository {
         size: Int,
     ): CursorDTO<Review>
 
+    fun findById(reviewId: Long): Review
+
     fun getTotalAverageScoreByStoreId(storeId: String): Double
 
     fun getTasteAverageScoreByStoreId(storeId: String): Double
