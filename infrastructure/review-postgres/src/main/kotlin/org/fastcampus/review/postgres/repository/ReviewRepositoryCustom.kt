@@ -67,4 +67,20 @@ class ReviewRepositoryCustom(
             nextCursor = if (reviews.nextPageable().sort.isSorted) reviews.nextPageable().pageNumber else null,
         )
     }
+
+    override fun getTotalAverageScoreByStoreId(storeId: String): Double {
+        return reviewJpaRepository.getTotalAverageScoreByStoreId(storeId) ?: 0.0
+    }
+
+    override fun getTasteAverageScoreByStoreId(storeId: String): Double {
+        return reviewJpaRepository.getTasteAverageScoreByStoreId(storeId) ?: 0.0
+    }
+
+    override fun getAmountAverageScoreByStoreId(storeId: String): Double {
+        return reviewJpaRepository.getAmountAverageScoreByStoreId(storeId) ?: 0.0
+    }
+
+    override fun countReviewCountByStoreId(storeId: String): Long {
+        return reviewJpaRepository.countByStoreId(storeId)
+    }
 }
