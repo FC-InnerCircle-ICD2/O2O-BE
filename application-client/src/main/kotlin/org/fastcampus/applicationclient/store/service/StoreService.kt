@@ -13,6 +13,8 @@ import org.fastcampus.applicationclient.store.mapper.StoreMapper.toStoreInfo
 import org.fastcampus.applicationclient.store.mapper.calculateDeliveryTime
 import org.fastcampus.applicationclient.store.mapper.fetchDistance
 import org.fastcampus.applicationclient.store.mapper.fetchStoreCoordinates
+import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.store.entity.Store
 import org.fastcampus.store.exception.StoreException
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
@@ -138,5 +140,29 @@ class StoreService(
         } else {
             return false
         }
+    }
+
+    @StoreMetered
+    fun getStoresByNearByAndCondition(
+        latitude: Double,
+        longitude: Double,
+        page: Int,
+        size: Int,
+        category: Store.Category?,
+        searchCondition: String?,
+    ): CursorDTO<StoreInfo>? {
+        val mapContent = storeRepository
+            .findStoreNearbyAndCondition(
+                latitude,
+                longitude,
+                category,
+                searchCondition,
+                page,
+                size,
+            )
+        val content = mapContent
+            .first
+            .map { it.store.toStoreInfo(it.distance.toDouble()) }
+        return CursorDTO(content, mapContent.second)
     }
 }

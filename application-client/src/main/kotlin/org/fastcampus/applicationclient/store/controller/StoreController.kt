@@ -6,6 +6,8 @@ import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
 import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywordsResponse
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
+import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.store.entity.Store
 import org.fastcampus.store.redis.Coordinates
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -97,5 +99,17 @@ class StoreController(
             logger.info("Failed to add search keyword: $keyword")
             return ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", "fail"))
         }
+    }
+
+    @GetMapping("/list")
+    fun getStoresByNearyByAndCondition(
+        @RequestHeader("X-User-Lat") userLat: Double,
+        @RequestHeader("X-User-Lng") userLng: Double,
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "5") size: Int,
+        @RequestParam(required = false) category: Store.Category?,
+        @RequestParam(required = false) searchCondition: String?,
+    ): ResponseEntity<CursorDTO<StoreInfo>> {
+        return ResponseEntity.ok(storeService.getStoresByNearByAndCondition(userLat, userLng, page, size, category, searchCondition))
     }
 }
