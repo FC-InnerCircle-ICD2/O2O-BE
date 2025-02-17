@@ -13,12 +13,19 @@ class Review(
     val amountScore: Int,
     val representativeImageUri: String? = null,
     val deliveryQuality: DeliveryQuality? = null,
-    val adminUserId: Long? = null,
-    val adminReviewContent: String? = null,
-    val adminReviewedAt: LocalDateTime? = null,
+    var adminUserId: Long? = null,
+    var adminReviewContent: String? = null,
+    var adminReviewedAt: LocalDateTime? = null,
     val createdAt: LocalDateTime? = null,
-    val updatedAt: LocalDateTime? = null,
+    var updatedAt: LocalDateTime? = null,
 ) {
+    fun reply(ownerId: Long, content: String) {
+        this.adminUserId = ownerId
+        this.adminReviewContent = content
+        this.updatedAt = LocalDateTime.now()
+        this.adminReviewedAt = LocalDateTime.now()
+    }
+
     enum class DeliveryQuality(
         val code: String,
         val desc: String,

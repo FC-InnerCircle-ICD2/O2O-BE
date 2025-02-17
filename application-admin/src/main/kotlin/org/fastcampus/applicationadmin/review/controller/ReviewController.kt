@@ -2,14 +2,19 @@ package org.fastcampus.applicationadmin.review.controller
 
 import org.fastcampus.applicationadmin.config.security.dto.AuthMember
 import org.fastcampus.applicationadmin.review.controller.dto.ReviewInquiryResponse
+import org.fastcampus.applicationadmin.review.controller.dto.ReviewReplyRequest
 import org.fastcampus.applicationadmin.review.service.ReviewService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.review.entity.Review
+import org.slf4j.LoggerFactory
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -30,10 +35,26 @@ class ReviewController(
         @RequestParam(defaultValue = "5") size: Int,
         @AuthenticationPrincipal owner: AuthMember,
     ): APIResponseDTO<CursorDTO<ReviewInquiryResponse>> {
+        log.debug("admin tried to inquire reviews: owner= {}", owner)
         return APIResponseDTO(
             HttpStatus.OK.value(),
             HttpStatus.OK.reasonPhrase,
             reviewService.findReviews(owner.id, startDate, endDate, sort, answerType, page, size),
         )
+    }
+
+    @PostMapping("/{reviewId}")
+    fun replyReview(
+        @PathVariable reviewId: Long,
+        @AuthenticationPrincipal owner: AuthMember,
+        @RequestBody requestDto: ReviewReplyRequest,
+    ): APIResponseDTO<String> {
+        log.debug("reply review: ownerId= {}, reviewId= {}", owner, reviewId)
+        reviewService.replyReview(reviewId, owner, requestDto)
+        return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null)
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(ReviewController::class.java)
     }
 }

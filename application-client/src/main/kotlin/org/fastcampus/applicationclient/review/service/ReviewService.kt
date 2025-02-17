@@ -54,6 +54,7 @@ class ReviewService(
                 WritableReviewResponse.of(
                     store.id,
                     store.name,
+                    store.imageThumbnail,
                     reviewableOrder.id,
                     reviewableOrder.orderSummary,
                     reviewableOrder.orderTime,
