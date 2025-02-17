@@ -47,7 +47,8 @@ object StoreMapper {
             latitude = latitude ?: 0.0,
             longitude = longitude ?: 0.0,
             phone = tel ?: "unknown",
-        )
+            minimumOrderAmount = minimumOrderAmount,
+            )
 
     private fun Menu.toMenuResponse(): MenuOptionInfo {
         return MenuOptionInfo(
