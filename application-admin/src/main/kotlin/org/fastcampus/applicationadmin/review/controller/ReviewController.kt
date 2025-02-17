@@ -1,0 +1,39 @@
+package org.fastcampus.applicationadmin.review.controller
+
+import org.fastcampus.applicationadmin.config.security.dto.AuthMember
+import org.fastcampus.applicationadmin.review.controller.dto.ReviewInquiryResponse
+import org.fastcampus.applicationadmin.review.service.ReviewService
+import org.fastcampus.common.dto.APIResponseDTO
+import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.review.entity.Review
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.http.HttpStatus
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
+
+@RestController
+@RequestMapping("/api/v1/reviews")
+class ReviewController(
+    private val reviewService: ReviewService,
+) {
+    @GetMapping
+    fun getReviews(
+        @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") startDate: LocalDate?,
+        @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") endDate: LocalDate?,
+        @RequestParam sort: Review.Sort,
+        @RequestParam answerType: Review.AnswerType,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "5") size: Int,
+        @AuthenticationPrincipal owner: AuthMember,
+    ): APIResponseDTO<CursorDTO<ReviewInquiryResponse>> {
+        return APIResponseDTO(
+            HttpStatus.OK.value(),
+            HttpStatus.OK.reasonPhrase,
+            reviewService.findReviews(owner.id, startDate, endDate, sort, answerType, page, size),
+        )
+    }
+}

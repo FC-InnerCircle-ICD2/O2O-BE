@@ -27,6 +27,7 @@ data class Order(
     val paymentPrice: Long,
     val excludingSpoonAndFork: Boolean = true,
     val requestToRider: String? = null,
+    val orderMenus: List<OrderMenu>? = null, // 필요시 설정
 ) {
     fun accept() {
         // 주문접수상태만 주문수락가능
@@ -78,6 +79,7 @@ data class Order(
                 ACCEPT -> ClientStatus.ONGOING
                 COMPLETED -> ClientStatus.DONE
                 CANCEL -> ClientStatus.CANCEL
+                REFUSE -> ClientStatus.REFUSE
                 else -> throw IllegalArgumentException("Unknown status $this")
             }
         }
@@ -91,6 +93,7 @@ data class Order(
         ONGOING("C2", "진행중"),
         DONE("C3", "완료"),
         CANCEL("C4", "취소"),
+        REFUSE("C5", "거절"),
         ;
 
         fun toOrderStatus(): Status {
@@ -99,6 +102,7 @@ data class Order(
                 ONGOING -> Status.ACCEPT
                 DONE -> Status.COMPLETED
                 CANCEL -> Status.CANCEL
+                REFUSE -> Status.REFUSE
             }
         }
     }

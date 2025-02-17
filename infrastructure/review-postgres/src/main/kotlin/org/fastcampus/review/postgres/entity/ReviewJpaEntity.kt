@@ -11,6 +11,7 @@ import jakarta.persistence.Table
 import org.fastcampus.common.entity.BaseEntity
 import org.fastcampus.review.entity.Review
 import org.fastcampus.review.entity.Review.DeliveryQuality
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "REVIEWS")
@@ -41,6 +42,8 @@ class ReviewJpaEntity(
     val adminUserId: Long? = null,
     @Column(name = "ADMIN_REVIEW_CONTENT", nullable = true, length = 1000)
     val adminReviewContent: String? = null,
+    @Column(name = "ADMIN_REVIEWED_AT", nullable = true)
+    val adminReviewedAt: LocalDateTime? = null,
 ) : BaseEntity()
 
 fun Review.toJpaEntity() =
@@ -57,6 +60,7 @@ fun Review.toJpaEntity() =
         deliveryQuality = this.deliveryQuality,
         adminUserId = this.adminUserId,
         adminReviewContent = this.adminReviewContent,
+        adminReviewedAt = this.adminReviewedAt,
     )
 
 fun ReviewJpaEntity.toModel() =
@@ -73,6 +77,7 @@ fun ReviewJpaEntity.toModel() =
         deliveryQuality = this.deliveryQuality,
         adminUserId = this.adminUserId,
         adminReviewContent = this.adminReviewContent,
+        adminReviewedAt = this.adminReviewedAt,
         createdAt = this.createdAt,
         updatedAt = this.updatedAt,
     )
