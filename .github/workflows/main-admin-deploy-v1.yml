@@ -62,6 +62,7 @@ jobs:
 
           DB_INSTANCE_ID=$(aws ec2 describe-instances  \
             --filters "Name=tag:Name,Values=$DB_INSTANCE_NAME" \
+                      "Name=instance-state-name,Values=running" \
             --query "Reservations[].Instances[].InstanceId" \
             --output text)
 
