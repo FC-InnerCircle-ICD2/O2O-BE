@@ -15,6 +15,7 @@ class Review(
     val deliveryQuality: DeliveryQuality? = null,
     val adminUserId: Long? = null,
     val adminReviewContent: String? = null,
+    val adminReviewedAt: LocalDateTime? = null,
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null,
 ) {
@@ -24,5 +25,22 @@ class Review(
     ) {
         GOOD("d1", "Good"),
         BAD("d2", "Bad"),
+    }
+
+    enum class Sort(
+        val code: String,
+        val desc: String,
+    ) {
+        LATEST("s1", "latest"),
+        SCORE("s2", "score"),
+    }
+
+    enum class AnswerType(
+        val code: String,
+        val desc: String,
+    ) {
+        ALL("a1", "all"),
+        OWNER_ANSWERED("a2", "owner_answered"),
+        OWNER_NOT_ANSWERED("a3", "owner_not_answered"),
     }
 }

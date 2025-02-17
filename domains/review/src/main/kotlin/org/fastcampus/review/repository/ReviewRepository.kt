@@ -2,6 +2,7 @@ package org.fastcampus.review.repository
 
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.review.entity.Review
+import java.time.LocalDate
 
 interface ReviewRepository {
     fun save(review: Review): Review
@@ -9,4 +10,14 @@ interface ReviewRepository {
     fun findByOrderIdIn(orderIds: List<String>): List<Review>
 
     fun findByUserId(memberId: Long, page: Int, size: Int): CursorDTO<Review>
+
+    fun findReviews(
+        storeId: String,
+        startDate: LocalDate?,
+        endDate: LocalDate?,
+        sort: Review.Sort,
+        answerType: Review.AnswerType,
+        page: Int,
+        size: Int,
+    ): CursorDTO<Review>
 }

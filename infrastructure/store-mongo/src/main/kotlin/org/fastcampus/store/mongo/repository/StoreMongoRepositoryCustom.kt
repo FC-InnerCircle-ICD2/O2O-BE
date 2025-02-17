@@ -36,9 +36,9 @@ internal class StoreMongoRepositoryCustom(
         return result?.ownerId
     }
 
-    override fun findByOwnerId(ownerId: String): String? {
+    override fun findByOwnerId(ownerId: String): String {
         val store = storeMongoRepository.findByOwnerId(ownerId) ?: throw StoreException.StoreNotFoundException(ownerId)
-        return store.id
+        return store.id!!
     }
 
     override fun findStoreNearbyAndCondition(

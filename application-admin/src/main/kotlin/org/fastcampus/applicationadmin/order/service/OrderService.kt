@@ -43,7 +43,7 @@ class OrderService(
         page: Int,
         size: Int,
     ): OffSetBasedDTO<OrderInquiryResponse> {
-        val storeId = storeRepository.findByOwnerId(ownerId.toString()) ?: throw OrderException.StoreNotFound(ownerId.toString())
+        val storeId: String = storeRepository.findByOwnerId(ownerId.toString())
         val startOfDay = startDate?.atStartOfDay()
         val endOfDay = endDate?.atTime(23, 59, 59)
         val orders = orderRepository.findByStoreIdAndStatusesWithPeriod(

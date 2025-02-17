@@ -14,7 +14,7 @@ interface StoreRepository {
 
     fun findOwnerIdByStoreId(storeId: String): String?
 
-    fun findByOwnerId(ownerId: String): String?
+    fun findByOwnerId(ownerId: String): String
 
     fun findStoreNearbyAndCondition(
         latitude: Double,
