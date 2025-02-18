@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set Up Modules
         run: |
@@ -24,37 +26,46 @@ jobs:
           function find_module() {
             dir="$1"
             while [[ "$dir" != "$project_root" && "$dir" != "/" ]]; do
-            # Module criteria: check build.gradle or build.gradle.kts file
-            if [[ -f "$dir/build.gradle.kts" || -f "$dir/build.gradle" ]]; then
-            # Return the directory as a module
-            echo "$(realpath --relative-to="$project_root" "$dir")"
-            return
-            fi
-            # Move to parent directory
-            dir=$(dirname "$dir")
+
+              # Module criteria: check build.gradle or build.gradle.kts file
+              if [[ -f "$dir/build.gradle.kts" || -f "$dir/build.gradle" ]]; then
+                # Return the directory as a module
+                echo "$(realpath --relative-to="$project_root" "$dir")"
+                return
+              fi
+
+              # Move to parent directory
+              dir=$(dirname "$dir")
             done
           }
 
           # Fetch changed files (customize as needed)
-          changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          BASE_SHA=$(git rev-parse origin/${{ github.event.pull_request.base.ref }})
+          git fetch origin ${{ github.event.pull_request.base.ref }}  # base 브랜치 최신 상태로 가져오기
+          changed_files=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...${{ github.sha }} | tr '\n' ' ')
 
           # Identify modules in changed files
           for file in $changed_files; do
-          # Directory where the file belongs
-          file_dir=$(dirname "$file")
-          # Find the module path
-          module=$(find_module "$project_root/$file_dir")
-          build_module=$(echo "$module" | tr '/' ':')
-          # Remove unnecessary spaces
-          build_module=$(echo "$build_module" | xargs)
-          # Exclude "." modules
-          if [[ "$build_module" == "." ]]; then
-          continue
-          fi
-          # Add unique modules to the list
-          if [[ -n "$build_module" && ! " ${modules_to_format[*]} " =~ " ${build_module} " ]]; then
-          modules_to_format+=("$build_module")
-          fi
+
+            # Directory where the file belongs
+            file_dir=$(dirname "$file")
+
+            # Find the module path
+            module=$(find_module "$project_root/$file_dir")
+            build_module=$(echo "$module" | tr '/' ':')
+
+            # Remove unnecessary spaces
+            build_module=$(echo "$build_module" | xargs)
+
+            # Exclude "." modules
+            if [[ "$build_module" == "." ]]; then
+              continue
+            fi
+
+            # Add unique modules to the list
+            if [[ -n "$build_module" && ! " ${modules_to_format[*]} " =~ " ${build_module} " ]]; then
+              modules_to_format+=("$build_module")
+            fi
           done
 
           # Export modules as a single string
@@ -62,40 +73,16 @@ jobs:
         env:
           GITHUB_ENV: $GITHUB_ENV
 
-      - name: Fetch Base Branch
-        run: git fetch origin +refs/heads/${{ github.event.pull_request.base.ref }}:refs/remotes/origin/${{ github.event.pull_request.base.ref }}
-
-      - name: Get Modified Files
-        run: |
-          BASE_SHA=$(git rev-parse origin/${{ github.event.pull_request.base.ref }})
-          MODIFIED_FILES=$(git diff --name-only $BASE_SHA ${{ github.sha }} | tr '\n' ' ')
-          echo "MODIFIED_FILES=$MODIFIED_FILES" >> $GITHUB_ENV
-
-      - name: Determine Modified Modules
+      - name: Set Module Matrix
         id: determine_modules
         run: |
           # 문자열을 배열로 전환
           IFS=' ' read -r -a MODIFIED_FILES_ARRAY <<< "${{ env.MODIFIED_FILES }}"
-          IFS=' ' read -r -a MODULES_ARRAY <<< "${{ env.MODULES }}"
-
-          MODIFIED_MODULES=()
-          for FILE in "${MODIFIED_FILES_ARRAY[@]}"; do
-            for MODULE in "${MODULES_ARRAY[@]}"; do
-              # 모듈 경로가 파일에 포함되는지 확인
-              if [[ "$FILE" == "$MODULE"* ]]; then
-                # 수정된 파일이 특정 모듈에 속하는 경우 그 모듈이 이미 배열에 추가되었는지 확인
-                if ! [[ " ${MODIFIED_MODULES[@]} " =~ " ${MODULE} " ]]; then
-                  echo "Add Module($MODULE)"
-                  MODIFIED_MODULES+=("$MODULE")
-                  break
-                fi
-              fi
-            done
-          done
+          IFS=' ' read -r -a MODULES_ARRAY <<< "${{ env.modules }}"
 
           # 변경 모듈 MATRIX 문자열 변환
           MODULE_MATRIX=""
-          for MODULE in "${MODIFIED_MODULES[@]}"; do
+          for MODULE in "${MODULES_ARRAY[@]}"; do
             if [ -n "$MODULE_MATRIX" ]; then
               MODULE_MATRIX+=",\"${MODULE}\""
             else
@@ -138,24 +125,22 @@ jobs:
       - name: Execute Gradle Test
         if: ${{ matrix.module && matrix.module != '' }}
         run: |
-          # domains/member -> domains:member 변환
           TARGET_MODULE=$(echo "${{ matrix.module }}")
           echo "TARGET : $TARGET_MODULE"
           chmod +x ./gradlew
           ./gradlew :$TARGET_MODULE:test --parallel
-
-      - name: Create jacoco Test Report
-        run: |
-          chmod +x ./gradlew
-          ./gradlew jacocoRootReport
+          PR_MODULE=${TARGET_MODULE//:/\/}  # ':'을 '/'로 변경
+          echo "pr_module=$PR_MODULE" >> $GITHUB_ENV
 
       - name: Coverage Report as Comment to the PR
         uses: madrapps/jacoco-report@v1.6.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: 📝 테스트 커버리지 리포트
+          title: 📝 ${{ matrix.module }} 테스트 커버리지 리포트
           update-comment: true
           min-coverage-overall: 60
           min-coverage-changed-files: 60
           paths: |
-            ${{ github.workspace }}/**/build/reports/jacoco/jacocoTestReport.xml
+            ${{ github.workspace }}/${{ env.pr_module }}/build/reports/jacoco/test/jacocoTestReport.xml
+          extra-info: |
+            Target Module: ${{ matrix.module }}

@@ -1,0 +1,88 @@
+### 회원가입
+POST http://localhost:8081/api/v1/members/join
+Content-Type: application/json
+
+{
+    "signname": "user@gmail.com",
+    "password": "1234",
+    "nickname": "개발의민족",
+    "username": "홍길동",
+    "phone": "01012345678"
+}
+
+### 로그인
+POST http://localhost:8081/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "signname": "user@gmail.com",
+    "password": "1234"
+}
+> {%
+    client.global.set("accessToken", response.body.data.accessToken)
+%}
+
+
+### 주문생성
+POST http://localhost:8081/api/v1/orders
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+{
+    "storeId": "26466355",
+    "roadAddress": "서울 동대문구 왕산로 123",
+    "jibunAddress": "서울 동대문구 전농동 123-45",
+    "detailAddress": "O2O아파트 123호",
+    "orderType": "DELIVERY",
+    "paymentType": "TOSS_PAY",
+    "orderMenus": [
+        {
+            "id": "22ae085c-c1a1-4b10-8563-d4ebfc17e664",
+            "quantity": 2,
+            "orderMenuOptionGroups": [
+                {
+                    "id": "45c2e410-8d9c-4932-ae51-c2ed9694a137",
+                    "orderMenuOptionIds": [
+                        "f127be5b-5669-4d73-81db-fbbefdca74f1"
+                    ]
+                }
+            ]
+        }
+    ]
+}
+> {%
+    client.global.set("orderId", response.body.data.orderId)
+    client.global.set("totalPrice", response.body.data.totalPrice)
+%}
+
+### 리뷰 가능한 주문 조회 (Cursor 기반 페이징)
+GET http://localhost:8081/api/v1/reviews/writable?cursor=2025-02-02T14:00:00&size=10
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+
+### 리뷰 등록 (파일 + JSON 데이터 전송)
+POST http://localhost:8081/api/v1/reviews
+Content-Type: multipart/form-data; boundary=boundary
+Authorization: Bearer {{accessToken}}
+
+--boundary
+Content-Disposition: form-data; name="review"
+Content-Type: application/json
+
+{
+    "orderId": "{{orderId}}",
+    "storeId": "26466355",
+    "content": "The food was delicious and delivery was quick.",
+    "totalScore": 5,
+    "tasteScore": 5,
+    "amountScore": 4,
+    "deliveryQuality": "GOOD"
+}
+
+--boundary--
+
+### 리뷰 조회 (Cursor 기반 페이징)
+GET http://localhost:8082/api/v1/reviews?startDate=20250215&endDate=20250215&sort=SCORE&answerType=All
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhY2Nlc3NUb2tlbiIsInJvbGUiOiJDRU8iLCJpZCI6MSwiZXhwIjoxNzQwNjMzNTA1fQ.-a2t2PMweMQSHrll2bcyeCOCnFyrxqME_p5FKdyKmLea0XavB51FRCnuBvtloPLzbp0FslrtJ69YCXhDllKq_A
+Content-Type: application/json

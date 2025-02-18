@@ -1,0 +1,20 @@
+server:
+  port: 8082
+
+spring:
+  profiles:
+    active: local
+    include:
+      - member-postgres
+      - order-postgres
+      - payment-postgres
+      - store-mongo
+      - store-redis
+
+logging:
+  level:
+    org.hibernate.SQL: trace
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    org.fastcampus: debug
+    org.springframework.data.mongodb.core: DEBUG
+    org.mongodb.driver: DEBUG

@@ -1,0 +1,16 @@
+name: Deploy Main Admin to Docker Hub
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'application-admin/**'
+      - 'application-admin/build.gradle'
+  workflow_dispatch:
+
+jobs:
+  client-build:
+    uses: ./.github/workflows/main-admin-deploy-v1.yml
+    name: "Build and Deploy for Main Admin"
+    secrets: inherit

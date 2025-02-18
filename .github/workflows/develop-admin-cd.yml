@@ -1,0 +1,16 @@
+name: Deploy Develop Admin to Docker Hub
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'application-admin/**'
+      - 'application-admin/build.gradle'
+  workflow_dispatch:
+
+jobs:
+  admin-build:
+    uses: ./.github/workflows/develop-admin-deploy-v1.yml
+    name: "Build and Deploy for Develop Admin"
+    secrets: inherit

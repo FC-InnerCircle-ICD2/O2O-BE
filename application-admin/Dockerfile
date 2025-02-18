@@ -1,7 +1,7 @@
 FROM eclipse-temurin:21-jdk-alpine
 
-EXPOSE 8081
+EXPOSE 8082
 
-COPY ./build/libs/*.jar admin-app.jar
+COPY ./build/libs/application-admin-1.0-SNAPSHOT.jar admin-app.jar
 
-ENTRYPOINT ["java", "-jar","/admin-app.jar"]
+ENTRYPOINT ["java", "-jar", "-Duser.timezone=Asia/Seoul", "/admin-app.jar", "--spring.profiles.active=dev"]

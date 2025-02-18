@@ -4,8 +4,6 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="delegatedBuild" value="false" />
-        <option name="testRunner" value="PLATFORM" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
@@ -14,12 +12,20 @@
             <option value="$PROJECT_DIR$/application-client" />
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/domains" />
+            <option value="$PROJECT_DIR$/domains/cart" />
             <option value="$PROJECT_DIR$/domains/member" />
             <option value="$PROJECT_DIR$/domains/order" />
+            <option value="$PROJECT_DIR$/domains/payment" />
             <option value="$PROJECT_DIR$/domains/review" />
             <option value="$PROJECT_DIR$/domains/store" />
             <option value="$PROJECT_DIR$/infrastructure" />
+            <option value="$PROJECT_DIR$/infrastructure/cart-mongo" />
+            <option value="$PROJECT_DIR$/infrastructure/member-postgres" />
+            <option value="$PROJECT_DIR$/infrastructure/member-redis" />
             <option value="$PROJECT_DIR$/infrastructure/order-postgres" />
+            <option value="$PROJECT_DIR$/infrastructure/order-redis" />
+            <option value="$PROJECT_DIR$/infrastructure/payment-postgres" />
+            <option value="$PROJECT_DIR$/infrastructure/review-postgres" />
             <option value="$PROJECT_DIR$/infrastructure/store-mongo" />
             <option value="$PROJECT_DIR$/infrastructure/store-redis" />
           </set>

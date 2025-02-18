@@ -5,4 +5,5 @@ plugins {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework:spring-web")
+    runtimeOnly("com.h2database:h2")
 }

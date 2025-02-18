@@ -1,0 +1,16 @@
+name: Deploy Main Client to Docker Hub
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'application-client/**'
+      - 'application-client/build.gradle'
+  workflow_dispatch:
+
+jobs:
+  client-build:
+    uses: ./.github/workflows/main-client-deploy-v1.yml
+    name: "Build and Deploy for Main Client"
+    secrets: inherit

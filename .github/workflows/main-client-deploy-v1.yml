@@ -1,0 +1,90 @@
+on:
+  workflow_call:
+
+jobs:
+  client-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Cache Gradle Package
+        uses: actions/cache@v3
+        id: gradle-cache
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Execute Gradle build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :application-client:build --no-daemon
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: ./application-client
+          push: true
+          tags: yong7317/application-client:latest
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Set .env File
+        run: echo "${{ secrets.ENV_PROPERTIES }}" > .env
+
+      - name: Upload specific file to S3
+        run: |
+          aws s3 cp ./flyway s3://${{ secrets.O2O_BE_BUCKET }}/flyway/ --recursive
+          aws s3 cp ./.env s3://${{ secrets.O2O_BE_BUCKET }}/
+
+      - name: Run Commands using SSM
+        run: |
+          DB_INSTANCE_NAME="prod-db-instance"
+
+          DB_INSTANCE_ID=$(aws ec2 describe-instances  \
+            --filters "Name=tag:Name,Values=$DB_INSTANCE_NAME" \
+                      "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId" \
+            --output text)
+
+          aws ssm send-command \
+            --instance-ids $DB_INSTANCE_ID \
+            --document-name "AWS-RunShellScript" \
+            --parameters '{"commands":[
+                "aws s3 cp s3://${{ secrets.O2O_BE_BUCKET }}/flyway /home/ec2-user/backend/flyway --recursive",
+                "bash /home/ec2-user/deploy.sh"
+              ]}'
+
+          ASG_NAME="ProdClientAutoScalingGroup"
+
+          APP_INSTANCE_IDS=$(aws autoscaling describe-auto-scaling-groups \
+            --auto-scaling-group-names $ASG_NAME  \
+            --query "AutoScalingGroups[].Instances[].InstanceId"  \
+            --output text)
+
+          aws ssm send-command \
+            --instance-ids $APP_INSTANCE_IDS \
+            --document-name "AWS-RunShellScript" \
+            --parameters '{"commands":[
+                "aws s3 cp s3://${{ secrets.O2O_BE_BUCKET }}/.env /home/ec2-user/backend --recursive",
+                "bash /home/ec2-user/backend_deploy.sh"
+              ]}'
