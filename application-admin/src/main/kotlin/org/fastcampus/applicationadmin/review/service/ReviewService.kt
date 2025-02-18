@@ -53,6 +53,16 @@ class ReviewService(
         reviewRepository.save(review)
     }
 
+    fun deleteReply(reviewId: Long, owner: AuthMember) {
+        val review = reviewRepository.findById(reviewId)
+        val storeId = storeRepository.findByOwnerId(ownerId = owner.id.toString())
+        if (review.storeId != storeId) {
+            throw ReviewException.NotMatchedOwner(owner.id)
+        }
+        review.deleteReply()
+        reviewRepository.save(review)
+    }
+
     companion object {
         private val log = LoggerFactory.getLogger(ReviewService::class.java)
     }

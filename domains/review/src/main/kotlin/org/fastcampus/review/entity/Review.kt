@@ -26,6 +26,12 @@ class Review(
         this.adminReviewedAt = LocalDateTime.now()
     }
 
+    fun deleteReply() {
+        this.adminUserId = null
+        this.adminReviewContent = null
+        this.updatedAt = LocalDateTime.now()
+    }
+
     enum class DeliveryQuality(
         val code: String,
         val desc: String,
