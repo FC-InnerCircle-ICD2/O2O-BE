@@ -32,6 +32,17 @@ class Review(
         this.updatedAt = LocalDateTime.now()
     }
 
+    fun update(
+        content: String,
+        totalScore: Int,
+        tasteScore: Int,
+        amountScore: Int,
+        deliveryQuality: DeliveryQuality,
+        representativeImageUri: String?,
+    ) {
+        TODO("Not yet implemented")
+    }
+
     enum class DeliveryQuality(
         val code: String,
         val desc: String,
