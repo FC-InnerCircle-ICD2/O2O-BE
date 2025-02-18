@@ -43,7 +43,7 @@ class ReviewController(
         )
     }
 
-    @PostMapping("/{reviewId}")
+    @PostMapping("/{reviewId}/reply")
     fun replyReview(
         @PathVariable reviewId: Long,
         @AuthenticationPrincipal owner: AuthMember,
