@@ -1,5 +1,5 @@
 ### 회원가입
-POST http://localhost:8081/api/v1/members/join
+POST http://localhost:8081/api/v1/auth/join
 Content-Type: application/json
 
 {
@@ -7,7 +7,16 @@ Content-Type: application/json
     "password": "1234",
     "nickname": "개발의민족",
     "username": "홍길동",
-    "phone": "01012345678"
+    "phone": "01012345678",
+    "address": {
+        "memberAddressType": "HOME",
+        "roadAddress": "서울특별시 강남구 테헤란로 123",
+        "jibunAddress": "서울특별시 강남구 역삼동 456-7",
+        "detailAddress": "101동 202호",
+        "alias": "우리집",
+        "latitude": 37.123456,
+        "longitude": 127.654321
+    }
 }
 
 ### 로그인
@@ -38,7 +47,7 @@ Authorization: {{accessToken}}
     "orderMenus": [
         {
             "id": "22ae085c-c1a1-4b10-8563-d4ebfc17e664",
-            "quantity": 2,
+            "quantity": 10,
             "orderMenuOptionGroups": [
                 {
                     "id": "45c2e410-8d9c-4932-ae51-c2ed9694a137",
@@ -56,7 +65,7 @@ Authorization: {{accessToken}}
 %}
 
 ### 리뷰 가능한 주문 조회 (Cursor 기반 페이징)
-GET http://localhost:8081/api/v1/reviews/writable?cursor=2025-02-02T14:00:00&size=10
+GET http://localhost:8081/api/v1/reviews/writable?cursor=2025-02-19T14:00:00&size=10
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
@@ -83,6 +92,21 @@ Content-Type: application/json
 --boundary--
 
 ### 리뷰 조회 (Cursor 기반 페이징)
-GET http://localhost:8082/api/v1/reviews?startDate=20250215&endDate=20250215&sort=SCORE&answerType=All
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhY2Nlc3NUb2tlbiIsInJvbGUiOiJDRU8iLCJpZCI6MSwiZXhwIjoxNzQwNjMzNTA1fQ.-a2t2PMweMQSHrll2bcyeCOCnFyrxqME_p5FKdyKmLea0XavB51FRCnuBvtloPLzbp0FslrtJ69YCXhDllKq_A
+GET http://localhost:8082/api/v1/reviews?startDate=20250215&endDate=20250215&sort=SCORE&answerType=ALL
+Authorization: Bearer {{}}
 Content-Type: application/json
+
+### 점주 리뷰 답글
+POST http://localhost:8082/api/v1/reviews/1/reply
+Authorization: Bearer {{}}
+Content-Type: application/json
+
+{
+    "content": "so good"
+}
+
+### 점주 리뷰 삭제
+DELETE http://localhost:8082/api/v1/reviews/1/reply
+Authorization: Bearer {{}}
+Content-Type: application/json
+
