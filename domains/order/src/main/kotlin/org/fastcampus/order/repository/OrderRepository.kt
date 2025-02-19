@@ -32,10 +32,10 @@ interface OrderRepository {
 
     fun findReviewableOrders(userId: Long, cursor: LocalDateTime): List<Order>
 
-    fun findAllByStoreIdAndOrderTimeBetweenAndStatusNot(
+    fun findAllByStoreIdAndOrderTimeBetweenAndStatusIn(
         storeId: String,
         startDateTime: LocalDateTime,
         endDateTime: LocalDateTime,
-        status: Order.Status,
+        status: List<Order.Status>,
     ): List<Order>
 }

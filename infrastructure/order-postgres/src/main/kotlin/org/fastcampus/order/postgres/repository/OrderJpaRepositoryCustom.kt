@@ -87,13 +87,13 @@ class OrderJpaRepositoryCustom(
             .toList()
     }
 
-    override fun findAllByStoreIdAndOrderTimeBetweenAndStatusNot(
+    override fun findAllByStoreIdAndOrderTimeBetweenAndStatusIn(
         storeId: String,
         startDateTime: LocalDateTime,
         endDateTime: LocalDateTime,
-        status: Order.Status,
+        status: List<Order.Status>,
     ): List<Order> {
-        return orderJpaRepository.findAllByStoreIdAndOrderTimeBetweenAndStatusNot(
+        return orderJpaRepository.findAllByStoreIdAndOrderTimeBetweenAndStatusIn(
             storeId,
             startDateTime,
             endDateTime,
