@@ -24,9 +24,7 @@ import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 class ReviewServiceTest {
-    @Mock private lateinit var reviewValidator: ReviewValidator
-
-    @Mock private lateinit var reviewImageUploader: ReviewImageUploader
+    @Mock private lateinit var reviewImageManager: ReviewImageManager
 
     @Mock private lateinit var reviewRepository: ReviewRepository
 

@@ -11,7 +11,7 @@ import java.io.IOException
 import java.util.*
 
 @Component
-class ReviewImageUploader(
+class ReviewImageManager(
     private val s3Operations: S3Operations,
 ) {
     @Value("\${spring.cloud.aws.s3.bucket}")
@@ -69,6 +69,6 @@ class ReviewImageUploader(
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(ReviewImageUploader::class.java)
+        private val log = LoggerFactory.getLogger(ReviewImageManager::class.java)
     }
 }
