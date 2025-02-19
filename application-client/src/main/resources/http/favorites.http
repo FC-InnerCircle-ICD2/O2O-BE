@@ -1,0 +1,39 @@
+### 로그인
+POST http://localhost:8081/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "signname": "user1@gmail.com",
+    "password": "1234"
+}
+> {%
+    client.global.set("accessToken", response.body.data.accessToken)
+%}
+
+### 찜 1
+POST http://localhost:8081/api/v1/favorites/1006816630
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+### 찜 2
+POST http://localhost:8081/api/v1/favorites/116496682
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+### 찜 목록 가져오기
+GET http://localhost:8081/api/v1/favorites
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+### 최근 목록(비로그인, 가게 id로 조회)
+GET http://localhost:8081/api/v1/favorites/recent?storeIds=1006816630,116496682
+
+### 찜 취소 1
+DELETE http://localhost:8081/api/v1/favorites/1006816630
+Content-Type: application/json
+Authorization: {{accessToken}}
+
+### 찜 취소 2
+DELETE http://localhost:8081/api/v1/favorites/116496682
+Content-Type: application/json
+Authorization: {{accessToken}}

@@ -13,7 +13,7 @@ import org.fastcampus.favorite.entity.Favorite
 @Entity
 @Table(
     name = "FAVORITES",
-    indexes = [Index(name = "FAVORITE_IDX_1", columnList = "USER_ID, STORE_ID", unique = true,)],
+    indexes = [Index(name = "FAVORITE_IDX_1", columnList = "USER_ID, STORE_ID", unique = true)],
 )
 class FavoriteJpaEntity(
     @Id

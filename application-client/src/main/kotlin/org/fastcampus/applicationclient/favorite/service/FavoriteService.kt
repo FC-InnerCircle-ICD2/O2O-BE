@@ -6,6 +6,7 @@ import org.fastcampus.favorite.repository.FavoriteRepository
 import org.fastcampus.review.repository.ReviewRepository
 import org.fastcampus.store.repository.StoreRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class FavoriteService(
@@ -13,10 +14,12 @@ class FavoriteService(
     private val storeRepository: StoreRepository,
     private val reviewRepository: ReviewRepository,
 ) {
+    @Transactional
     fun addFavorite(userId: Long, storeId: String) {
         favoriteRepository.addFavorite(Favorite(userId = userId, storeId = storeId))
     }
 
+    @Transactional
     fun removeFavorite(userId: Long, storeId: String) {
         favoriteRepository.removeFavoriteByUserIdAndStoreId(userId, storeId)
     }
