@@ -149,6 +149,8 @@ class PaymentServiceTest {
             orderPrice = 1_000L,
             paymentPrice = 1_000L,
             storeId = "storeId",
+            storeName = "",
+            storeImageThumbnail = "",
             roadAddress = "roadAddress",
             jibunAddress = "jibunAddress",
             detailAddress = "detailAddress",

@@ -43,7 +43,7 @@ class OrderService(
     @Transactional(readOnly = true)
     @OrderMetered
     fun getOrders(userId: Long, keyword: String, page: Int, size: Int): CursorDTO<OrderResponse> {
-        val orders = orderRepository.findByUserIdExcludingWaitStatus(userId, if (page == 0) 0 else page, size)
+        val orders = orderRepository.findByUserIdExcludingWaitStatus(userId, keyword, page, size)
         return CursorDTO(
             content = orders.content.map { order ->
                 val store = storeRepository.findById(requireNotNull(order.storeId))
@@ -166,6 +166,8 @@ class OrderService(
             Order(
                 id = "$today-$uuid8charsInFront",
                 storeId = storeEntity.id,
+                storeName = "",
+                storeImageThumbnail = "",
                 userId = userId,
                 roadAddress = orderCreationRequest.roadAddress,
                 jibunAddress = orderCreationRequest.jibunAddress,
