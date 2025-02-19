@@ -90,7 +90,7 @@ class ReviewService(
                     totalScore = review.totalScore,
                     tasteScore = review.tasteScore,
                     amountScore = review.amountScore,
-                    representativeImageUri = requireNotNull(review.representativeImageUri),
+                    representativeImageUri = review.representativeImageUri,
                     clientReviewContent = requireNotNull(review.clientReviewContent),
                 )
             },
