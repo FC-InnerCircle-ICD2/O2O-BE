@@ -166,8 +166,8 @@ class OrderService(
             Order(
                 id = "$today-$uuid8charsInFront",
                 storeId = storeEntity.id,
-                storeName = "",
-                storeImageThumbnail = "",
+                storeName = storeEntity.name,
+                storeImageThumbnail = storeEntity.imageThumbnail,
                 userId = userId,
                 roadAddress = orderCreationRequest.roadAddress,
                 jibunAddress = orderCreationRequest.jibunAddress,
