@@ -12,7 +12,7 @@ data class WrittenReviewResponse(
     val totalScore: Int,
     val tasteScore: Int,
     val amountScore: Int,
-    val representativeImageUri: String,
+    val representativeImageUri: String?,
     val clientReviewContent: String,
     val editDeadline: Int,
 ) {
@@ -26,7 +26,7 @@ data class WrittenReviewResponse(
             totalScore: Int,
             tasteScore: Int,
             amountScore: Int,
-            representativeImageUri: String,
+            representativeImageUri: String?,
             clientReviewContent: String,
         ): WrittenReviewResponse {
             val daysPassed = ChronoUnit.DAYS.between(createTime, LocalDateTime.now()).toInt()

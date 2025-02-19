@@ -65,7 +65,7 @@ Authorization: {{accessToken}}
 %}
 
 ### 리뷰 가능한 주문 조회 (Cursor 기반 페이징)
-GET http://localhost:8081/api/v1/reviews/writable?cursor=2025-02-19T14:00:00&size=10
+GET http://localhost:8081/api/v1/reviews/writable?cursor=2025-02-20T14:00:00&size=10
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
@@ -91,9 +91,14 @@ Content-Type: application/json
 
 --boundary--
 
-### 리뷰 조회 (Cursor 기반 페이징)
-GET http://localhost:8082/api/v1/reviews?startDate=20250215&endDate=20250215&sort=SCORE&answerType=ALL
-Authorization: Bearer {{}}
+### 리뷰 조회
+GET http://localhost:8081/api/v1/reviews?page=1&size=5
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+### 점주 리뷰 조회 (Cursor 기반 페이징)
+GET http://localhost:8082/api/v1/reviews?startDate=20250215&endDate=20250225&sort=SCORE&answerType=OWNER_NOT_ANSWERED
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhY2Nlc3NUb2tlbiIsInJvbGUiOiJDRU8iLCJpZCI6MSwiZXhwIjoxNzQwNjMzNTA1fQ.-a2t2PMweMQSHrll2bcyeCOCnFyrxqME_p5FKdyKmLea0XavB51FRCnuBvtloPLzbp0FslrtJ69YCXhDllKq_A
 Content-Type: application/json
 
 ### 점주 리뷰 답글
