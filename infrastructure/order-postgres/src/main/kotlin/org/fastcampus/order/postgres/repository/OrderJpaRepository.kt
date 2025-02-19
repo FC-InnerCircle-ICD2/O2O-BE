@@ -39,13 +39,13 @@ interface OrderJpaRepository : JpaRepository<OrderJpaEntity, String>, JpaSpecifi
         FROM OrderJpaEntity o
         WHERE o.storeId = :storeId
           AND o.orderTime BETWEEN :startDateTime AND :endDateTime
-          AND o.status <> :excludedStatus
+          AND o.status IN :includedStatus
     """,
     )
-    fun findAllByStoreIdAndOrderTimeBetweenAndStatusNot(
+    fun findAllByStoreIdAndOrderTimeBetweenAndStatusIn(
         @Param("storeId") storeId: String,
         @Param("startDateTime") startDateTime: LocalDateTime,
         @Param("endDateTime") endDateTime: LocalDateTime,
-        @Param("excludedStatus") excludedStatus: Order.Status,
+        @Param("includedStatus") includedStatus: List<Order.Status>,
     ): List<OrderJpaEntity>
 }
