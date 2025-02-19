@@ -85,6 +85,7 @@ class ReviewService(
                 val store = review.storeId.let { storeRepository.findById(it) }
                 val order = review.orderId.let { orderRepository.findById(it) }
                 WrittenReviewResponse.of(
+                    reviewId = requireNotNull(review.id),
                     storeId = store?.id,
                     storeName = store?.name,
                     createTime = requireNotNull(review.createdAt),

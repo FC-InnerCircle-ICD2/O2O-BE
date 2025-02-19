@@ -4,6 +4,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 data class WrittenReviewResponse(
+    val reviewId: Long,
     val storeId: String,
     val storeName: String,
     val createTime: LocalDateTime,
@@ -18,6 +19,7 @@ data class WrittenReviewResponse(
 ) {
     companion object {
         fun of(
+            reviewId: Long,
             storeId: String?,
             storeName: String?,
             createTime: LocalDateTime,
@@ -32,6 +34,7 @@ data class WrittenReviewResponse(
             val daysPassed = ChronoUnit.DAYS.between(createTime, LocalDateTime.now()).toInt()
 
             return WrittenReviewResponse(
+                reviewId = reviewId,
                 storeId = storeId ?: "",
                 storeName = storeName ?: "",
                 createTime = createTime,
