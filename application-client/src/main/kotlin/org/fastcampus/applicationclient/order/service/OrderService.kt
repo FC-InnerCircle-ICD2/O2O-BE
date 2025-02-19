@@ -46,11 +46,10 @@ class OrderService(
         val orders = orderRepository.findByUserIdExcludingWaitStatus(userId, keyword, page, size)
         return CursorDTO(
             content = orders.content.map { order ->
-                val store = storeRepository.findById(requireNotNull(order.storeId))
                 OrderResponse(
                     storeId = order.storeId,
-                    storeName = store?.name,
-                    imageThumbnail = store?.imageThumbnail,
+                    storeName = order.storeName,
+                    imageThumbnail = order.storeImageThumbnail,
                     orderId = order.id,
                     status = mapOf("code" to order.status.code, "desc" to order.status.desc),
                     orderTime = order.orderTime,
