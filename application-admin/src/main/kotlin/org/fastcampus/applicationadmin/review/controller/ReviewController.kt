@@ -3,6 +3,7 @@ package org.fastcampus.applicationadmin.review.controller
 import org.fastcampus.applicationadmin.config.security.dto.AuthMember
 import org.fastcampus.applicationadmin.review.controller.dto.ReviewInquiryResponse
 import org.fastcampus.applicationadmin.review.controller.dto.ReviewReplyRequest
+import org.fastcampus.applicationadmin.review.controller.dto.SummaryResponse
 import org.fastcampus.applicationadmin.review.service.ReviewService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
@@ -63,6 +64,14 @@ class ReviewController(
         log.debug("delete reply: ownerId= {}, reviewId= {}", owner, reviewId)
         reviewService.deleteReply(reviewId, owner)
         return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null)
+    }
+
+    @GetMapping("/summary")
+    fun getSummary(
+        @AuthenticationPrincipal owner: AuthMember,
+    ): APIResponseDTO<SummaryResponse> {
+        val response = reviewService.getSummary(owner.id)
+        return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response)
     }
 
     companion object {
