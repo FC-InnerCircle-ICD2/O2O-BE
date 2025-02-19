@@ -28,6 +28,8 @@ fun createOrderFixture(
     return Order(
         id = id,
         storeId = storeId,
+        storeName = "",
+        storeImageThumbnail = "",
         userId = userId,
         roadAddress = roadAddress,
         jibunAddress = jibunAddress,

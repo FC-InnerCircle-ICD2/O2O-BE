@@ -22,6 +22,10 @@ class OrderJpaEntity(
     val id: String = UUID.randomUUID().toString(),
     @Column(name = "STORE_ID")
     val storeId: String? = null,
+    @Column(name = "STORE_NAME")
+    val storeName: String? = null,
+    @Column(name = "STORE_IMAGE_THUMBNAIL")
+    val storeImageThumbnail: String? = null,
     @Column(name = "USER_ID")
     val userId: Long? = null,
     @Column(name = "ROAD_ADDRESS")
@@ -64,6 +68,8 @@ fun Order.toJpaEntity() =
     OrderJpaEntity(
         id,
         storeId,
+        storeName,
+        storeImageThumbnail,
         userId,
         roadAddress,
         jibunAddress,
@@ -87,6 +93,8 @@ fun OrderJpaEntity.toModel() =
     Order(
         id,
         storeId,
+        storeName,
+        storeImageThumbnail,
         userId,
         roadAddress,
         jibunAddress,
