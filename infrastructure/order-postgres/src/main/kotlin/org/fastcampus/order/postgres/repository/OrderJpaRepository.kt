@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import java.time.LocalDateTime
 
 interface OrderJpaRepository : JpaRepository<OrderJpaEntity, String>, JpaSpecificationExecutor<OrderJpaEntity> {
@@ -31,4 +32,20 @@ interface OrderJpaRepository : JpaRepository<OrderJpaEntity, String>, JpaSpecifi
     """,
     )
     fun findByUserIdAndOrderTimeAfterWithCursor(userId: Long, orderTime: LocalDateTime, cursor: LocalDateTime): List<OrderJpaEntity>
+
+    @Query(
+        """
+        SELECT o
+        FROM OrderJpaEntity o
+        WHERE o.storeId = :storeId
+          AND o.orderTime BETWEEN :startDateTime AND :endDateTime
+          AND o.status <> :excludedStatus
+    """,
+    )
+    fun findAllByStoreIdAndOrderTimeBetweenAndStatusNot(
+        @Param("storeId") storeId: String,
+        @Param("startDateTime") startDateTime: LocalDateTime,
+        @Param("endDateTime") endDateTime: LocalDateTime,
+        @Param("excludedStatus") excludedStatus: Order.Status,
+    ): List<OrderJpaEntity>
 }

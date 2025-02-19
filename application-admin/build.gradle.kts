@@ -20,6 +20,7 @@ dependencies {
     runtimeOnly(project(":infrastructure:payment-postgres"))
     runtimeOnly(project(":infrastructure:review-postgres"))
     implementation(project(":common"))
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-tx")
@@ -27,4 +28,5 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.auth0:java-jwt:4.2.1")
     implementation("org.springframework.retry:spring-retry")
+    testImplementation("io.mockk:mockk:1.13.3")
 }
