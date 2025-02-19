@@ -12,6 +12,7 @@ import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.review.exception.ReviewException
 import org.fastcampus.review.repository.ReviewRepository
 import org.fastcampus.store.repository.StoreRepository
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -29,6 +30,7 @@ class ReviewService(
         // 주문정보 확인
         val order = orderRepository.findById(dto.orderId) ?: throw OrderException.OrderNotFound(dto.orderId)
         if (requireNotNull(order.userId) != user.id) {
+            log.error("user who ordered doesn't match by request user id. userId in order: $order.userId, userId in request: ${user.id}")
             throw ReviewException.NotMatchedUser(user.id)
         }
 
@@ -39,7 +41,8 @@ class ReviewService(
             imageUri = reviewImageManager.upload(imageFullPath, imageFile)
         }
 
-        reviewRepository.save(dto.toModel(user.id, imageUri))
+        val review = reviewRepository.save(dto.toModel(user.id, imageUri))
+        log.info("review has been created. reviewId = $review.id")
     }
 
     @Transactional(readOnly = true)
@@ -122,5 +125,26 @@ class ReviewService(
             representativeImageUri = imageUri,
         )
         reviewRepository.save(review)
+        log.info("review has been updated. reviewId = $review.id")
+    }
+
+    fun deleteReview(reviewId: Long, user: AuthMember) {
+        // 리뷰 정보 확인
+        val review = reviewRepository.findById(reviewId)
+        if (review.userId != user.id) {
+            throw ReviewException.NotFoundReview(reviewId)
+        }
+
+        // 이미지가 존재하면 삭제
+        review.representativeImageUri?.let {
+            reviewImageManager.deleteImage(it)
+        }
+
+        reviewRepository.delete(review)
+        log.info("review has been deleted. reviewId = $review.id")
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(this::class.java)
     }
 }

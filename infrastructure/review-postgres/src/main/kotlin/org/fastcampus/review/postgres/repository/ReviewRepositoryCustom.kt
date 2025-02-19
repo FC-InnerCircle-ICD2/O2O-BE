@@ -83,4 +83,8 @@ class ReviewRepositoryCustom(
     override fun countReviewCountByStoreId(storeId: String): Long {
         return reviewJpaRepository.countByStoreId(storeId)
     }
+
+    override fun delete(review: Review) {
+        reviewJpaRepository.delete(review.toJpaEntity())
+    }
 }

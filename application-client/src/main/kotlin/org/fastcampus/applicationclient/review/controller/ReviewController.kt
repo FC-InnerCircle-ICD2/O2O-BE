@@ -14,6 +14,7 @@ import org.fastcampus.common.dto.TimeBasedCursorDTO
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -71,6 +72,16 @@ class ReviewController(
         @AuthenticationPrincipal user: AuthMember,
     ): APIResponseDTO<Nothing?> {
         reviewService.updateReview(reviewId, dto, imageFile, user)
+        return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null)
+    }
+
+    @JwtAuthenticated
+    @DeleteMapping("/{reviewId}")
+    fun deleteReview(
+        @PathVariable("reviewId") reviewId: Long,
+        @AuthenticationPrincipal user: AuthMember,
+    ): APIResponseDTO<Nothing?> {
+        reviewService.deleteReview(reviewId, user)
         return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null)
     }
 }

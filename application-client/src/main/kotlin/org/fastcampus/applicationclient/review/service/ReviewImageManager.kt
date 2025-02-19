@@ -37,11 +37,21 @@ class ReviewImageManager(
                     ObjectMetadata.builder().contentType(imageFile.contentType).build(),
                 )
             }
+            log.debug("upload review image: $imageUri")
         } catch (e: IOException) {
             log.error("fail to upload review image", e)
             throw ReviewException.ImageUploadFail(imageUri)
         }
         return imageUri
+    }
+
+    fun deleteImage(imageUri: String) {
+        try {
+            s3Operations.deleteObject(bucketName, extractObjectKey(imageUri))
+            log.debug("delete review image: $imageUri")
+        } catch (e: IOException) {
+            log.error("fail to delete review image: $imageUri", e)
+        }
     }
 
     private fun validate(file: MultipartFile) {
@@ -66,6 +76,10 @@ class ReviewImageManager(
     private fun getFileExtension(fileName: String): String {
         val index = fileName.lastIndexOf('.')
         return if (index == -1) "" else fileName.substring(index + 1) // 점을 제외하고 반환
+    }
+
+    private fun extractObjectKey(imageUrl: String): String {
+        return imageUrl.substringAfter(".amazonaws.com/")
     }
 
     companion object {
