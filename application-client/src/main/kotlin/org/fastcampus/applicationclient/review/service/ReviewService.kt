@@ -98,6 +98,7 @@ class ReviewService(
         )
     }
 
+    @Transactional
     fun updateReview(reviewId: Long, dto: ReviewUpdateRequest, imageFile: MultipartFile?, user: AuthMember) {
         // 리뷰 정보 확인
         val review = reviewRepository.findById(reviewId)
@@ -120,7 +121,6 @@ class ReviewService(
             deliveryQuality = dto.deliveryQuality,
             representativeImageUri = imageUri,
         )
-
         reviewRepository.save(review)
     }
 }

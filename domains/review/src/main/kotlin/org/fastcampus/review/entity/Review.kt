@@ -7,12 +7,12 @@ class Review(
     val orderId: String,
     val userId: Long,
     val storeId: String,
-    val clientReviewContent: String,
-    val totalScore: Int,
-    val tasteScore: Int,
-    val amountScore: Int,
-    val representativeImageUri: String? = null,
-    val deliveryQuality: DeliveryQuality? = null,
+    var clientReviewContent: String,
+    var totalScore: Int,
+    var tasteScore: Int,
+    var amountScore: Int,
+    var representativeImageUri: String? = null,
+    var deliveryQuality: DeliveryQuality? = null,
     var adminUserId: Long? = null,
     var adminReviewContent: String? = null,
     var adminReviewedAt: LocalDateTime? = null,
@@ -40,7 +40,12 @@ class Review(
         deliveryQuality: DeliveryQuality,
         representativeImageUri: String?,
     ) {
-        TODO("Not yet implemented")
+        this.clientReviewContent = content
+        this.totalScore = totalScore
+        this.tasteScore = tasteScore
+        this.amountScore = amountScore
+        this.deliveryQuality = deliveryQuality
+        this.representativeImageUri = representativeImageUri
     }
 
     enum class DeliveryQuality(
