@@ -31,4 +31,11 @@ interface OrderRepository {
     ): OffSetBasedDTO<Order>
 
     fun findReviewableOrders(userId: Long, cursor: LocalDateTime): List<Order>
+
+    fun findAllByStoreIdAndOrderTimeBetweenAndStatusNot(
+        storeId: String,
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime,
+        status: Order.Status,
+    ): List<Order>
 }

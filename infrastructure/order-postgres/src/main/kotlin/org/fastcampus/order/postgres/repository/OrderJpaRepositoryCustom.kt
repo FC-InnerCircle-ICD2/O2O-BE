@@ -86,4 +86,18 @@ class OrderJpaRepositoryCustom(
             .map { it.toModel() }
             .toList()
     }
+
+    override fun findAllByStoreIdAndOrderTimeBetweenAndStatusNot(
+        storeId: String,
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime,
+        status: Order.Status,
+    ): List<Order> {
+        return orderJpaRepository.findAllByStoreIdAndOrderTimeBetweenAndStatusNot(
+            storeId,
+            startDateTime,
+            endDateTime,
+            status,
+        ).map { it.toModel() }
+    }
 }
