@@ -30,7 +30,7 @@ interface OrderRepository {
         size: Int,
     ): OffSetBasedDTO<Order>
 
-    fun findReviewableOrders(userId: Long, cursor: LocalDateTime): List<Order>
+    fun findReviewableOrders(userId: Long): List<Order>
 
     fun findAllByStoreIdAndOrderTimeBetweenAndStatusIn(
         storeId: String,

@@ -28,10 +28,9 @@ interface OrderJpaRepository : JpaRepository<OrderJpaEntity, String>, JpaSpecifi
         SELECT o FROM OrderJpaEntity o
         WHERE o.userId = :userId
         AND o.orderTime >= :orderTime
-        AND o.orderTime < :cursor
     """,
     )
-    fun findByUserIdAndOrderTimeAfterWithCursor(userId: Long, orderTime: LocalDateTime, cursor: LocalDateTime): List<OrderJpaEntity>
+    fun findByUserIdAndOrderTimeAfter(userId: Long, orderTime: LocalDateTime): List<OrderJpaEntity>
 
     @Query(
         """
