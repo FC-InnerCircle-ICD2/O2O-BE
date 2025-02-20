@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArraySet
 
 @Component
 class SseManager {
@@ -16,14 +17,9 @@ class SseManager {
         }
         emitter.onCompletion {
             logger.debug("SSE onCompletion id: [{}], emitter: [{}]", key, emitter)
-            val removeTarget = emitters[key]
-            // 연속 요청으로 최신 세션이 저장되어 있을 때, 과거의 세션 종료가 최신 세션을 지우지 못하도록 함
-            if (removeTarget == emitter) {
-                logger.debug("[{}] emitter 제거", removeTarget)
-                emitters.remove(key)
-            }
+            removeEmitter(key, emitter)
         }
-        emitters[key] = emitter
+        emitters.computeIfAbsent(key) { CopyOnWriteArraySet<SseEmitter>() }.add(emitter)
 
         // 연결 시작시 연결 지속을 위해 더미데이터 응답 1회
         push(
@@ -43,25 +39,40 @@ class SseManager {
         reconnectTime: Long? = null,
     ) {
         try {
-            emitters[key]?.send(
-                SseEmitter
-                    .event()
-                    .apply {
-                        eventType?.let { name(eventType) }
-                        data?.let { data(data) }
-                        comment?.let { comment(comment) }
-                        lastEventId?.let { id(lastEventId) }
-                        reconnectTime?.let { reconnectTime(reconnectTime) }
-                    },
-            ) ?: logger.debug("push key[{}] 미존재", key)
+            emitters[key]?.forEach {
+                it.send(
+                    SseEmitter
+                        .event()
+                        .apply {
+                            eventType?.let { name(eventType) }
+                            data?.let { data(data) }
+                            comment?.let { comment(comment) }
+                            lastEventId?.let { id(lastEventId) }
+                            reconnectTime?.let { reconnectTime(reconnectTime) }
+                        },
+                )
+            } ?: logger.debug("연결된 점주 [{}] 미존재", key)
         } catch (ex: Exception) {
             logger.error("SSE push error", ex)
             emitters.remove(key)
         }
     }
 
+    private fun removeEmitter(key: String, emitter: SseEmitter) {
+        val emitterSet = emitters[key]
+        if (emitterSet?.remove(emitter) == true) {
+            logger.debug("*** [{}] emitter 제거됨", emitter)
+            // 리스트가 비어있다면
+            if (emitterSet.isEmpty()) {
+                logger.debug("*** [{}] 점주의 연결목록 모두 삭제", key)
+                emitters.remove(key)
+                logger.debug("*** emitters map: {}", emitters)
+            }
+        }
+    }
+
     private companion object {
         private val logger = LoggerFactory.getLogger(SseManager::class.java)
-        private val emitters = ConcurrentHashMap<String, SseEmitter>()
+        private val emitters = ConcurrentHashMap<String, CopyOnWriteArraySet<SseEmitter>>()
     }
 }
