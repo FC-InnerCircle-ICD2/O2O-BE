@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: application-oss
+  profiles:
+    active: local
+    include:
+      - order-postgres
+  batch:
+    job:
+      names: ${job.name:NONE}
+      enabled: true
+    jdbc:
+      initialize-schema: always
