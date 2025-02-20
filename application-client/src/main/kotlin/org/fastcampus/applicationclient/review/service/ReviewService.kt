@@ -6,7 +6,6 @@ import org.fastcampus.applicationclient.review.controller.dto.ReviewUpdateReques
 import org.fastcampus.applicationclient.review.controller.dto.WritableReviewResponse
 import org.fastcampus.applicationclient.review.controller.dto.WrittenReviewResponse
 import org.fastcampus.common.dto.CursorDTO
-import org.fastcampus.common.dto.TimeBasedCursorDTO
 import org.fastcampus.order.exception.OrderException
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.review.exception.ReviewException
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
-import java.time.LocalDateTime
 
 @Service
 class ReviewService(
@@ -46,14 +44,13 @@ class ReviewService(
     }
 
     @Transactional(readOnly = true)
-    fun findWritableReview(user: AuthMember, cursor: LocalDateTime, size: Int): TimeBasedCursorDTO<WritableReviewResponse> {
-        val orders = orderRepository.findReviewableOrders(user.id, cursor)
+    fun findWritableReview(user: AuthMember): List<WritableReviewResponse> {
+        val orders = orderRepository.findReviewableOrders(user.id)
         val orderIds = orders.map { it.id }
         val reviewedOrderIds = reviewRepository.findByOrderIdIn(orderIds).map { it.orderId }.toSet()
         val reviewableOrders = orders
             .filter { it.id !in reviewedOrderIds }
             .sortedByDescending { it.orderTime }
-            .take(size)
 
         val response = mutableListOf<WritableReviewResponse>()
         for (reviewableOrder in reviewableOrders) {
@@ -71,10 +68,7 @@ class ReviewService(
             )
         }
 
-        return TimeBasedCursorDTO(
-            content = response,
-            nextCursor = if (response.isNotEmpty()) response.last().orderTime else null,
-        )
+        return response
     }
 
     @Transactional(readOnly = true)
@@ -99,6 +93,7 @@ class ReviewService(
                 )
             },
             nextCursor = findReviews.nextCursor?.plus(1),
+            totalCount = findReviews.totalCount,
         )
     }
 

@@ -69,7 +69,6 @@ GET http://localhost:8081/api/v1/reviews/writable?cursor=2025-02-20T14:00:00&siz
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
-
 ### 리뷰 등록 (파일 + JSON 데이터 전송)
 POST http://localhost:8081/api/v1/reviews
 Content-Type: multipart/form-data; boundary=boundary

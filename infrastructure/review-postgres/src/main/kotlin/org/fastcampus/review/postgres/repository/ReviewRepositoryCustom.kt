@@ -38,6 +38,7 @@ class ReviewRepositoryCustom(
         return CursorDTO(
             content = findReviews.content.map { it.toModel() },
             nextCursor = if (findReviews.nextPageable().sort.isSorted) findReviews.nextPageable().pageNumber else null,
+            totalCount = findReviews.totalElements,
         )
     }
 
