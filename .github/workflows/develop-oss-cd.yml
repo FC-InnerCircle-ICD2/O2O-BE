@@ -1,0 +1,16 @@
+name: Deploy Develop OSS to Docker Hub
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'application-oss/**'
+      - 'application-oss/build.gradle'
+  workflow_dispatch:
+
+jobs:
+  client-build:
+    uses: ./.github/workflows/develop-oss-deploy-v1.yml
+    name: "Build and Deploy for Develop OSS"
+    secrets: inherit

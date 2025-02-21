@@ -5,6 +5,7 @@ rootProject.name = "o2o-be"
 
 include("application-admin")
 include("application-client")
+include("application-oss")
 include("common")
 include("domains")
 include("domains:member")
