@@ -1,5 +1,5 @@
 ### Get store details (within 500m)
-GET http://localhost:8080/api/v1/stores/1006816630
+GET http://localhost:8081/api/v1/stores/1006816630
 X-User-Lat: 37.71936226550588
 X-User-Lng: 126.69319553943058
 
@@ -11,6 +11,6 @@ GET http://localhost:8080/api/v1/stores/1006816630/menus?page=1&size=5
 
 
 ### Get categories
-GET http://localhost:8081/api/v1/stores/list-cursor?size=5&cursor=7348.09565612338_1590320795
+GET http://localhost:8081/api/v1/stores/list-cursor?size=5&searchCondition=감자탕
 X-User-Lat: 37.5579907597889
 X-User-Lng: 126.921149447336
