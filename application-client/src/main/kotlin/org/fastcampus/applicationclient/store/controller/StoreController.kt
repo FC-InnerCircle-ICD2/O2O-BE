@@ -1,6 +1,5 @@
 package org.fastcampus.applicationclient.store.controller
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-
-private val logger = KotlinLogging.logger {}
 
 /**
  * Created by brinst07 on 25. 1. 11..

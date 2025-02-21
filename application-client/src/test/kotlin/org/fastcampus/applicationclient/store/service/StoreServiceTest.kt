@@ -1,6 +1,7 @@
 package org.fastcampus.applicationclient.store.service
 
 import org.fastcampus.applicationclient.store.mapper.fetchDistance
+import org.fastcampus.review.repository.ReviewRepository
 import org.fastcampus.store.entity.Menu
 import org.fastcampus.store.entity.Store
 import org.fastcampus.store.entity.StoreMenuCategory
@@ -29,12 +30,14 @@ class StoreServiceTest {
     private lateinit var storeRepository: StoreRepository
     private lateinit var storeRedisRepository: StoreRedisRepository
     private lateinit var storeService: StoreService
+    private lateinit var reviewRepository: ReviewRepository
 
     @BeforeEach
     fun setup() {
         storeRepository = mock(StoreRepository::class.java)
         storeRedisRepository = mock(StoreRedisRepository::class.java)
-        storeService = StoreService(storeRepository, storeRedisRepository)
+        reviewRepository = mock(ReviewRepository::class.java)
+        storeService = StoreService(storeRepository, storeRedisRepository, reviewRepository)
     }
 
     @Test
