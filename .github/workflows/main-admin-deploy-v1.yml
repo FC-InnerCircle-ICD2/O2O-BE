@@ -2,7 +2,7 @@ on:
   workflow_call:
 
 jobs:
-  client-deploy:
+  admin-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

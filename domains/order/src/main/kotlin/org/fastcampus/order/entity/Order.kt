@@ -10,6 +10,8 @@ import java.time.LocalDateTime
 data class Order(
     val id: String,
     val storeId: String?,
+    val storeName: String?,
+    val storeImageThumbnail: String?,
     val userId: Long?,
     val roadAddress: String?,
     val jibunAddress: String?,

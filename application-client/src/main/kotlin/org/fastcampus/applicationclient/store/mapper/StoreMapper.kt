@@ -16,13 +16,13 @@ object StoreMapper {
         )
     }
 
-    fun Store.toStoreInfo(deliveryTime: String, deliveryDistance: Double): StoreInfo =
+    fun Store.toStoreInfo(deliveryTime: String, deliveryDistance: Double, rating: Double, reviewCount: Int): StoreInfo =
         StoreInfo(
             id = id ?: "unknown",
             name = name ?: "unknown",
             imageMain = imageMain ?: "unknown",
-            rating = 3.8,
-            reviewCount = 3000,
+            rating = rating,
+            reviewCount = reviewCount,
             deliveryTime = deliveryTime,
             deliveryDistance = deliveryDistance,
             freeDelivery = true,
@@ -33,13 +33,13 @@ object StoreMapper {
             minimumOrderAmount = minimumOrderAmount,
         )
 
-    fun Store.toStoreInfo(distance: Double): StoreInfo =
+    fun Store.toStoreInfo(distance: Double, rating: Double, reviewCount: Int): StoreInfo =
         StoreInfo(
             id = id ?: "unknown",
             name = name ?: "unknown",
             imageMain = imageMain ?: "unknown",
-            rating = 3.8,
-            reviewCount = 3000,
+            rating = rating,
+            reviewCount = reviewCount,
             deliveryTime = distance.calculateDeliveryTime().toString(),
             deliveryDistance = distance,
             freeDelivery = true,

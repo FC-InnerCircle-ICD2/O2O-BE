@@ -1,0 +1,16 @@
+name: Deploy Main OSS to Docker Hub
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'application-oss/**'
+      - 'application-oss/build.gradle'
+  workflow_dispatch:
+
+jobs:
+  client-build:
+    uses: ./.github/workflows/main-oss-deploy-v1.yml
+    name: "Build and Deploy for Main OSS"
+    secrets: inherit

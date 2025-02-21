@@ -1,4 +1,4 @@
-package org.fastcampus.order.postgres.config
+package org.fastcampus.member.postgres.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing

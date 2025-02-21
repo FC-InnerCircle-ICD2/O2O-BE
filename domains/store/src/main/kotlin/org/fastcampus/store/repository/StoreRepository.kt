@@ -24,4 +24,14 @@ interface StoreRepository {
         page: Int,
         size: Int,
     ): Pair<List<StoreWithDistance>, Int?>
+
+    fun findStoreNearByAndConditionWithCursor(
+        latitude: Double,
+        longitude: Double,
+        category: Store.Category?,
+        searchName: String?,
+        cursorDistance: Double?,
+        cursorStoreId: String?,
+        size: Int,
+    ): Pair<List<StoreWithDistance>, String?>
 }

@@ -7,6 +7,7 @@ import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywo
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.common.dto.CursorDTOString
 import org.fastcampus.store.entity.Store
 import org.fastcampus.store.redis.Coordinates
 import org.slf4j.Logger
@@ -115,6 +116,33 @@ class StoreController(
                 HttpStatus.OK.value(),
                 HttpStatus.OK.reasonPhrase,
                 storeService.getStoresByNearByAndCondition(userLat, userLng, page, size, category, searchCondition),
+            ),
+        )
+    }
+
+    @GetMapping("/list-cursor")
+    fun getStoresByNearbyAndConditionCursor(
+        @RequestHeader("X-User-Lat") userLat: Double,
+        @RequestHeader("X-User-Lng") userLng: Double,
+        @RequestParam(defaultValue = "5") size: Int,
+        @RequestParam(required = false) category: Store.Category?,
+        @RequestParam(required = false) searchCondition: String?,
+        @RequestParam(required = false) cursor: String?, // "distance_storeId"
+    ): ResponseEntity<APIResponseDTO<CursorDTOString<StoreInfo>>> {
+        logger.info("category: $category, searchCondition: $searchCondition")
+        val result = storeService.getStoresByNearByAndConditionCursor(
+            latitude = userLat,
+            longitude = userLng,
+            size = size,
+            category = category,
+            searchCondition = searchCondition,
+            cursor = cursor,
+        )
+        return ResponseEntity.ok(
+            APIResponseDTO(
+                status = HttpStatus.OK.value(),
+                message = "OK",
+                data = result,
             ),
         )
     }

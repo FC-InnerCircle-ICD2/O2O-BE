@@ -14,6 +14,8 @@ import org.fastcampus.applicationclient.store.mapper.calculateDeliveryTime
 import org.fastcampus.applicationclient.store.mapper.fetchDistance
 import org.fastcampus.applicationclient.store.mapper.fetchStoreCoordinates
 import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.common.dto.CursorDTOString
+import org.fastcampus.review.repository.ReviewRepository
 import org.fastcampus.store.entity.Store
 import org.fastcampus.store.exception.StoreException
 import org.fastcampus.store.redis.Coordinates
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional
 class StoreService(
     private val storeRepository: StoreRepository,
     private val storeRedisRepository: StoreRedisRepository,
+    private val reviewRepository: ReviewRepository,
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(StoreService::class.java)
@@ -40,8 +43,10 @@ class StoreService(
     @StoreMetered
     fun getStoreInfo(storeId: String, userCoordinates: Coordinates): StoreInfo =
         storeRepository.findById(storeId)?.run {
+            val rating = reviewRepository.getTotalAverageScoreByStoreId(storeId)
+            val reviewCount = reviewRepository.countReviewCountByStoreId(storeId).toInt()
             val deliveryInfo = calculateDeliveryDetails(storeId, userCoordinates)
-            toStoreInfo(deliveryInfo["deliveryTime"] as String, deliveryInfo["distance"] as Double)
+            toStoreInfo(deliveryInfo["deliveryTime"] as String, deliveryInfo["distance"] as Double, rating, reviewCount)
         } ?: throw StoreException.StoreNotFoundException(storeId)
 
     @Transactional(readOnly = true)
@@ -162,7 +167,66 @@ class StoreService(
             )
         val content = mapContent
             .first
-            .map { it.store.toStoreInfo(it.distance.toDouble()) }
+            .map {
+                val dist = it.distance.toDoubleOrNull() ?: 0.0
+                val rating = reviewRepository.getTotalAverageScoreByStoreId(it.store.id ?: "")
+                val reviewCount = reviewRepository.countReviewCountByStoreId(it.store.id ?: "").toInt()
+                it.store.toStoreInfo(dist, rating, reviewCount)
+            }
         return CursorDTO(content, mapContent.second)
+    }
+
+    @StoreMetered
+    fun getStoresByNearByAndConditionCursor(
+        latitude: Double,
+        longitude: Double,
+        size: Int,
+        category: Store.Category?,
+        searchCondition: String?,
+        cursor: String?, // "distance_storeId" 형태
+    ): CursorDTOString<StoreInfo>? {
+        // 1) cursor 파싱 (ex: "13.23_STORE1234")
+        val (cursorDistance, cursorStoreId) = parseCursor(cursor)
+
+        val (storeList, nextCursor) = storeRepository.findStoreNearByAndConditionWithCursor(
+            latitude = latitude,
+            longitude = longitude,
+            category = category,
+            searchName = searchCondition,
+            cursorDistance = cursorDistance,
+            cursorStoreId = cursorStoreId,
+            size = size,
+        )
+
+        // 3) 결과를 StoreInfo로 변환
+        val content = storeList.map {
+            val dist = it.distance.toDoubleOrNull() ?: 0.0
+            val rating = reviewRepository.getTotalAverageScoreByStoreId(it.store.id ?: "")
+            val reviewCount = reviewRepository.countReviewCountByStoreId(it.store.id ?: "").toInt()
+            it.store.toStoreInfo(dist, rating, reviewCount)
+        }
+
+        return CursorDTOString(
+            content = content,
+            nextCursor = nextCursor, // "13.23_STORE1234" etc
+            totalCount = content.size.toLong(),
+        )
+    }
+
+    /**
+     * "distance_storeId" 형태의 커서를 파싱해,
+     * (Double?, String?) 형태로 반환
+     */
+    private fun parseCursor(cursor: String?): Pair<Double?, String?> {
+        if (cursor.isNullOrBlank()) {
+            return Pair(null, null)
+        }
+        val parts = cursor.split("_")
+        if (parts.size != 2) {
+            return Pair(null, null)
+        }
+        val distance = parts[0].toDoubleOrNull()
+        val storeId = parts[1]
+        return Pair(distance, storeId)
     }
 }

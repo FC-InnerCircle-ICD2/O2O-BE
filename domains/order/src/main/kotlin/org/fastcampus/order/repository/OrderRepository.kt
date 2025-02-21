@@ -19,7 +19,7 @@ interface OrderRepository {
 
     fun update(id: Long): Order
 
-    fun findByUserIdExcludingWaitStatus(userId: Long, page: Int, size: Int): CursorDTO<Order>
+    fun findByUserIdExcludingWaitStatus(userId: Long, keyword: String, page: Int, size: Int): CursorDTO<Order>
 
     fun findByStoreIdAndStatusesWithPeriod(
         storeId: String,
@@ -30,5 +30,12 @@ interface OrderRepository {
         size: Int,
     ): OffSetBasedDTO<Order>
 
-    fun findReviewableOrders(userId: Long, cursor: LocalDateTime): List<Order>
+    fun findReviewableOrders(userId: Long): List<Order>
+
+    fun findAllByStoreIdAndOrderTimeBetweenAndStatusIn(
+        storeId: String,
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime,
+        status: List<Order.Status>,
+    ): List<Order>
 }

@@ -3,6 +3,7 @@ package org.fastcampus.applicationadmin.review.controller
 import org.fastcampus.applicationadmin.config.security.dto.AuthMember
 import org.fastcampus.applicationadmin.review.controller.dto.ReviewInquiryResponse
 import org.fastcampus.applicationadmin.review.controller.dto.ReviewReplyRequest
+import org.fastcampus.applicationadmin.review.controller.dto.SummaryResponse
 import org.fastcampus.applicationadmin.review.service.ReviewService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -43,7 +45,7 @@ class ReviewController(
         )
     }
 
-    @PostMapping("/{reviewId}")
+    @PostMapping("/{reviewId}/reply")
     fun replyReview(
         @PathVariable reviewId: Long,
         @AuthenticationPrincipal owner: AuthMember,
@@ -52,6 +54,24 @@ class ReviewController(
         log.debug("reply review: ownerId= {}, reviewId= {}", owner, reviewId)
         reviewService.replyReview(reviewId, owner, requestDto)
         return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null)
+    }
+
+    @DeleteMapping("/{reviewId}/reply")
+    fun deleteReply(
+        @PathVariable reviewId: Long,
+        @AuthenticationPrincipal owner: AuthMember,
+    ): APIResponseDTO<String> {
+        log.debug("delete reply: ownerId= {}, reviewId= {}", owner, reviewId)
+        reviewService.deleteReply(reviewId, owner)
+        return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null)
+    }
+
+    @GetMapping("/summary")
+    fun getSummary(
+        @AuthenticationPrincipal owner: AuthMember,
+    ): APIResponseDTO<SummaryResponse> {
+        val response = reviewService.getSummary(owner.id)
+        return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response)
     }
 
     companion object {

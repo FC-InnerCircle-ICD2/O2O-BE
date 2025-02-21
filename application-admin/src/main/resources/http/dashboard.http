@@ -1,0 +1,6 @@
+###
+GET http://localhost:8082/api/v1/dashboard?
+    startDate=20250201&
+    endDate=20250218&
+    type=SALES
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhY2Nlc3NUb2tlbiIsInJvbGUiOiJDRU8iLCJpZCI6MSwiZXhwIjoxNzQwNjMzNTA1fQ.-a2t2PMweMQSHrll2bcyeCOCnFyrxqME_p5FKdyKmLea0XavB51FRCnuBvtloPLzbp0FslrtJ69YCXhDllKq_A

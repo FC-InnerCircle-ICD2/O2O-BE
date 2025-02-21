@@ -4,6 +4,7 @@ import org.fastcampus.applicationadmin.config.security.dto.AuthMember
 import org.fastcampus.applicationadmin.order.service.component.OrderReader
 import org.fastcampus.applicationadmin.review.controller.dto.ReviewInquiryResponse
 import org.fastcampus.applicationadmin.review.controller.dto.ReviewReplyRequest
+import org.fastcampus.applicationadmin.review.controller.dto.SummaryResponse
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.member.repository.MemberRepository
 import org.fastcampus.review.entity.Review
@@ -51,6 +52,26 @@ class ReviewService(
         }
         review.reply(owner.id, requestDto.content)
         reviewRepository.save(review)
+    }
+
+    fun deleteReply(reviewId: Long, owner: AuthMember) {
+        val review = reviewRepository.findById(reviewId)
+        val storeId = storeRepository.findByOwnerId(ownerId = owner.id.toString())
+        if (review.storeId != storeId) {
+            throw ReviewException.NotMatchedOwner(owner.id)
+        }
+        review.deleteReply()
+        reviewRepository.save(review)
+    }
+
+    fun getSummary(ownerId: Long): SummaryResponse {
+        val storeId = storeRepository.findByOwnerId(ownerId.toString())
+        return SummaryResponse(
+            totalRating = reviewRepository.getTotalAverageScoreByStoreId(storeId),
+            quantityRating = reviewRepository.getAmountAverageScoreByStoreId(storeId),
+            tasteRating = reviewRepository.getTasteAverageScoreByStoreId(storeId),
+            reviewCount = reviewRepository.countReviewCountByStoreId(storeId),
+        )
     }
 
     companion object {

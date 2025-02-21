@@ -11,7 +11,7 @@ import java.io.IOException
 import java.util.*
 
 @Component
-class ReviewImageUploader(
+class ReviewImageManager(
     private val s3Operations: S3Operations,
 ) {
     @Value("\${spring.cloud.aws.s3.bucket}")
@@ -37,11 +37,21 @@ class ReviewImageUploader(
                     ObjectMetadata.builder().contentType(imageFile.contentType).build(),
                 )
             }
+            log.debug("upload review image: $imageUri")
         } catch (e: IOException) {
             log.error("fail to upload review image", e)
             throw ReviewException.ImageUploadFail(imageUri)
         }
         return imageUri
+    }
+
+    fun deleteImage(imageUri: String) {
+        try {
+            s3Operations.deleteObject(bucketName, extractObjectKey(imageUri))
+            log.debug("delete review image: $imageUri")
+        } catch (e: IOException) {
+            log.error("fail to delete review image: $imageUri", e)
+        }
     }
 
     private fun validate(file: MultipartFile) {
@@ -68,7 +78,11 @@ class ReviewImageUploader(
         return if (index == -1) "" else fileName.substring(index + 1) // 점을 제외하고 반환
     }
 
+    private fun extractObjectKey(imageUrl: String): String {
+        return imageUrl.substringAfter(".amazonaws.com/")
+    }
+
     companion object {
-        private val log = LoggerFactory.getLogger(ReviewImageUploader::class.java)
+        private val log = LoggerFactory.getLogger(ReviewImageManager::class.java)
     }
 }

@@ -38,6 +38,7 @@ class ReviewRepositoryCustom(
         return CursorDTO(
             content = findReviews.content.map { it.toModel() },
             nextCursor = if (findReviews.nextPageable().sort.isSorted) findReviews.nextPageable().pageNumber else null,
+            totalCount = findReviews.totalElements,
         )
     }
 
@@ -82,5 +83,9 @@ class ReviewRepositoryCustom(
 
     override fun countReviewCountByStoreId(storeId: String): Long {
         return reviewJpaRepository.countByStoreId(storeId)
+    }
+
+    override fun delete(review: Review) {
+        reviewJpaRepository.delete(review.toJpaEntity())
     }
 }

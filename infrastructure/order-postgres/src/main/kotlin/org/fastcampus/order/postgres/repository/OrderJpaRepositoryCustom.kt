@@ -42,9 +42,14 @@ class OrderJpaRepositoryCustom(
         TODO("Not yet implemented")
     }
 
-    override fun findByUserIdExcludingWaitStatus(userId: Long, page: Int, size: Int): CursorDTO<Order> {
+    override fun findByUserIdExcludingWaitStatus(userId: Long, keyword: String, page: Int, size: Int): CursorDTO<Order> {
         val pageable: Pageable = PageRequest.of(page, size, Sort.by("orderTime").descending())
-        val orderJpaEntities: Page<OrderJpaEntity> = orderJpaRepository.findByUserIdAndStatusNot(userId, Order.Status.WAIT, pageable)
+        val orderJpaEntities: Page<OrderJpaEntity> = orderJpaRepository.findByUserIdAndStatusNot(
+            userId,
+            keyword,
+            Order.Status.WAIT,
+            pageable,
+        )
         return CursorDTO(
             content = orderJpaEntities.content.map { it.toModel() },
             nextCursor = if (orderJpaEntities.nextPageable().sort.isSorted) orderJpaEntities.nextPageable().pageNumber else null,
@@ -79,11 +84,25 @@ class OrderJpaRepositoryCustom(
         )
     }
 
-    override fun findReviewableOrders(userId: Long, cursor: LocalDateTime): List<Order> {
+    override fun findReviewableOrders(userId: Long): List<Order> {
         // 리뷰는 주문 후 3일까지 가능
         val threeDaysAgo = LocalDate.now().minusDays(3).atStartOfDay()
-        return orderJpaRepository.findByUserIdAndOrderTimeAfterWithCursor(userId, threeDaysAgo, cursor)
+        return orderJpaRepository.findByUserIdAndOrderTimeAfter(userId, threeDaysAgo)
             .map { it.toModel() }
             .toList()
+    }
+
+    override fun findAllByStoreIdAndOrderTimeBetweenAndStatusIn(
+        storeId: String,
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime,
+        status: List<Order.Status>,
+    ): List<Order> {
+        return orderJpaRepository.findAllByStoreIdAndOrderTimeBetweenAndStatusIn(
+            storeId,
+            startDateTime,
+            endDateTime,
+            status,
+        ).map { it.toModel() }
     }
 }

@@ -1,0 +1,69 @@
+on:
+  workflow_call:
+
+jobs:
+  oss-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Cache Gradle Package
+        uses: actions/cache@v3
+        id: gradle-cache
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Execute Gradle build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :application-oss:build --no-daemon
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: ./application-oss
+          push: true
+          tags: yong7317/application-oss:latest
+
+      - name: Copy Flyway files to EC2
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          source: "flyway/"
+          target: ${{ secrets.EC2_FLYWAY_DIR }}
+
+      - name: SSH and Deploy
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd backend
+            echo "${{ secrets.ENV_PROPERTIES }}" > .env
+            docker stop app-oss || true
+            docker rm app-oss || true
+            docker rmi yong7317/application-oss:latest || true
+            docker pull yong7317/application-oss:latest
+            docker-compose up -d
+
+

@@ -25,7 +25,7 @@ object ReviewSpecifications {
     fun hasAnswerType(answerType: Review.AnswerType?): Specification<ReviewJpaEntity>? {
         return if (answerType == Review.AnswerType.OWNER_NOT_ANSWERED) {
             Specification { root, _, criteriaBuilder ->
-                criteriaBuilder.isNull(root.get<Any>("adminId")) // adminId가 NULL인 경우만 필터링
+                criteriaBuilder.isNull(root.get<Any>("adminUserId")) // adminUserId가 NULL인 경우만 필터링
             }
         } else {
             null

@@ -30,4 +30,6 @@ interface ReviewRepository {
     fun getAmountAverageScoreByStoreId(storeId: String): Double
 
     fun countReviewCountByStoreId(storeId: String): Long
+
+    fun delete(review: Review)
 }
