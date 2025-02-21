@@ -4,13 +4,13 @@ X-User-Lat: 37.71936226550588
 X-User-Lng: 126.69319553943058
 
 ### Get Store Menu Option (within 500m)
-GET http://localhost:8080/api/v1/stores/116496682/menus/37af65c8-14ce-4e0d-9f15-24ad5ff60868/options
+GET http://localhost:8081/api/v1/stores/116496682/menus/37af65c8-14ce-4e0d-9f15-24ad5ff60868/options
 
 ### Get categories
-GET http://localhost:8080/api/v1/stores/1006816630/menus?page=1&size=5
+GET http://localhost:8081/api/v1/stores/746659549/menus
 
 
 ### Get categories
-GET http://localhost:8081/api/v1/stores/list-cursor?size=5&searchCondition=감자탕
+GET http://localhost:8081/api/v1/stores/list-cursor?size=10&cursor=3318.92215792456_1671487737
 X-User-Lat: 37.5579907597889
 X-User-Lng: 126.921149447336
