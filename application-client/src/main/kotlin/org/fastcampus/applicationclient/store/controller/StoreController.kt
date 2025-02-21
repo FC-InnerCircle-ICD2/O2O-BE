@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.store.controller
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
@@ -7,6 +8,7 @@ import org.fastcampus.applicationclient.store.controller.dto.response.TrendKeywo
 import org.fastcampus.applicationclient.store.service.StoreService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.common.dto.CursorDTOString
 import org.fastcampus.store.entity.Store
 import org.fastcampus.store.redis.Coordinates
 import org.slf4j.Logger
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+
+private val logger = KotlinLogging.logger {}
 
 /**
  * Created by brinst07 on 25. 1. 11..
@@ -115,6 +119,33 @@ class StoreController(
                 HttpStatus.OK.value(),
                 HttpStatus.OK.reasonPhrase,
                 storeService.getStoresByNearByAndCondition(userLat, userLng, page, size, category, searchCondition),
+            ),
+        )
+    }
+
+    @GetMapping("/list-cursor")
+    fun getStoresByNearbyAndConditionCursor(
+        @RequestHeader("X-User-Lat") userLat: Double,
+        @RequestHeader("X-User-Lng") userLng: Double,
+        @RequestParam(defaultValue = "5") size: Int,
+        @RequestParam(required = false) category: Store.Category?,
+        @RequestParam(required = false) searchCondition: String?,
+        @RequestParam(required = false) cursor: String?, // "distance_storeId"
+    ): ResponseEntity<APIResponseDTO<CursorDTOString<StoreInfo>>> {
+        logger.info("category: $category, searchCondition: $searchCondition")
+        val result = storeService.getStoresByNearByAndConditionCursor(
+            latitude = userLat,
+            longitude = userLng,
+            size = size,
+            category = category,
+            searchCondition = searchCondition,
+            cursor = cursor,
+        )
+        return ResponseEntity.ok(
+            APIResponseDTO(
+                status = HttpStatus.OK.value(),
+                message = "OK",
+                data = result,
             ),
         )
     }
