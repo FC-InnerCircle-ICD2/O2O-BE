@@ -18,3 +18,9 @@ data class TimeBasedCursorDTO<T>(
     val content: List<T>,
     val nextCursor: LocalDateTime?,
 )
+
+data class CursorDTOString<T>(
+    val content: List<T>,
+    val nextCursor: String?,
+    val totalCount: Long? = null,
+)

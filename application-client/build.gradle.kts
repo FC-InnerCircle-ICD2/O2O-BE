@@ -38,6 +38,7 @@ dependencies {
     runtimeOnly(project(":infrastructure:cart-mongo"))
     runtimeOnly(project(":infrastructure:favorite-postgres"))
     implementation(project(":common"))
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")

@@ -35,6 +35,8 @@ class StoreDocument(
     @Field(name = "storeMenuCategory")
     val storeMenuCategoryDocument: List<StoreMenuCategoryDocument>? = null,
     val minimumOrderAmount: Long,
+    @Transient
+    var distance: Double? = null, // geoNear로 임시 추가되는 필드
 )
 
 fun StoreDocument.toModel() =
