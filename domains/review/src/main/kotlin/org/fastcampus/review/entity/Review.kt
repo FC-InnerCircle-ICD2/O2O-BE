@@ -38,14 +38,16 @@ class Review(
         tasteScore: Int,
         amountScore: Int,
         deliveryQuality: DeliveryQuality,
-        representativeImageUri: String?,
+        representativeImageUri: String? = null,
     ) {
         this.clientReviewContent = content
         this.totalScore = totalScore
         this.tasteScore = tasteScore
         this.amountScore = amountScore
         this.deliveryQuality = deliveryQuality
-        this.representativeImageUri = representativeImageUri
+        if (representativeImageUri != null) {
+            this.representativeImageUri = representativeImageUri
+        }
     }
 
     enum class DeliveryQuality(
