@@ -71,8 +71,8 @@ services:
 #      - store-mongo
 #      - store-redis
 #      - order-postgres
-#  oss-app:
-#    container_name: oss-app
+#  app-oss:
+#    container_name: app-oss
 #    image: yong7317/application-oss:latest
 #    ports:
 #      - '8085:8085'
