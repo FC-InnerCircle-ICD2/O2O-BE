@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.store.controller
 
+import org.fastcampus.applicationclient.store.controller.dto.request.OrderType
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
@@ -126,16 +127,17 @@ class StoreController(
         @RequestHeader("X-User-Lng") userLng: Double,
         @RequestParam(defaultValue = "5") size: Int,
         @RequestParam(required = false) category: Store.Category?,
-        @RequestParam(required = false) searchCondition: String?,
+        @RequestParam(required = false) keyword: String?,
         @RequestParam(required = false) cursor: String?, // "distance_storeId"
+        @RequestParam(required = false) order: OrderType?, // "distance_storeId"
     ): ResponseEntity<APIResponseDTO<CursorDTOString<StoreInfo>>> {
-        logger.info("category: $category, searchCondition: $searchCondition")
+        logger.info("category: $category, searchCondition: $keyword")
         val result = storeService.getStoresByNearByAndConditionCursor(
             latitude = userLat,
             longitude = userLng,
             size = size,
             category = category,
-            searchCondition = searchCondition,
+            keyword = keyword,
             cursor = cursor,
         )
         return ResponseEntity.ok(

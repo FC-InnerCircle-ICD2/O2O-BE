@@ -3,6 +3,7 @@ package org.fastcampus.store.redis.repository
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
 import org.springframework.data.geo.Point
+import org.springframework.data.redis.connection.RedisGeoCommands
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
 
@@ -30,9 +31,13 @@ class StoreRedisRepositoryImpl(
     }
 
     override fun getDistanceBetweenUserByStore(userKey: String, storeKey: String): Double {
-        val key = "$DISTANCE_KEY:$userKey:$storeKey"
-        val distance = redisTemplate.opsForValue().get(key) as? Double
-        return distance ?: 0.0
+        val distance = redisTemplate.opsForGeo().distance(
+            GEO_KEY,
+            userKey,
+            storeKey,
+            RedisGeoCommands.DistanceUnit.METERS,
+        )
+        return distance?.value ?: 0.0
     }
 
     override fun saveDistanceBetweenUserByStore(userKey: String, storeKey: String, distance: Double) {

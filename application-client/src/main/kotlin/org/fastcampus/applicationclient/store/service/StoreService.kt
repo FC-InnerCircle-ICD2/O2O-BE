@@ -182,7 +182,7 @@ class StoreService(
         longitude: Double,
         size: Int,
         category: Store.Category?,
-        searchCondition: String?,
+        keyword: String?,
         cursor: String?, // "distance_storeId" 형태
     ): CursorDTOString<StoreInfo>? {
         // 1) cursor 파싱 (ex: "13.23_STORE1234")
@@ -192,7 +192,7 @@ class StoreService(
             latitude = latitude,
             longitude = longitude,
             category = category,
-            searchName = searchCondition,
+            searchName = keyword,
             cursorDistance = cursorDistance,
             cursorStoreId = cursorStoreId,
             size = size,
