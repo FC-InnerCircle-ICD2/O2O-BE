@@ -9,7 +9,6 @@ import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.common.dto.CursorDTOString
 import org.fastcampus.store.entity.Store
-import org.fastcampus.store.redis.Coordinates
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -42,7 +41,7 @@ class StoreController(
         @RequestHeader("X-User-Lng") userLng: Double,
     ): ResponseEntity<APIResponseDTO<StoreInfo>> {
         return try {
-            val response = storeService.getStoreInfo(id, Coordinates(userLat, userLng))
+            val response = storeService.getStoreInfo(id, userLat, userLng)
             ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", response))
         } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
