@@ -54,7 +54,11 @@ object StoreMapper {
         return MenuOptionInfo(
             id = this.id ?: "unknown",
             name = this.name ?: "unknown",
-            price = this.price?.replace(",", "")?.toInt() ?: -1,
+            price = this.price
+                ?.takeIf { it.isNotBlank() }
+                ?.replace(",", "")
+                ?.toIntOrNull()
+                ?: -1,
             description = this.desc ?: "",
             imageUrl = this.imgUrl ?: "unknown",
             soldOut = this.isSoldOut,
