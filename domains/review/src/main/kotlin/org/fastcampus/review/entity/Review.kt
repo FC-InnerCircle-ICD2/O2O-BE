@@ -38,16 +38,16 @@ class Review(
         tasteScore: Int,
         amountScore: Int,
         deliveryQuality: DeliveryQuality,
-        representativeImageUri: String? = null,
     ) {
         this.clientReviewContent = content
         this.totalScore = totalScore
         this.tasteScore = tasteScore
         this.amountScore = amountScore
         this.deliveryQuality = deliveryQuality
-        if (representativeImageUri != null) {
-            this.representativeImageUri = representativeImageUri
-        }
+    }
+
+    fun changeRepresentativeImageUri(imageUri: String?) {
+        this.representativeImageUri = imageUri
     }
 
     enum class DeliveryQuality(
