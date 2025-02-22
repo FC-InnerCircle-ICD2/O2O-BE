@@ -41,13 +41,16 @@ class StoreService(
 
     @Transactional(readOnly = true)
     @StoreMetered
-    fun getStoreInfo(storeId: String, userCoordinates: Coordinates): StoreInfo =
-        storeRepository.findById(storeId)?.run {
-            val rating = reviewRepository.getTotalAverageScoreByStoreId(storeId)
-            val reviewCount = reviewRepository.countReviewCountByStoreId(storeId).toInt()
-            val deliveryInfo = calculateDeliveryDetails(storeId, userCoordinates)
-            toStoreInfo(deliveryInfo["deliveryTime"] as String, deliveryInfo["distance"] as Double, rating, reviewCount)
-        } ?: throw StoreException.StoreNotFoundException(storeId)
+    fun getStoreInfo(storeId: String, userLat: Double, userLng: Double): StoreInfo {
+        val findStoreNearByAndCondition = storeRepository.findStoreNearByAndCondition(storeId, userLat, userLng)
+        val countReviewCountByStoreId = reviewRepository.countReviewCountByStoreId(storeId)
+        val totalAverageScoreByStoreId = reviewRepository.getTotalAverageScoreByStoreId(storeId)
+        return findStoreNearByAndCondition.store.toStoreInfo(
+            findStoreNearByAndCondition.distance.toDoubleOrNull() ?: 0.0,
+            rating = totalAverageScoreByStoreId,
+            reviewCount = countReviewCountByStoreId.toInt(),
+        )
+    }
 
     @Transactional(readOnly = true)
     @StoreMetered
@@ -182,7 +185,7 @@ class StoreService(
         longitude: Double,
         size: Int,
         category: Store.Category?,
-        searchCondition: String?,
+        keyword: String?,
         cursor: String?, // "distance_storeId" 형태
     ): CursorDTOString<StoreInfo>? {
         // 1) cursor 파싱 (ex: "13.23_STORE1234")
@@ -192,7 +195,7 @@ class StoreService(
             latitude = latitude,
             longitude = longitude,
             category = category,
-            searchName = searchCondition,
+            searchName = keyword,
             cursorDistance = cursorDistance,
             cursorStoreId = cursorStoreId,
             size = size,

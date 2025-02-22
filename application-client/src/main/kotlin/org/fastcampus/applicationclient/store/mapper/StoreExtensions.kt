@@ -7,11 +7,11 @@ import org.fastcampus.store.repository.StoreRepository
 
 fun Double.calculateDeliveryTime(): Int =
     when {
-        this < 5 -> 25
-        this < 10 -> 30
-        this < 20 -> 35
-        this < 30 -> 40
-        this < 40 -> 45
+        this < 2000 -> 25
+        this < 4000 -> 30
+        this < 6000 -> 35
+        this < 8000 -> 40
+        this < 9000 -> 45
         else -> 60
     }
 
