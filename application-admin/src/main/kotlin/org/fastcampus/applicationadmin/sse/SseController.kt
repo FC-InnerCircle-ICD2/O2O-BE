@@ -20,7 +20,7 @@ class SseController(
     override fun connectSse(
         @AuthenticationPrincipal authMember: AuthMember,
     ): SseEmitter {
-        logger.debug("Connected Sse UserId: {}", authMember.id)
+        logger.debug("SSE Connecting UserId: {}", authMember.id)
 
         val emitter = SseEmitter(TIMEOUT_MILLIS)
         sseManager.manage(authMember.id.toString(), emitter)
