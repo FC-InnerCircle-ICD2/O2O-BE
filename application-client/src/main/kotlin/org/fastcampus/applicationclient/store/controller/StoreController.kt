@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.store.controller
 
+import org.fastcampus.applicationclient.store.controller.dto.request.StoreSearchRequest
 import org.fastcampus.applicationclient.store.controller.dto.response.CategoryResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.MenuResponse
 import org.fastcampus.applicationclient.store.controller.dto.response.StoreInfo
@@ -90,14 +91,14 @@ class StoreController(
 
     @PostMapping("/search")
     fun search(
-        @RequestBody keyword: String,
+        @RequestBody storeSearchRequest: StoreSearchRequest,
     ): ResponseEntity<APIResponseDTO<String>> {
-        val addCount = storeService.search(keyword)
+        val addCount = storeService.search(storeSearchRequest.keyword)
         if (addCount) {
-            logger.info("Successfully added search keyword: $keyword")
+            logger.info("Successfully added search keyword: $storeSearchRequest.keyword")
             return ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", "success"))
         } else {
-            logger.info("Failed to add search keyword: $keyword")
+            logger.info("Failed to add search keyword: $storeSearchRequest.keyword")
             return ResponseEntity.ok(APIResponseDTO(HttpStatus.OK.value(), "OK", "fail"))
         }
     }
