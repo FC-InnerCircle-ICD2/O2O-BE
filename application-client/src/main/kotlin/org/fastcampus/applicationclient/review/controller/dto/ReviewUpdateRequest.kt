@@ -3,6 +3,7 @@ package org.fastcampus.applicationclient.review.controller.dto
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import org.fastcampus.review.entity.Review.DeliveryQuality
 
 class ReviewUpdateRequest(
@@ -14,5 +15,8 @@ class ReviewUpdateRequest(
     val tasteScore: Int,
     @field:Min(0) @field:Max(5)
     val amountScore: Int,
+    @NotNull
     val deliveryQuality: DeliveryQuality,
+    @NotNull
+    val isImageChanged: Boolean,
 )
