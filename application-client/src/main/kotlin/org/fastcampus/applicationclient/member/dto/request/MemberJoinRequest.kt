@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size
  */
 data class MemberJoinRequest(
     @field:NotBlank(message = "이메일을 입력해주세요.")
-    @field:Size(max = 255, message = "이메일은 255자 이내여야 합니다.")
+    @field:Size(max = 50, message = "이메일은 50자 이내여야 합니다.")
     @field:Email(message = "유효한 이메일 주소를 입력해주세요.")
     val signname: String?,
     @field:NotBlank(message = "비밀번호를 입력해주세요.")
