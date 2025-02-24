@@ -9,6 +9,7 @@ data class MemberAddressResponse(
 
 data class MemberAddressDto(
     val id: Long,
+    var isDefault: Boolean,
     val roadAddress: String,
     val jibunAddress: String,
     val detailAddress: String,
