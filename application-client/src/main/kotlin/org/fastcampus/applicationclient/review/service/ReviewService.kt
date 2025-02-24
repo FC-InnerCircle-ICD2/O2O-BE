@@ -88,6 +88,7 @@ class ReviewService(
                     totalScore = review.totalScore,
                     tasteScore = review.tasteScore,
                     amountScore = review.amountScore,
+                    deliveryQuality = requireNotNull(review.deliveryQuality),
                     representativeImageUri = review.representativeImageUri,
                     clientReviewContent = requireNotNull(review.clientReviewContent),
                 )
@@ -105,11 +106,21 @@ class ReviewService(
             throw ReviewException.NotFoundReview(reviewId)
         }
 
-        // 이미지 파일이 존재한다면 S3에 이미지를 전달 후, uri를 받아옴
-        var imageUri: String? = null
-        if (imageFile != null) {
+        // 기존에 존재하던 이미지 수정
+        if (dto.isImageChanged && imageFile != null) {
             val imageFullPath = review.storeId + "/" + review.orderId
-            imageUri = reviewImageManager.upload(imageFullPath, imageFile)
+            val imageUri = reviewImageManager.upload(imageFullPath, imageFile)
+            review.changeRepresentativeImageUri(imageUri)
+            log.info("image has been updated. reviewId = $review.id")
+        }
+
+        // 기존에 존재하던 이미지 수정
+        if (dto.isImageChanged && imageFile == null) {
+            review.representativeImageUri?.let {
+                reviewImageManager.deleteImage(it)
+                review.changeRepresentativeImageUri(null)
+            }
+            log.info("image has been deleted. reviewId = $review.id")
         }
 
         review.update(
@@ -118,7 +129,6 @@ class ReviewService(
             tasteScore = dto.tasteScore,
             amountScore = dto.amountScore,
             deliveryQuality = dto.deliveryQuality,
-            representativeImageUri = imageUri,
         )
         reviewRepository.save(review)
         log.info("review has been updated. reviewId = $review.id")

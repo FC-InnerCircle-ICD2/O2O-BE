@@ -59,16 +59,20 @@ class SseManager {
     }
 
     private fun removeEmitter(key: String, emitter: SseEmitter) {
-        val emitterSet = emitters[key]
-        if (emitterSet?.remove(emitter) == true) {
-            logger.debug("*** [{}] emitter 제거됨", emitter)
-            // 리스트가 비어있다면
-            if (emitterSet.isEmpty()) {
-                logger.debug("*** [{}] 점주의 연결목록 모두 삭제", key)
-                emitters.remove(key)
-                logger.debug("*** emitters map: {}", emitters)
+        // Key 기준 동기화
+        emitters.computeIfPresent(key) { _, emitterSet ->
+            // 관리중인 대상에서 제거
+            if (emitterSet.remove(emitter)) {
+                logger.debug("*** [{}] emitter 제거됨", emitter)
+                // 마지막 대상이었다면 Map 에서 key 또한 지운다.
+                if (emitterSet.isEmpty()) {
+                    logger.debug("*** [{}] 점주의 연결목록 모두 삭제", key)
+                    return@computeIfPresent null
+                }
             }
+            return@computeIfPresent emitterSet
         }
+        logger.debug("*** emitters map: {}", emitters)
     }
 
     private companion object {
