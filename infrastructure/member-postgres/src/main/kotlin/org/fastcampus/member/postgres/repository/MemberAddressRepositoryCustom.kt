@@ -16,7 +16,9 @@ class MemberAddressRepositoryCustom(
     }
 
     override fun findByUserIdAndMemberAddressType(userId: Long, memberAddressType: MemberAddressType): MemberAddress? {
-        return memberAddressJpaRepository.findByUserIdAndMemberAddressType(userId, memberAddressType).map { it.toModel() }.orElse(null)
+        return memberAddressJpaRepository.findByUserIdAndMemberAddressType(userId, memberAddressType).filter {
+            !it.isDeleted
+        }.map { it.toModel() }.orElse(null)
     }
 
     override fun countByUserIdAndMemberAddressType(userId: Long, memberAddressType: MemberAddressType): Long {
