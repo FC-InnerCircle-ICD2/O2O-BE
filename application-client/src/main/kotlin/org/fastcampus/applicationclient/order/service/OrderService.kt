@@ -15,6 +15,7 @@ import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOption
 import org.fastcampus.order.entity.OrderMenuOptionGroup
 import org.fastcampus.order.exception.OrderException
+import org.fastcampus.order.repository.OrderDetailRepository
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -34,6 +35,7 @@ import java.util.*
 class OrderService(
     private val memberRepository: MemberRepository,
     private val orderRepository: OrderRepository,
+    private val orderDetailRepository: OrderDetailRepository,
     private val storeRepository: StoreRepository,
     private val paymentRepository: PaymentRepository,
     private val orderMenuRepository: OrderMenuRepository,
@@ -68,10 +70,9 @@ class OrderService(
         val order = requireNotNull(orderRepository.findById(orderId))
         val payment = requireNotNull(paymentRepository.findById(order.paymentId))
         val orderMenus = orderMenuRepository.findByOrderId(order.id)
-        val storeName = storeRepository.findById(storeId = requireNotNull(order.storeId))?.name
         return OrderDetailResponse(
             orderId = order.id,
-            storeName = storeName ?: "",
+            storeName = requireNotNull(order.storeName),
             status = mapOf("code" to order.status.code, "desc" to order.status.desc),
             orderTime = order.orderTime,
             isDeleted = order.isDeleted,
@@ -186,6 +187,10 @@ class OrderService(
                 paymentPrice = totalPrice,
             ),
         )
+
+        // mongoDB 주문 디테일 저장
+        orderDetailRepository.saveOrder(savedOrder, Payment.Type.entries.associate { it.code to it.desc })
+
         // 주문 메뉴, 옵션그룹, 옵션 저장
         saveOrderSubEntities(tempOrderMenus, savedOrder)
 

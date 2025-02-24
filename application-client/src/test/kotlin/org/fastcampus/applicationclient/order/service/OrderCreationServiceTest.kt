@@ -9,6 +9,7 @@ import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOption
 import org.fastcampus.order.entity.OrderMenuOptionGroup
+import org.fastcampus.order.repository.OrderDetailRepository
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -40,6 +41,7 @@ class OrderCreationServiceTest {
     private lateinit var orderMenuRepository: OrderMenuRepository
     private lateinit var orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository
     private lateinit var orderMenuOptionRepository: OrderMenuOptionRepository
+    private lateinit var orderDetailRepository: OrderDetailRepository
     private lateinit var orderService: OrderService
 
     @BeforeEach
@@ -51,6 +53,7 @@ class OrderCreationServiceTest {
         orderMenuRepository = mock(OrderMenuRepository::class.java)
         orderMenuOptionGroupRepository = mock(OrderMenuOptionGroupRepository::class.java)
         orderMenuOptionRepository = mock(OrderMenuOptionRepository::class.java)
+        orderDetailRepository = mock(OrderDetailRepository::class.java)
         orderService = OrderService(
             memberRepository = memberRepository,
             orderRepository = orderRepository,
@@ -59,6 +62,7 @@ class OrderCreationServiceTest {
             orderMenuRepository = orderMenuRepository,
             orderMenuOptionGroupRepository = orderMenuOptionGroupRepository,
             orderMenuOptionRepository = orderMenuOptionRepository,
+            orderDetailRepository = orderDetailRepository,
         )
     }
 
