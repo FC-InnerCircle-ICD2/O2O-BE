@@ -87,6 +87,7 @@ class MemberService(
                 detailAddress = address.detailAddress ?: "",
                 latitude = address.latitude,
                 longitude = address.longitude,
+                isDefault = address.isDefault,
             )
 
             if (address.isDefault) {
