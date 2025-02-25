@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class OrderService(
     private val orderRepository: OrderRepository,
+    private val orderDetailRepository: OrderDetailRepository,
     private val storeRepository: StoreRepository,
     private val paymentRepository: PaymentRepository,
     private val orderMenuRepository: OrderMenuRepository,
@@ -53,10 +54,9 @@ class OrderService(
         val order = requireNotNull(orderRepository.findById(orderId))
         val payment = requireNotNull(paymentRepository.findById(order.paymentId))
         val orderMenus = orderMenuRepository.findByOrderId(order.id)
-        val storeName = storeRepository.findById(storeId = requireNotNull(order.storeId))?.name
         return OrderDetailResponse(
             orderId = order.id,
-            storeName = storeName ?: "",
+            storeName = requireNotNull(order.storeName),
             status = mapOf("code" to order.status.code, "desc" to order.status.desc),
             orderTime = order.orderTime,
             isDeleted = order.isDeleted,

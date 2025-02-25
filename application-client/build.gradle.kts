@@ -31,6 +31,7 @@ dependencies {
     runtimeOnly(project(":infrastructure:member-redis"))
     runtimeOnly(project(":infrastructure:order-postgres"))
     runtimeOnly(project(":infrastructure:order-redis"))
+    runtimeOnly(project(":infrastructure:order-mongo"))
     runtimeOnly(project(":infrastructure:payment-postgres"))
     runtimeOnly(project(":infrastructure:store-mongo"))
     runtimeOnly(project(":infrastructure:store-redis"))

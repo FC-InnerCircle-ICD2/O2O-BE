@@ -9,6 +9,7 @@ import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOption
 import org.fastcampus.order.entity.OrderMenuOptionGroup
+import org.fastcampus.order.repository.OrderDetailRepository
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -59,6 +60,7 @@ class OrderCreationServiceTest {
             orderMenuRepository = orderMenuRepository,
             orderMenuOptionGroupRepository = orderMenuOptionGroupRepository,
             orderMenuOptionRepository = orderMenuOptionRepository,
+            orderDetailRepository = orderDetailRepository,
         )
     }
 
