@@ -12,15 +12,12 @@ import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.payment.repository.PaymentRepository
-import org.fastcampus.store.repository.StoreRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class OrderService(
     private val orderRepository: OrderRepository,
-    private val orderDetailRepository: OrderDetailRepository,
-    private val storeRepository: StoreRepository,
     private val paymentRepository: PaymentRepository,
     private val orderMenuRepository: OrderMenuRepository,
     private val orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository,
