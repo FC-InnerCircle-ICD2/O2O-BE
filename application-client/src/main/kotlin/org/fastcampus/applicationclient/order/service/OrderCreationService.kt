@@ -10,6 +10,7 @@ import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOption
 import org.fastcampus.order.entity.OrderMenuOptionGroup
 import org.fastcampus.order.exception.OrderException
+import org.fastcampus.order.repository.OrderDetailRepository
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -30,6 +31,7 @@ import java.util.*
 class OrderCreationService(
     private val memberRepository: MemberRepository,
     private val orderRepository: OrderRepository,
+    private val orderDetailRepository: OrderDetailRepository,
     private val storeRepository: StoreRepository,
     private val paymentRepository: PaymentRepository,
     private val orderMenuRepository: OrderMenuRepository,
@@ -73,6 +75,8 @@ class OrderCreationService(
 
         // 저장된 주문정보 전체
         val orderEntity = savedOrder.copy(orderMenus = subEntities)
+
+        orderDetailRepository.saveOrder(orderEntity, mapOf("code" to savedPayment.type.code, "desc" to savedPayment.type.desc))
 
         return OrderCreationResponse(
             savedOrder.id,
