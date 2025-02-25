@@ -68,8 +68,12 @@ class OrderCreationService(
             of(orderCreationRequest, storeEntity, loginMember, savedPayment, summary),
         )
 
-        // 주문 메뉴, 옵션그룹, 옵션 저장하고 조립 된 전체 주문 엔티티 반환
-        val orderEntity = saveOrderSubEntities(tempOrderMenus, savedOrder)
+        // 주문 메뉴, 옵션그룹, 옵션 저장
+        val subEntities = saveOrderSubEntities(tempOrderMenus, savedOrder)
+
+        // 저장된 주문정보 전체
+        val orderEntity = savedOrder.copy(orderMenus = subEntities)
+        println(orderEntity)
 
         return OrderCreationResponse(
             savedOrder.id,
