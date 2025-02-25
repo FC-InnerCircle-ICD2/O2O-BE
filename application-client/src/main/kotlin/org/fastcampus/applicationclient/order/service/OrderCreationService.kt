@@ -73,7 +73,6 @@ class OrderCreationService(
 
         // 저장된 주문정보 전체
         val orderEntity = savedOrder.copy(orderMenus = subEntities)
-        println(orderEntity)
 
         return OrderCreationResponse(
             savedOrder.id,
