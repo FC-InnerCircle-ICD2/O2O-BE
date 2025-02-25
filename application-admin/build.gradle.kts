@@ -19,6 +19,7 @@ dependencies {
     runtimeOnly(project(":infrastructure:order-redis"))
     runtimeOnly(project(":infrastructure:payment-postgres"))
     runtimeOnly(project(":infrastructure:review-postgres"))
+    runtimeOnly(project(":infrastructure:order-mongo"))
     implementation(project(":common"))
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")

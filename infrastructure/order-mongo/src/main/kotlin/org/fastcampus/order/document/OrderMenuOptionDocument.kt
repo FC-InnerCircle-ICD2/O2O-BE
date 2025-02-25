@@ -1,4 +1,4 @@
-package org.fastcampus.order.mongo.document
+package org.fastcampus.order.document
 
 import org.fastcampus.order.entity.OrderMenuOption
 import org.springframework.data.mongodb.core.mapping.Field

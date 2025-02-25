@@ -1,4 +1,4 @@
-package org.fastcampus.order.mongo.document
+package org.fastcampus.order.document
 
 import org.bson.types.ObjectId
 import org.fastcampus.order.entity.Order
@@ -34,6 +34,7 @@ data class OrderDocument(
     val paymentId: Long,
     val paymentType: Map<String, String?>,
     val type: Order.Type,
+    @Field(name = "orderMenus")
     val orderMenuDocument: List<OrderMenuDocument>? = null,
 )
 
