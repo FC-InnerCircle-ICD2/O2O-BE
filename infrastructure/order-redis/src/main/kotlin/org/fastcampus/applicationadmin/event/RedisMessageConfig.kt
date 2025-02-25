@@ -14,17 +14,21 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 @Configuration
 class RedisMessageConfig(
     @Qualifier("OrderNotificationReceiver")
-    private val notificationReceiver: NotificationReceiver,
+    private val orderNotificationReceiver: NotificationReceiver,
+    @Qualifier("OrderCancellationReceiver")
+    private val orderCancellationReceiver: NotificationReceiver,
 ) {
     @Bean
     fun redisContainer(
         connectionFactory: RedisConnectionFactory,
-        @Qualifier("OrderNotificationReceiverAdapter") listenerAdapter: MessageListenerAdapter,
+        @Qualifier("OrderNotificationReceiverAdapter") orderNotificationListenerAdapter: MessageListenerAdapter,
+        @Qualifier("OrderCancellationReceiverAdapter") orderCancellationReceiverAdapter: MessageListenerAdapter,
     ): RedisMessageListenerContainer {
         return RedisMessageListenerContainer()
             .apply {
                 setConnectionFactory(connectionFactory)
-                addMessageListener(listenerAdapter, PatternTopic("ORDER_NOTIFICATION"))
+                addMessageListener(orderNotificationListenerAdapter, PatternTopic("ORDER_NOTIFICATION"))
+                addMessageListener(orderCancellationReceiverAdapter, PatternTopic("ORDER_CANCELLATION"))
                 setTaskExecutor(
                     ThreadPoolTaskExecutor().apply {
                         val cpuCoreCount = Runtime.getRuntime().availableProcessors()
@@ -40,8 +44,13 @@ class RedisMessageConfig(
     }
 
     @Bean("OrderNotificationReceiverAdapter")
-    fun listenerAdapter(): MessageListenerAdapter {
-        return MessageListenerAdapter(notificationReceiver)
+    fun orderNotificationReceiverAdapter(): MessageListenerAdapter {
+        return MessageListenerAdapter(orderNotificationReceiver)
+    }
+
+    @Bean("OrderCancellationReceiverAdapter")
+    fun orderCancellationReceiverAdapter(): MessageListenerAdapter {
+        return MessageListenerAdapter(orderCancellationReceiver)
     }
 
     @Bean
