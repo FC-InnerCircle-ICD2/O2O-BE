@@ -68,8 +68,8 @@ class OrderCreationService(
             of(orderCreationRequest, storeEntity, loginMember, savedPayment, summary),
         )
 
-        // 주문 메뉴, 옵션그룹, 옵션 저장
-        saveOrderSubEntities(tempOrderMenus, savedOrder)
+        // 주문 메뉴, 옵션그룹, 옵션 저장하고 조립 된 전체 주문 엔티티 반환
+        val orderEntity = saveOrderSubEntities(tempOrderMenus, savedOrder)
 
         return OrderCreationResponse(
             savedOrder.id,
@@ -135,9 +135,9 @@ class OrderCreationService(
         return savedPayment
     }
 
-    private fun saveOrderSubEntities(tempOrderMenus: List<OrderMenu>, savedOrder: Order) {
-        // 주문 메뉴 생성, 저장
-        tempOrderMenus.forEach { tempOrderMenu ->
+    private fun saveOrderSubEntities(tempOrderMenus: List<OrderMenu>, savedOrder: Order): List<OrderMenu> {
+        // 주문 메뉴 생성, 저장후 결과 반환
+        return tempOrderMenus.map { tempOrderMenu ->
             val savedOrderMenu = orderMenuRepository.save(
                 tempOrderMenu.copy(
                     orderId = savedOrder.id,
@@ -146,18 +146,24 @@ class OrderCreationService(
             )
 
             // 주문 메뉴 옵션 그룹 생성, 저장
-            tempOrderMenu.orderMenuOptionGroups!!.forEach { tempOrderMenuOptionGroup ->
+            val savedOrderMenuOptionGroups = tempOrderMenu.orderMenuOptionGroups!!.map { tempOrderMenuOptionGroup ->
                 val savedOrderMenuOptionGroup = orderMenuOptionGroupRepository.save(
                     tempOrderMenuOptionGroup.copy(orderMenuId = savedOrderMenu.id!!),
                 )
 
                 // 주문 메뉴 옵션 생성, 저장
-                tempOrderMenuOptionGroup.orderMenuOptions!!.forEach { tempOrderMenuOption ->
+                val savedOrderMenuOptions = tempOrderMenuOptionGroup.orderMenuOptions!!.map { tempOrderMenuOption ->
                     orderMenuOptionRepository.save(
                         tempOrderMenuOption.copy(orderMenuOptionGroupId = savedOrderMenuOptionGroup.id!!),
                     )
                 }
+
+                // 주문 옵션 그룹에 옵션을 조립
+                savedOrderMenuOptionGroup.copy(orderMenuOptions = savedOrderMenuOptions)
             }
+
+            // 주문 메뉴에 주문 옵션 그룹 조립
+            savedOrderMenu.copy(orderMenuOptionGroups = savedOrderMenuOptionGroups)
         }
     }
 
