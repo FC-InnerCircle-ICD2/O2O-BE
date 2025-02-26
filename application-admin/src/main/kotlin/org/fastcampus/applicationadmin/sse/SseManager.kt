@@ -1,6 +1,7 @@
 package org.fastcampus.applicationadmin.sse
 
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.util.concurrent.ConcurrentHashMap
@@ -73,6 +74,22 @@ class SseManager {
             return@computeIfPresent emitterSet
         }
         logger.debug("*** emitters map: {}", emitters)
+    }
+
+    @Scheduled(fixedDelay = 30 * 1000)
+    private fun ping() {
+        emitters.forEach { (_, emitterSet) ->
+            emitterSet.forEach { emitter ->
+                emitter.send(
+                    SseEmitter
+                        .event()
+                        .apply {
+                            name("PING")
+                            data("PING PING")
+                        },
+                )
+            }
+        }
     }
 
     private companion object {

@@ -29,6 +29,6 @@ class SseController(
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SseController::class.java)
-        private const val TIMEOUT_MILLIS = 65 * 1_000L
+        private const val TIMEOUT_MILLIS = -1L
     }
 }
