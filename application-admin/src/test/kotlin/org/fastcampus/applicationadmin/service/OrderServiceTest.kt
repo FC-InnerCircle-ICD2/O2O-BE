@@ -27,6 +27,7 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.context.ApplicationEventPublisher
 import strikt.api.expectThat
 import strikt.api.expectThrows
 import strikt.assertions.isEqualTo
@@ -48,6 +49,8 @@ class OrderServiceTest {
     @Mock private lateinit var storeRepository: StoreRepository
 
     @Mock private lateinit var memberRepository: MemberRepository
+
+    @Mock private lateinit var eventPublisher: ApplicationEventPublisher
 
     @InjectMocks private lateinit var orderService: OrderService
 

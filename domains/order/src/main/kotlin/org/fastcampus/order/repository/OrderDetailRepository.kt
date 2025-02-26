@@ -6,4 +6,6 @@ interface OrderDetailRepository {
     fun saveOrderDetail(orderDetail: OrderDetail): OrderDetail
 
     fun findById(orderId: String): OrderDetail?
+
+    fun updateStatus(orderId: String, status: Map<String, String>)
 }
