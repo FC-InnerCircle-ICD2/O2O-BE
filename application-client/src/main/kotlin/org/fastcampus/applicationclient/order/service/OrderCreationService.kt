@@ -3,6 +3,8 @@ package org.fastcampus.applicationclient.order.service
 import org.fastcampus.applicationclient.aop.OrderMetered
 import org.fastcampus.applicationclient.order.controller.dto.request.OrderCreationRequest
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderCreationResponse
+import org.fastcampus.applicationclient.order.service.event.OrderDetailSaveEvent
+import org.fastcampus.applicationclient.order.service.event.OrderNotificationEvent
 import org.fastcampus.member.entity.Member
 import org.fastcampus.member.repository.MemberRepository
 import org.fastcampus.order.entity.Order
@@ -21,6 +23,7 @@ import org.fastcampus.store.entity.Menu
 import org.fastcampus.store.entity.MenuOption
 import org.fastcampus.store.entity.Store
 import org.fastcampus.store.repository.StoreRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -31,12 +34,12 @@ import java.util.*
 class OrderCreationService(
     private val memberRepository: MemberRepository,
     private val orderRepository: OrderRepository,
-    private val orderDetailRepository: OrderDetailRepository,
     private val storeRepository: StoreRepository,
     private val paymentRepository: PaymentRepository,
     private val orderMenuRepository: OrderMenuRepository,
     private val orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository,
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     @Transactional
     @OrderMetered
@@ -76,7 +79,12 @@ class OrderCreationService(
         // 저장된 주문정보 전체
         val orderEntity = savedOrder.copy(orderMenus = subEntities)
 
-        orderDetailRepository.saveOrder(orderEntity, mapOf("code" to savedPayment.type.code, "desc" to savedPayment.type.desc))
+        eventPublisher.publishEvent(
+            OrderDetailSaveEvent(
+                orderEntity,
+                mapOf("code" to savedPayment.type.code, "desc" to savedPayment.type.desc)
+            )
+        )
 
         return OrderCreationResponse(
             savedOrder.id,
