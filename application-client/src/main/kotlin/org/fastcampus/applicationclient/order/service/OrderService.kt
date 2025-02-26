@@ -12,14 +12,12 @@ import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.payment.repository.PaymentRepository
-import org.fastcampus.store.repository.StoreRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class OrderService(
     private val orderRepository: OrderRepository,
-    private val storeRepository: StoreRepository,
     private val paymentRepository: PaymentRepository,
     private val orderMenuRepository: OrderMenuRepository,
     private val orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository,
@@ -53,10 +51,9 @@ class OrderService(
         val order = requireNotNull(orderRepository.findById(orderId))
         val payment = requireNotNull(paymentRepository.findById(order.paymentId))
         val orderMenus = orderMenuRepository.findByOrderId(order.id)
-        val storeName = storeRepository.findById(storeId = requireNotNull(order.storeId))?.name
         return OrderDetailResponse(
             orderId = order.id,
-            storeName = storeName ?: "",
+            storeName = requireNotNull(order.storeName),
             status = mapOf("code" to order.status.code, "desc" to order.status.desc),
             orderTime = order.orderTime,
             isDeleted = order.isDeleted,
