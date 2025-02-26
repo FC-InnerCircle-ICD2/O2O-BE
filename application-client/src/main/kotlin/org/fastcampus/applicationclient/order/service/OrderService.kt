@@ -7,6 +7,7 @@ import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuO
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderResponse
 import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.order.repository.OrderDetailRepository
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -22,6 +23,7 @@ class OrderService(
     private val orderMenuRepository: OrderMenuRepository,
     private val orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository,
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
+    private val orderDetailRepository: OrderDetailRepository,
 ) {
     @Transactional(readOnly = true)
     @OrderMetered
@@ -48,52 +50,25 @@ class OrderService(
     @Transactional(readOnly = true)
     @OrderMetered
     fun getOrder(orderId: String): OrderDetailResponse {
+        orderDetailRepository.findById(orderId)?.let { orderDetail ->
+            return OrderDetailResponse.from(orderDetail)
+        }
         val order = requireNotNull(orderRepository.findById(orderId))
         val payment = requireNotNull(paymentRepository.findById(order.paymentId))
         val orderMenus = orderMenuRepository.findByOrderId(order.id)
-        return OrderDetailResponse(
-            orderId = order.id,
-            storeName = requireNotNull(order.storeName),
-            status = mapOf("code" to order.status.code, "desc" to order.status.desc),
-            orderTime = order.orderTime,
-            isDeleted = order.isDeleted,
-            tel = order.tel,
-            roadAddress = order.roadAddress,
-            jibunAddress = order.jibunAddress,
-            detailAddress = order.detailAddress,
-            excludingSpoonAndFork = order.excludingSpoonAndFork,
-            requestToRider = order.requestToRider,
-            orderPrice = order.orderPrice,
-            deliveryPrice = order.deliveryPrice,
-            deliveryCompleteTime = order.deliveryCompleteTime,
-            paymentPrice = order.paymentPrice,
-            paymentId = order.paymentId,
-            paymentType = mapOf("code" to payment.type.code, "desc" to payment.type.desc),
-            type = mapOf("code" to order.type.code, "desc" to order.type.desc),
-            orderMenus = orderMenus.map { orderMenu ->
+        return OrderDetailResponse.from(
+            order,
+            payment.type,
+            orderMenus.map { orderMenu ->
                 val orderMenuOptionGroups = orderMenuOptionGroupRepository.findByOrderMenuId(requireNotNull(orderMenu.id))
-                OrderMenuResponse(
-                    id = orderMenu.id,
-                    menuId = orderMenu.menuId,
-                    menuName = orderMenu.menuName,
-                    menuQuantity = orderMenu.menuQuantity,
-                    menuPrice = orderMenu.menuPrice,
-                    totalPrice = orderMenu.totalPrice,
-                    orderMenuOptionGroups = orderMenuOptionGroups.map { orderMenuOptionGroup ->
+                OrderMenuResponse.from(
+                    orderMenu,
+                    orderMenuOptionGroups.map { orderMenuOptionGroup ->
                         val orderMenuOptions = orderMenuOptionRepository
                             .findByOrderMenuOptionGroupId(requireNotNull(orderMenuOptionGroup.id))
-                        OrderMenuOptionGroupResponse(
-                            id = orderMenuOptionGroup.id,
-                            orderMenuId = orderMenuOptionGroup.orderMenuId,
-                            orderMenuOptionGroupName = orderMenuOptionGroup.orderMenuOptionGroupName,
-                            orderMenuOptions = orderMenuOptions.map { orderMenu ->
-                                OrderMenuOptionResponse(
-                                    id = orderMenu.id,
-                                    orderMenuOptionGroupId = orderMenu.orderMenuOptionGroupId,
-                                    menuOptionName = orderMenu.menuOptionName,
-                                    menuOptionPrice = orderMenu.menuOptionPrice,
-                                )
-                            },
+                        OrderMenuOptionGroupResponse.from(
+                            orderMenuOptionGroup,
+                            orderMenuOptions.map { orderMenu -> OrderMenuOptionResponse.from(orderMenu) },
                         )
                     },
                 )

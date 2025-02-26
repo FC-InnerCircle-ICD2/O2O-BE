@@ -4,6 +4,7 @@ import org.fastcampus.applicationadmin.order.controller.dto.OrderInquiryResponse
 import org.fastcampus.applicationadmin.order.controller.dto.OrderMenuInquiryResponse
 import org.fastcampus.applicationadmin.order.controller.dto.OrderMenuOptionGroupInquiryResponse
 import org.fastcampus.applicationadmin.order.controller.dto.OrderMenuOptionInquiryResponse
+import org.fastcampus.applicationadmin.order.service.event.OrderDetailStatusEvent
 import org.fastcampus.common.dto.OffSetBasedDTO
 import org.fastcampus.member.entity.Member
 import org.fastcampus.member.repository.MemberRepository
@@ -17,6 +18,7 @@ import org.fastcampus.order.repository.OrderMenuRepository
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.store.repository.StoreRepository
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -29,6 +31,7 @@ class OrderService(
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
     private val storeRepository: StoreRepository,
     private val memberRepository: MemberRepository,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(OrderService::class.java)
@@ -79,6 +82,8 @@ class OrderService(
         }
         order.accept()
         orderRepository.save(order)
+
+        eventPublisher.publishEvent(OrderDetailStatusEvent(orderId, order.status))
     }
 
     fun refuseOrder(orderId: String, ownerId: Long) {
@@ -90,6 +95,8 @@ class OrderService(
         }
         order.refuse()
         orderRepository.save(order)
+
+        eventPublisher.publishEvent(OrderDetailStatusEvent(orderId, order.status))
     }
 
     fun completeOrder(orderId: String, ownerId: Long) {
@@ -101,6 +108,8 @@ class OrderService(
         }
         order.complete()
         orderRepository.save(order)
+
+        eventPublisher.publishEvent(OrderDetailStatusEvent(orderId, order.status))
     }
 
     private fun convertIntoOrderInquiryResponse(order: Order): OrderInquiryResponse {

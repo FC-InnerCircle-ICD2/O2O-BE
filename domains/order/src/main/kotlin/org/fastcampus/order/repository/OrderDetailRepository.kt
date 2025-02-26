@@ -1,9 +1,11 @@
 package org.fastcampus.order.repository
 
-import org.fastcampus.order.entity.Order
+import org.fastcampus.order.entity.OrderDetail
 
 interface OrderDetailRepository {
-    fun saveOrder(order: Order, paymentType: Map<String, String>): Order
+    fun saveOrderDetail(orderDetail: OrderDetail): OrderDetail
 
-    fun findById(orderId: String): Order?
+    fun findById(orderId: String): OrderDetail?
+
+    fun updateStatus(orderId: String, status: Map<String, String>)
 }

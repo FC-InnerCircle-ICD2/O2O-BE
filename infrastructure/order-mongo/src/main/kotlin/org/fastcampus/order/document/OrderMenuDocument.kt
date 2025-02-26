@@ -14,6 +14,17 @@ class OrderMenuDocument(
     val orderMenuOptionGroupDocument: List<OrderMenuOptionGroupDocument>? = null,
 )
 
+fun OrderMenu.toJpaDocument() =
+    OrderMenuDocument(
+        id,
+        menuId,
+        menuName,
+        menuQuantity,
+        menuPrice,
+        totalPrice,
+        orderMenuOptionGroups?.map { it.toJpaDocument() },
+    )
+
 fun OrderMenuDocument.toModel() =
     OrderMenu(
         id,

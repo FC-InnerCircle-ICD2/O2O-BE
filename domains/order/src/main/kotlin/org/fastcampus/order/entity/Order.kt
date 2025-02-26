@@ -117,3 +117,30 @@ data class Order(
         PACKING("T2", "포장"),
     }
 }
+
+fun Order.toOrderDetail(paymentType: Map<String, String>) =
+    OrderDetail(
+        id,
+        storeId,
+        storeName,
+        storeImageThumbnail,
+        userId,
+        roadAddress,
+        jibunAddress,
+        detailAddress,
+        tel,
+        mapOf("code" to status.code, "desc" to status.desc),
+        orderTime,
+        orderSummary,
+        mapOf("code" to type.code, "desc" to type.desc),
+        paymentId,
+        mapOf("code" to paymentType["code"], "desc" to paymentType["desc"]),
+        isDeleted,
+        deliveryCompleteTime,
+        orderPrice,
+        deliveryPrice,
+        paymentPrice,
+        excludingSpoonAndFork,
+        requestToRider,
+        orderMenus,
+    )

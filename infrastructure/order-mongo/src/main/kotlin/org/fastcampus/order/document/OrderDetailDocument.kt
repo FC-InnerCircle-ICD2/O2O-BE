@@ -1,14 +1,14 @@
 package org.fastcampus.order.document
 
 import org.bson.types.ObjectId
-import org.fastcampus.order.entity.Order
+import org.fastcampus.order.entity.OrderDetail
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import java.time.LocalDateTime
 
-@Document(collection = "orders")
-data class OrderDocument(
+@Document(collection = "orderDetails")
+class OrderDetailDocument(
     @Id
     @Field(name = "_id")
     val _id: ObjectId? = null,
@@ -17,7 +17,7 @@ data class OrderDocument(
     val storeName: String?,
     val storeImageThumbnail: String?,
     val userId: Long?,
-    val status: Order.Status,
+    val status: Map<String, String?>,
     val orderTime: LocalDateTime,
     val orderSummary: String?,
     val isDeleted: Boolean,
@@ -33,20 +33,20 @@ data class OrderDocument(
     val paymentPrice: Long,
     val paymentId: Long,
     val paymentType: Map<String, String?>,
-    val type: Order.Type,
+    val type: Map<String, String?>,
     @Field(name = "orderMenus")
     val orderMenuDocument: List<OrderMenuDocument>? = null,
 )
 
-fun Order.toJpaDocument(orderId: String, paymentType: Map<String, String>) =
-    OrderDocument(
+fun OrderDetail.toJpaDocument() =
+    OrderDetailDocument(
         null,
         orderId,
         storeId,
         storeName,
         storeImageThumbnail,
         userId,
-        status,
+        mapOf("code" to status["code"], "desc" to status["desc"]),
         orderTime,
         orderSummary,
         isDeleted,
@@ -62,11 +62,12 @@ fun Order.toJpaDocument(orderId: String, paymentType: Map<String, String>) =
         paymentPrice,
         paymentId,
         mapOf("code" to paymentType["code"], "desc" to paymentType["desc"]),
-        type,
+        mapOf("code" to type["code"], "desc" to type["desc"]),
+        orderMenus?.map { it.toJpaDocument() },
     )
 
-fun OrderDocument.toModel() =
-    Order(
+fun OrderDetailDocument.toModel() =
+    OrderDetail(
         orderId,
         storeId,
         storeName,
@@ -76,11 +77,12 @@ fun OrderDocument.toModel() =
         jibunAddress,
         detailAddress,
         tel,
-        status,
+        mapOf("code" to status["code"], "desc" to status["desc"]),
         orderTime,
         orderSummary,
-        type,
+        mapOf("code" to type["code"], "desc" to type["desc"]),
         paymentId,
+        mapOf("code" to paymentType["code"], "desc" to paymentType["desc"]),
         isDeleted,
         deliveryCompleteTime,
         orderPrice,

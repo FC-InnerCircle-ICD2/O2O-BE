@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.springframework.context.ApplicationEventPublisher
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotBlank
@@ -41,6 +42,7 @@ class OrderCreationServiceTest {
     private lateinit var orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository
     private lateinit var orderMenuOptionRepository: OrderMenuOptionRepository
     private lateinit var orderCreationService: OrderCreationService
+    private lateinit var eventPublisher: ApplicationEventPublisher
 
     @BeforeEach
     fun init() {
@@ -51,6 +53,7 @@ class OrderCreationServiceTest {
         orderMenuRepository = mock(OrderMenuRepository::class.java)
         orderMenuOptionGroupRepository = mock(OrderMenuOptionGroupRepository::class.java)
         orderMenuOptionRepository = mock(OrderMenuOptionRepository::class.java)
+        eventPublisher = mock(ApplicationEventPublisher::class.java)
         orderCreationService = OrderCreationService(
             memberRepository = memberRepository,
             orderRepository = orderRepository,
@@ -59,6 +62,7 @@ class OrderCreationServiceTest {
             orderMenuRepository = orderMenuRepository,
             orderMenuOptionGroupRepository = orderMenuOptionGroupRepository,
             orderMenuOptionRepository = orderMenuOptionRepository,
+            eventPublisher = eventPublisher,
         )
     }
 
