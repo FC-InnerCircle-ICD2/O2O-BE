@@ -9,7 +9,6 @@ import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOption
 import org.fastcampus.order.entity.OrderMenuOptionGroup
-import org.fastcampus.order.repository.OrderDetailRepository
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -27,6 +26,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.springframework.context.ApplicationEventPublisher
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotBlank
@@ -41,8 +41,8 @@ class OrderCreationServiceTest {
     private lateinit var orderMenuRepository: OrderMenuRepository
     private lateinit var orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository
     private lateinit var orderMenuOptionRepository: OrderMenuOptionRepository
-    private lateinit var orderDetailRepository: OrderDetailRepository
     private lateinit var orderCreationService: OrderCreationService
+    private lateinit var eventPublisher: ApplicationEventPublisher
 
     @BeforeEach
     fun init() {
@@ -53,7 +53,7 @@ class OrderCreationServiceTest {
         orderMenuRepository = mock(OrderMenuRepository::class.java)
         orderMenuOptionGroupRepository = mock(OrderMenuOptionGroupRepository::class.java)
         orderMenuOptionRepository = mock(OrderMenuOptionRepository::class.java)
-        orderDetailRepository = mock(OrderDetailRepository::class.java)
+        eventPublisher = mock(ApplicationEventPublisher::class.java)
         orderCreationService = OrderCreationService(
             memberRepository = memberRepository,
             orderRepository = orderRepository,
@@ -62,7 +62,7 @@ class OrderCreationServiceTest {
             orderMenuRepository = orderMenuRepository,
             orderMenuOptionGroupRepository = orderMenuOptionGroupRepository,
             orderMenuOptionRepository = orderMenuOptionRepository,
-            orderDetailRepository = orderDetailRepository,
+            eventPublisher = eventPublisher,
         )
     }
 

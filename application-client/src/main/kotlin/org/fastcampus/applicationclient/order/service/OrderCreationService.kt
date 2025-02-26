@@ -4,15 +4,14 @@ import org.fastcampus.applicationclient.aop.OrderMetered
 import org.fastcampus.applicationclient.order.controller.dto.request.OrderCreationRequest
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderCreationResponse
 import org.fastcampus.applicationclient.order.service.event.OrderDetailSaveEvent
-import org.fastcampus.applicationclient.order.service.event.OrderNotificationEvent
 import org.fastcampus.member.entity.Member
 import org.fastcampus.member.repository.MemberRepository
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOption
 import org.fastcampus.order.entity.OrderMenuOptionGroup
+import org.fastcampus.order.entity.toOrderDetail
 import org.fastcampus.order.exception.OrderException
-import org.fastcampus.order.repository.OrderDetailRepository
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -81,9 +80,10 @@ class OrderCreationService(
 
         eventPublisher.publishEvent(
             OrderDetailSaveEvent(
-                orderEntity,
-                mapOf("code" to savedPayment.type.code, "desc" to savedPayment.type.desc)
-            )
+                orderEntity.toOrderDetail(
+                    mapOf("code" to savedPayment.type.code, "desc" to savedPayment.type.desc),
+                ),
+            ),
         )
 
         return OrderCreationResponse(
