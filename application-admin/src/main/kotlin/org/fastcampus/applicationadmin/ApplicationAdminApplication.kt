@@ -2,6 +2,7 @@ package org.fastcampus.applicationadmin
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication(
     scanBasePackages = [
@@ -13,6 +14,7 @@ import org.springframework.boot.runApplication
         "org.fastcampus.review",
     ],
 )
+@EnableScheduling
 class ApplicationAdminApplication
 
 fun main(args: Array<String>) {
