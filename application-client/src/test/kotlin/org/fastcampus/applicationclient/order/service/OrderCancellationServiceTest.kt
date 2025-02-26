@@ -1,6 +1,7 @@
 package org.fastcampus.applicationclient.order.service
 
 import org.fastcampus.applicationclient.fixture.createOrderFixture
+import org.fastcampus.applicationclient.order.service.event.OrderCancellationEvent
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.exception.OrderException
 import org.fastcampus.order.repository.OrderRepository
@@ -36,6 +37,7 @@ class OrderCancellationServiceTest {
 
         `when`(orderRepository.findById(order.id)).thenReturn(order)
         doNothing().`when`(refundManager).refundOrder(order.id)
+        doNothing().`when`(eventPublisher).publishEvent(OrderCancellationEvent(storeId = order.storeId!!, orderId = order.id))
 
         // when
         orderCancellationService.cancelOrder(order.id)
