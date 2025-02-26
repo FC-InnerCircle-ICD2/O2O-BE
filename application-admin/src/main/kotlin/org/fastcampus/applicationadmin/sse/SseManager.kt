@@ -76,8 +76,9 @@ class SseManager {
         logger.debug("*** emitters map: {}", emitters)
     }
 
-    @Scheduled(fixedDelay = 30 * 1000)
+    @Scheduled(fixedRate = 30 * 1000)
     private fun ping() {
+        logger.debug("PING!")
         emitters.forEach { (_, emitterSet) ->
             emitterSet.forEach { emitter ->
                 emitter.send(
