@@ -81,14 +81,17 @@ class SseManager {
         logger.debug("PING!")
         emitters.forEach { (_, emitterSet) ->
             emitterSet.forEach { emitter ->
-                emitter.send(
-                    SseEmitter
-                        .event()
-                        .apply {
-                            name("PING")
-                            data("PING PING")
-                        },
-                )
+                try {
+                    emitter.send(
+                        SseEmitter
+                            .event()
+                            .apply {
+                                name("PING")
+                                data("PING PING")
+                            },
+                    )
+                } catch (ignore: Exception) {
+                }
             }
         }
     }
