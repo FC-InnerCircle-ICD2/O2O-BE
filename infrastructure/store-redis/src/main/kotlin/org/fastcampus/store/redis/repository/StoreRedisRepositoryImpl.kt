@@ -85,4 +85,14 @@ class StoreRedisRepositoryImpl(
         val startTime = currentTime - WINDOWDURATION
         return redisTemplate.opsForZSet().count("search:$keyword", startTime.toDouble(), currentTime.toDouble()) ?: 0
     }
+
+    private fun roundDecimals(value: Double, decimals: Int): Double {
+        val scale = Math.pow(10.0, decimals.toDouble())
+        return Math.round(value * scale) / scale
+    }
+
+    private fun getCacheKey(latitude: Double, longitude: Double): String {
+        return "user:${roundDecimals(latitude, 2)},${roundDecimals(longitude, 2)}"
+
+    }
 }

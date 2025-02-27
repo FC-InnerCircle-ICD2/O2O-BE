@@ -2,6 +2,7 @@ package org.fastcampus.order.postgres.repository
 
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.common.dto.OffSetBasedDTO
+import org.fastcampus.order.dto.OrderCount
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.postgres.entity.OrderJpaEntity
 import org.fastcampus.order.postgres.entity.toJpaEntity
@@ -104,5 +105,10 @@ class OrderJpaRepositoryCustom(
             endDateTime,
             status,
         ).map { it.toModel() }
+    }
+
+    override fun findOrderCnt(): List<OrderCount> {
+        return orderJpaRepository.countOrdersByStoreId()
+            .map { OrderCount(it.getStoreId()!!, it.getOrderCount().toInt()) }
     }
 }

@@ -37,6 +37,7 @@ class StoreDocument(
     val minimumOrderAmount: Long,
     @Transient
     var distance: Double? = null, // geoNear로 임시 추가되는 필드
+    var orderCnt: Int?,
 )
 
 fun StoreDocument.toModel() =
@@ -59,4 +60,5 @@ fun StoreDocument.toModel() =
         roadAddress,
         storeMenuCategoryDocument?.map { it.toModel() },
         minimumOrderAmount,
+        orderCnt ?: 0,
     )

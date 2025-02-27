@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.NearQuery
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.Update
 import org.springframework.stereotype.Component
 
 @Component
@@ -205,6 +206,12 @@ internal class StoreMongoRepositoryCustom(
 
 // 5) 페이징에 필요한 (결과 목록, nextCursor) 구조로 반환
         return Pair(storeWithDistances, nextCursor)
+    }
+
+    override fun updateOrderCnt(storeId: String, orderCnt: Int) {
+        val query = Query(Criteria.where("id").`is`(storeId))
+        val update = Update().set("orderCount", orderCnt)
+        mongoTemplate.updateFirst(query, update, StoreDocument::class.java)
     }
 
     private fun convertToCategory(category: Store.Category): String {

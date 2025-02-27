@@ -2,6 +2,7 @@ package org.fastcampus.order.repository
 
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.common.dto.OffSetBasedDTO
+import org.fastcampus.order.dto.OrderCount
 import org.fastcampus.order.entity.Order
 import java.time.LocalDateTime
 
@@ -38,4 +39,6 @@ interface OrderRepository {
         endDateTime: LocalDateTime,
         status: List<Order.Status>,
     ): List<Order>
+
+    fun findOrderCnt(): List<OrderCount>
 }

@@ -23,6 +23,7 @@ data class Store(
     val roadAddress: String?,
     val storeMenuCategory: List<StoreMenuCategory>?,
     val minimumOrderAmount: Long,
+    val orderCnt: Int,
 ) {
     fun getCategories(): List<StoreMenuCategory> {
         return storeMenuCategory ?: emptyList()

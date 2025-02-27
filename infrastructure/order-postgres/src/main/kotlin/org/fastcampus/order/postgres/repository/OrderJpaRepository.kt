@@ -2,6 +2,7 @@ package org.fastcampus.order.postgres.repository
 
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.postgres.entity.OrderJpaEntity
+import org.fastcampus.order.postgres.projections.StoreOrderCountProjection
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -47,4 +48,10 @@ interface OrderJpaRepository : JpaRepository<OrderJpaEntity, String>, JpaSpecifi
         @Param("endDateTime") endDateTime: LocalDateTime,
         @Param("includedStatus") includedStatus: List<Order.Status>,
     ): List<OrderJpaEntity>
+
+    @Query("SELECT o.storeId AS storeId, COUNT(o) AS orderCount " +
+        "FROM OrderJpaEntity o " +
+        "WHERE o.isDeleted = false " + // 필요한 경우 필터링 조건 추가
+        "GROUP BY o.storeId")
+    fun countOrdersByStoreId(): List<StoreOrderCountProjection>
 }
