@@ -9,6 +9,9 @@ server:
 spring:
   application:
     name: application-client
+  config:
+    import:
+      - application-pg-toss-payments.yml
   profiles:
     active: local
     include:

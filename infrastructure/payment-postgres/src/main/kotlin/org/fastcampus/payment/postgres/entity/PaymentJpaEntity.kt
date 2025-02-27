@@ -26,6 +26,8 @@ class PaymentJpaEntity(
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
     val status: Payment.Status,
+    @Column(name = "PG_KEY")
+    val pgKey: String? = null,
 ) : BaseEntity()
 
 fun Payment.toJpaEntity() =
@@ -34,6 +36,7 @@ fun Payment.toJpaEntity() =
         type,
         paymentPrice,
         status,
+        pgKey,
     )
 
 fun PaymentJpaEntity.toModel() =
@@ -42,4 +45,5 @@ fun PaymentJpaEntity.toModel() =
         type,
         paymentPrice,
         status,
+        pgKey,
     )
