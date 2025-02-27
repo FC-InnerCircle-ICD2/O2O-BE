@@ -7,6 +7,7 @@ import org.fastcampus.applicationclient.order.controller.dto.request.OrderCreati
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderCreationResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderDetailResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderResponse
+import org.fastcampus.applicationclient.order.controller.dto.response.OrderStatusResponse
 import org.fastcampus.applicationclient.order.service.OrderCancellationService
 import org.fastcampus.applicationclient.order.service.OrderCreationService
 import org.fastcampus.applicationclient.order.service.OrderService
@@ -49,6 +50,15 @@ class OrderController(
         @PathVariable orderId: String,
     ): ResponseEntity<APIResponseDTO<OrderDetailResponse>> {
         val response = orderService.getOrder(orderId)
+        return ResponseEntity
+            .ok(APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response))
+    }
+
+    @GetMapping("/{orderId}/status")
+    fun getOrderStatus(
+        @PathVariable orderId: String,
+    ): ResponseEntity<APIResponseDTO<OrderStatusResponse>> {
+        val response = orderService.getOrderStatus(orderId)
         return ResponseEntity
             .ok(APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response))
     }
