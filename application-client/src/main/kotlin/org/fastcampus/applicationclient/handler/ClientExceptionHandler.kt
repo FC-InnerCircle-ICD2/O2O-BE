@@ -97,18 +97,18 @@ class ClientExceptionHandler {
     @ExceptionHandler(OrderException::class)
     fun handleOrderException(exception: OrderException): ResponseEntity<APIResponseDTO<*>> {
         logger.error("handleOrderException: {}", exception.toString(), exception)
-        return ResponseEntity.status(400).body(APIResponseDTO(400, "FAIL", exception.message))
+        return ResponseEntity.status(400).body(APIResponseDTO(400, exception.message, null))
     }
 
     @ExceptionHandler(PaymentException::class)
     fun handlePaymentException(exception: PaymentException): ResponseEntity<APIResponseDTO<*>> {
         logger.error("handlePaymentException: {}", exception.toString(), exception)
-        return ResponseEntity.status(400).body(APIResponseDTO(400, "FAIL", exception.message))
+        return ResponseEntity.status(400).body(APIResponseDTO(400, exception.message, null))
     }
 
     @ExceptionHandler(CartException::class)
     fun handleCartException(exception: CartException): ResponseEntity<APIResponseDTO<*>> {
         logger.error("handleCartException: {}", exception.toString(), exception)
-        return ResponseEntity.status(400).body(APIResponseDTO(400, "FAIL", exception.message))
+        return ResponseEntity.status(400).body(APIResponseDTO(400, exception.message, null))
     }
 }

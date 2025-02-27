@@ -5,12 +5,13 @@ data class Payment(
     val type: Type,
     val paymentPrice: Long?,
     val status: Status = Status.WAIT,
+    val pgKey: String? = null,
 ) {
     enum class Type(
         val code: String,
         val desc: String,
     ) {
-        KAKAO_PAY("P1", "카카오페이"),
+        PAY_200("P1", "PAY200"),
         TOSS_PAY("P2", "토스페이"),
     }
 

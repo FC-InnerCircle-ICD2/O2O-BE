@@ -1,0 +1,19 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+external:
+  tosspayments:
+    url: https://api.tosspayments.com
+    secret: none
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev, prod
+external:
+  tosspayments:
+    url: https://api.tosspayments.com
+    secret: ${TOSSPAYMENTS_SECRET}
