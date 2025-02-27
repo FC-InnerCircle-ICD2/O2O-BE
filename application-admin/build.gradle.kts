@@ -29,4 +29,5 @@ dependencies {
     implementation("com.auth0:java-jwt:4.2.1")
     implementation("org.springframework.retry:spring-retry")
     testImplementation("io.mockk:mockk:1.13.3")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 }

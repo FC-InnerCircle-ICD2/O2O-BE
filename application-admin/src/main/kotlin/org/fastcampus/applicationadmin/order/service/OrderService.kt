@@ -11,6 +11,7 @@ import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOptionGroup
 import org.fastcampus.order.exception.OrderException
+import org.fastcampus.order.repository.OrderLockManager
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
@@ -29,6 +30,7 @@ class OrderService(
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
     private val storeRepository: StoreRepository,
     private val memberRepository: MemberRepository,
+    private val orderLockManager: OrderLockManager,
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(OrderService::class.java)
@@ -77,7 +79,9 @@ class OrderService(
         if (ownerId.toString() != store.ownerId) {
             throw OrderException.OrderCanNotAccept(orderId)
         }
-        order.accept()
+        orderLockManager.lock(orderId) {
+            order.accept()
+        }
         orderRepository.save(order)
     }
 
@@ -88,7 +92,9 @@ class OrderService(
         if (ownerId.toString() != store.ownerId) {
             throw OrderException.OrderCanNotRefuse(orderId)
         }
-        order.refuse()
+        orderLockManager.lock(orderId) {
+            order.refuse()
+        }
         orderRepository.save(order)
     }
 
