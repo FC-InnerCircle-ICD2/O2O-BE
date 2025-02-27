@@ -39,7 +39,7 @@ class PaymentServiceTest {
             orderRepository = orderRepository,
             cartRepository = cartRepository,
             eventPublisher = eventPublisher,
-            paymentGateway = paymentGateway,
+//            paymentGateway = paymentGateway,
         )
     }
 
