@@ -6,7 +6,9 @@ import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuO
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuOptionResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderMenuResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderResponse
+import org.fastcampus.applicationclient.order.controller.dto.response.OrderStatusResponse
 import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.order.exception.OrderException
 import org.fastcampus.order.repository.OrderDetailRepository
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
@@ -74,5 +76,10 @@ class OrderService(
                 )
             },
         )
+    }
+
+    fun getOrderStatus(orderId: String): OrderStatusResponse {
+        val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
+        return OrderStatusResponse(order.status.toClientStatus())
     }
 }
