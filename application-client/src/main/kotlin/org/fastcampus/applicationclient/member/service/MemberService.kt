@@ -32,7 +32,21 @@ class MemberService(
     @MemberMetered
     fun info(authMember: AuthMember): MemberInfoResponse? {
         val findMember = memberRepository.findById(authMember.id)
-        return MemberInfoResponse(findMember.signname, findMember.nickname)
+        val defaultAddress = memberAddressRepository.findByUserIdAndIsDefault(authMember.id, true)
+        if (defaultAddress != null) {
+            return MemberInfoResponse(
+                findMember.signname,
+                findMember.nickname,
+                MemberInfoResponse.DefaultAddress(
+                    roadAddress = defaultAddress.roadAddress,
+                    jibunAddress = defaultAddress.jibunAddress,
+                    detailAddress = defaultAddress.detailAddress ?: "",
+                    latitude = defaultAddress.latitude,
+                    longitude = defaultAddress.longitude,
+                ),
+            )
+        }
+        return MemberInfoResponse(findMember.signname, findMember.nickname, null)
     }
 
     @Transactional
