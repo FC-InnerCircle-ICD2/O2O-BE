@@ -1,6 +1,7 @@
 package org.fastcampus.applicationclient.payment.service
 
 import org.fastcampus.applicationclient.aop.OrderMetered
+import org.fastcampus.applicationclient.order.service.event.OrderDetailStatusEvent
 import org.fastcampus.applicationclient.order.service.event.OrderNotificationEvent
 import org.fastcampus.cart.repository.CartRepository
 import org.fastcampus.order.entity.Order
@@ -69,13 +70,15 @@ class PaymentService(
         paymentRepository.save(payment.copy(status = Payment.Status.COMPLETED))
 
         // 주문접수 상태 변경
-        orderRepository.save(order.copy(status = Order.Status.RECEIVE))
+        val updatedOrder = orderRepository.save(order.copy(status = Order.Status.RECEIVE))
 
         // 장바구니 삭제
-        cartRepository.removeByUserId(order.userId!!)
+        cartRepository.removeByUserId(updatedOrder.userId!!)
 
         // 점주에게 주문 알림 - 트랜잭션 커밋이후 비동기 전송
-        eventPublisher.publishEvent(OrderNotificationEvent(order))
+        eventPublisher.publishEvent(OrderNotificationEvent(updatedOrder))
+
+        eventPublisher.publishEvent(OrderDetailStatusEvent(updatedOrder.id, updatedOrder.status))
     }
 
     private fun findPayment(paymentId: Long): Payment {
