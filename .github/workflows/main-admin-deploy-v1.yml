@@ -84,4 +84,7 @@ jobs:
           aws ssm send-command \
             --instance-ids $APP_INSTANCE_IDS \
             --document-name "AWS-RunShellScript" \
-            --parameters 'commands=["bash /home/ec2-user/backend_deploy.sh"]'
+            --parameters '{"commands":[
+              "aws s3 cp s3://${{ secrets.O2O_BE_BUCKET }}/.env /home/ec2-user/backend",
+              "bash /home/ec2-user/backend_deploy.sh"
+            ]}'
