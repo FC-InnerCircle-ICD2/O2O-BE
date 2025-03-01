@@ -51,7 +51,7 @@ class PaymentService(
 
         val payment = findPayment(order.paymentId)
 
-        // PG 결제승인 요청 - PAY_200 은 일단 성공응답
+        // PG 결제승인 요청 - 토스페이먼츠만 실제 통신, PAY_200 은 나중에
         if (payment.type == Payment.Type.TOSS_PAY) {
             val result = paymentGateway.approve(
                 paymentKey = payment.pgKey ?: throw PaymentException.PgKeyNotExists(payment.id.toString()),

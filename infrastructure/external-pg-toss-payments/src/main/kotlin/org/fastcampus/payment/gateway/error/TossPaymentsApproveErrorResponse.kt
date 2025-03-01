@@ -1,4 +1,4 @@
-package org.fastcampus.payment.gateway.client
+package org.fastcampus.payment.gateway.error
 
 import org.fastcampus.payment.gateway.PaymentGatewayResponse
 

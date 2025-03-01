@@ -3,7 +3,6 @@ package org.fastcampus.payment.gateway.error
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Response
 import feign.codec.ErrorDecoder
-import org.fastcampus.payment.gateway.client.TossPaymentsApproveErrorResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import java.io.IOException
