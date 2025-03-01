@@ -13,6 +13,8 @@ open class PaymentException(message: String) : RuntimeException(message) {
 
     data class PgKeyNotExists(val paymentId: String) : PaymentException("PG Key가 존재하지 않습니다.")
 
+    data class NotSupportedPaymentType(val paymentType: String) : PaymentException("지원하지 않는 결제 타입입니다.")
+
     // PG 요청에 대한 실패 공통 - PG 클라이언트 모듈이 반환하는 메세지를 그대로 클라이언트측까지 사용
     data class PGFailed(val paymentId: String, val msg: String) : PaymentException(msg)
 }

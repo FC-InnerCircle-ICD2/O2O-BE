@@ -22,6 +22,8 @@
             <option value="$PROJECT_DIR$/domains/store" />
             <option value="$PROJECT_DIR$/infrastructure" />
             <option value="$PROJECT_DIR$/infrastructure/cart-mongo" />
+            <option value="$PROJECT_DIR$/infrastructure/external-pg-pay200" />
+            <option value="$PROJECT_DIR$/infrastructure/external-pg-toss-payments" />
             <option value="$PROJECT_DIR$/infrastructure/favorite-postgres" />
             <option value="$PROJECT_DIR$/infrastructure/member-postgres" />
             <option value="$PROJECT_DIR$/infrastructure/member-redis" />

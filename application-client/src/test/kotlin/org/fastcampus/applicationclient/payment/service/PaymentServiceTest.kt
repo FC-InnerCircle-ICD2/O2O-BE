@@ -16,7 +16,9 @@ import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
+import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.core.env.Environment
 import strikt.api.expectThrows
 import java.time.LocalDateTime
 
@@ -27,6 +29,7 @@ class PaymentServiceTest {
     private lateinit var cartRepository: CartRepository
     private lateinit var eventPublisher: ApplicationEventPublisher
     private lateinit var paymentGateway: PaymentGateway
+    private lateinit var paymentGatewayFactory: PaymentGatewayFactory
 
     @BeforeEach
     fun init() {
@@ -34,13 +37,17 @@ class PaymentServiceTest {
         orderRepository = mock(OrderRepository::class.java)
         cartRepository = mock(CartRepository::class.java)
         eventPublisher = mock(ApplicationEventPublisher::class.java)
+        paymentGatewayFactory = PaymentGatewayFactory(
+            applicationContext = mock(ApplicationContext::class.java),
+            environment = mock(Environment::class.java),
+        )
         paymentGateway = mock(PaymentGateway::class.java)
         paymentService = PaymentService(
             paymentRepository = paymentRepository,
             orderRepository = orderRepository,
             cartRepository = cartRepository,
             eventPublisher = eventPublisher,
-            paymentGateway = paymentGateway,
+            paymentGatewayFactory = paymentGatewayFactory,
         )
     }
 

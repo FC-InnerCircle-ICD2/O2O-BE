@@ -39,6 +39,7 @@ dependencies {
     runtimeOnly(project(":infrastructure:cart-mongo"))
     runtimeOnly(project(":infrastructure:favorite-postgres"))
     runtimeOnly(project(":infrastructure:external-pg-toss-payments"))
+    runtimeOnly(project(":infrastructure:external-pg-pay200"))
     implementation(project(":common"))
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
