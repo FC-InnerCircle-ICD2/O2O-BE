@@ -1,0 +1,19 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+external:
+  pay200:
+    url: https://payment.pay-200.com
+    secret: none
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev, prod
+external:
+  pay200:
+    url: https://payment.pay-200.com
+    secret: ${PAY200_SECRET}

@@ -2,27 +2,26 @@ package org.fastcampus.payment.gateway.client
 
 import org.fastcampus.payment.gateway.PaymentGateway
 import org.fastcampus.payment.gateway.PaymentGatewayResponse
-import org.fastcampus.payment.gateway.error.TossPaymentsException
+import org.fastcampus.payment.gateway.error.Pay200Exception
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
-@Component("tossPaymentsGateway")
-class TossPaymentsGateway(
-    private val tossPaymentsClient: TossPaymentsClient,
+@Component("pay200Gateway")
+class Pay200Gateway(
+    private val pay200Client: Pay200Client,
 ) : PaymentGateway {
     override fun approve(paymentKey: String, orderId: String, amount: Long): PaymentGatewayResponse {
         try {
-            val request = TossPaymentsApproveRequest(
+            val request = Pay200ApproveRequest(
                 paymentKey = paymentKey,
                 orderId = orderId,
                 amount = amount,
             )
-            val response = tossPaymentsClient.approve(request)
+            val response = pay200Client.approve(request)
             return response.toPaymentGatewayResponse()
-        } catch (e: TossPaymentsException) {
+        } catch (e: Pay200Exception) {
             val errorResponse = e.error
-            logger.error("TossPaymentsGateway-approve-error: {}", errorResponse)
-
+            logger.error("Pay200Gateway-approve-error: {}", errorResponse)
             return errorResponse?.toPaymentGatewayResponse()
                 ?: PaymentGatewayResponse(
                     status = PaymentGatewayResponse.Status.FAILED,

@@ -3,8 +3,8 @@ package org.fastcampus.payment.gateway.error
 import org.fastcampus.payment.gateway.PaymentGatewayResponse
 
 internal data class TossPaymentsApproveErrorResponse(
-    val code: String,
-    val message: String,
+    val code: String = "",
+    val message: String = "",
 ) {
     fun toPaymentGatewayResponse(): PaymentGatewayResponse {
         return PaymentGatewayResponse(

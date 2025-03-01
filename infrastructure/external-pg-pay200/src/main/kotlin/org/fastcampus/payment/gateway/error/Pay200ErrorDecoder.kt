@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets
 /**
  * HTTP 응답 상태코드 2XX 범위 외 경우일 때.
  */
-internal class TossPaymentsErrorDecoder(
+internal class Pay200ErrorDecoder(
     @Qualifier("feignObjectMapper")
     private val objectMapper: ObjectMapper,
 ) : ErrorDecoder {
@@ -22,12 +22,12 @@ internal class TossPaymentsErrorDecoder(
         try {
             val body = response?.body()?.asInputStream()?.readAllBytes()?.let { String(it, StandardCharsets.UTF_8) }
             if (body == null) {
-                return TossPaymentsException("", TossPaymentsApproveErrorResponse())
+                return Pay200Exception("", Pay200ApproveErrorResponse())
             }
-            val errorResponse = objectMapper.readValue(body, TossPaymentsApproveErrorResponse::class.java)
-            return TossPaymentsException(errorResponse.message, errorResponse)
+            val errorResponse = objectMapper.readValue(body, Pay200ApproveErrorResponse::class.java)
+            return Pay200Exception(errorResponse.error.message, errorResponse)
         } catch (e: IOException) {
-            return TossPaymentsException(message = "에러 메세지 파싱 에러")
+            return Pay200Exception(message = "에러 메세지 파싱 에러")
         }
     }
 

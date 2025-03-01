@@ -8,7 +8,6 @@ import org.fastcampus.order.entity.Order
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.payment.entity.Payment
 import org.fastcampus.payment.exception.PaymentException
-import org.fastcampus.payment.gateway.PaymentGateway
 import org.fastcampus.payment.gateway.PaymentGatewayResponse
 import org.fastcampus.payment.repository.PaymentRepository
 import org.springframework.context.ApplicationEventPublisher
@@ -22,7 +21,7 @@ class PaymentService(
     private val orderRepository: OrderRepository,
     private val cartRepository: CartRepository,
     private val eventPublisher: ApplicationEventPublisher,
-    private val paymentGateway: PaymentGateway,
+    private val paymentGatewayFactory: PaymentGatewayFactory,
 ) {
     @Transactional
     fun savePaymentKey(userId: Long, orderId: String, paymentKey: String) {
@@ -52,18 +51,17 @@ class PaymentService(
 
         val payment = findPayment(order.paymentId)
 
-        // PG 결제승인 요청 - 토스페이먼츠만 실제 통신, PAY_200 은 나중에
-        if (payment.type == Payment.Type.TOSS_PAY) {
-            val result = paymentGateway.approve(
-                paymentKey = payment.pgKey ?: throw PaymentException.PgKeyNotExists(payment.id.toString()),
-                orderId = order.id,
-                amount = order.paymentPrice,
-            )
+        // PG 결제승인 요청
+        val paymentGateway = paymentGatewayFactory.getPaymentGateway(payment.type)
+        val result = paymentGateway.approve(
+            paymentKey = payment.pgKey ?: throw PaymentException.PgKeyNotExists(payment.id.toString()),
+            orderId = order.id,
+            amount = order.paymentPrice,
+        )
 
-            // 결제승인이 실패시 예외 - TODO 결제 상태를 새로운 트랜잭션으로 FAILED(결제실패) 상태로 바꿔야 할지? 초기 WAIT(결제대기) 상태로 남길지?
-            if (result.status != PaymentGatewayResponse.Status.DONE) {
-                throw PaymentException.PGFailed(payment.id.toString(), result.message)
-            }
+        // 결제승인이 실패시 예외 - TODO 결제 상태를 새로운 트랜잭션으로 FAILED(결제실패) 상태로 바꿔야 할지? 초기 WAIT(결제대기) 상태로 남길지?
+        if (result.status != PaymentGatewayResponse.Status.DONE) {
+            throw PaymentException.PGFailed(payment.id.toString(), result.message)
         }
 
         // 결제완료 변경

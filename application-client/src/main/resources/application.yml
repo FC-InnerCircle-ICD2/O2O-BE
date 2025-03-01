@@ -12,6 +12,7 @@ spring:
   config:
     import:
       - application-pg-toss-payments.yml
+      - application-pg-pay200.yml
   profiles:
     active: local
     include:
@@ -22,6 +23,12 @@ spring:
       - store-mongo
       - store-redis
       - aws
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            logger-level: full
 
 logging:
   pattern:
