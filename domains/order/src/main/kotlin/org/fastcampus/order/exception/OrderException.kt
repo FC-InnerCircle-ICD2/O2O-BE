@@ -13,6 +13,8 @@ open class OrderException(message: String) : RuntimeException(message) {
 
     data class OrderCanNotCancelled(val orderId: String) : OrderException("해당 주문은 취소할 수 없습니다.")
 
+    data class OrderLockException(val orderId: String) : OrderException("잠시 후 다시 시도해주십시오.")
+
     data class StoreNotFound(val storeId: String) : OrderException("가게를 찾을 수 없습니다.")
 
     data class StoreClosed(val storeId: String) : OrderException("가게의 영업이 종료되어 주문이 불가능합니다.")

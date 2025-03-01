@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.springframework.context.ApplicationEventPublisher
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotBlank
@@ -40,7 +41,8 @@ class OrderCreationServiceTest {
     private lateinit var orderMenuRepository: OrderMenuRepository
     private lateinit var orderMenuOptionGroupRepository: OrderMenuOptionGroupRepository
     private lateinit var orderMenuOptionRepository: OrderMenuOptionRepository
-    private lateinit var orderService: OrderService
+    private lateinit var orderCreationService: OrderCreationService
+    private lateinit var eventPublisher: ApplicationEventPublisher
 
     @BeforeEach
     fun init() {
@@ -51,7 +53,8 @@ class OrderCreationServiceTest {
         orderMenuRepository = mock(OrderMenuRepository::class.java)
         orderMenuOptionGroupRepository = mock(OrderMenuOptionGroupRepository::class.java)
         orderMenuOptionRepository = mock(OrderMenuOptionRepository::class.java)
-        orderService = OrderService(
+        eventPublisher = mock(ApplicationEventPublisher::class.java)
+        orderCreationService = OrderCreationService(
             memberRepository = memberRepository,
             orderRepository = orderRepository,
             storeRepository = storeRepository,
@@ -59,6 +62,7 @@ class OrderCreationServiceTest {
             orderMenuRepository = orderMenuRepository,
             orderMenuOptionGroupRepository = orderMenuOptionGroupRepository,
             orderMenuOptionRepository = orderMenuOptionRepository,
+            eventPublisher = eventPublisher,
         )
     }
 
@@ -100,7 +104,7 @@ class OrderCreationServiceTest {
             .thenAnswer { (it.arguments[0] as OrderMenuOption).copy(id = 1) }
 
         // when
-        val result = orderService.createOrder(1, request)
+        val result = orderCreationService.createOrder(1, request)
 
         // then
         expectThat(result) {

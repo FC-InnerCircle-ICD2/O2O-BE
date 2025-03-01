@@ -20,7 +20,7 @@ class SseController(
     override fun connectSse(
         @AuthenticationPrincipal authMember: AuthMember,
     ): SseEmitter {
-        logger.debug("Connected Sse UserId: {}", authMember.id)
+        logger.debug("SSE Connecting UserId: {}", authMember.id)
 
         val emitter = SseEmitter(TIMEOUT_MILLIS)
         sseManager.manage(authMember.id.toString(), emitter)
@@ -29,6 +29,6 @@ class SseController(
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SseController::class.java)
-        private const val TIMEOUT_MILLIS = 60 * 1_000L
+        private const val TIMEOUT_MILLIS = -1L
     }
 }

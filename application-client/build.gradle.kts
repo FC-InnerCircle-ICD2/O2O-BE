@@ -31,12 +31,15 @@ dependencies {
     runtimeOnly(project(":infrastructure:member-redis"))
     runtimeOnly(project(":infrastructure:order-postgres"))
     runtimeOnly(project(":infrastructure:order-redis"))
+    runtimeOnly(project(":infrastructure:order-mongo"))
     runtimeOnly(project(":infrastructure:payment-postgres"))
     runtimeOnly(project(":infrastructure:store-mongo"))
     runtimeOnly(project(":infrastructure:store-redis"))
     runtimeOnly(project(":infrastructure:review-postgres"))
     runtimeOnly(project(":infrastructure:cart-mongo"))
     runtimeOnly(project(":infrastructure:favorite-postgres"))
+    runtimeOnly(project(":infrastructure:external-pg-toss-payments"))
+    runtimeOnly(project(":infrastructure:external-pg-pay200"))
     implementation(project(":common"))
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
@@ -49,4 +52,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1")
     implementation("com.auth0:java-jwt:4.2.1")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.0")
+    }
 }

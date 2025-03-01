@@ -19,7 +19,5 @@ interface StoreRedisRepository {
 
     fun getTrendKeywords(): Map<String, Long>?
 
-    fun removeOldData()
-
     fun existsByName(name: String): Boolean?
 }

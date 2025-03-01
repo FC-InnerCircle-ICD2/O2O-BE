@@ -4,6 +4,7 @@ import org.fastcampus.applicationadmin.order.controller.dto.OrderInquiryResponse
 import org.fastcampus.applicationadmin.order.controller.dto.OrderMenuInquiryResponse
 import org.fastcampus.applicationadmin.order.controller.dto.OrderMenuOptionGroupInquiryResponse
 import org.fastcampus.applicationadmin.order.controller.dto.OrderMenuOptionInquiryResponse
+import org.fastcampus.applicationadmin.order.service.event.OrderDetailStatusEvent
 import org.fastcampus.common.dto.OffSetBasedDTO
 import org.fastcampus.member.entity.Member
 import org.fastcampus.member.repository.MemberRepository
@@ -11,12 +12,14 @@ import org.fastcampus.order.entity.Order
 import org.fastcampus.order.entity.OrderMenu
 import org.fastcampus.order.entity.OrderMenuOptionGroup
 import org.fastcampus.order.exception.OrderException
+import org.fastcampus.order.repository.OrderLockManager
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.store.repository.StoreRepository
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -29,6 +32,8 @@ class OrderService(
     private val orderMenuOptionRepository: OrderMenuOptionRepository,
     private val storeRepository: StoreRepository,
     private val memberRepository: MemberRepository,
+    private val eventPublisher: ApplicationEventPublisher,
+    private val orderLockManager: OrderLockManager,
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(OrderService::class.java)
@@ -77,8 +82,12 @@ class OrderService(
         if (ownerId.toString() != store.ownerId) {
             throw OrderException.OrderCanNotAccept(orderId)
         }
-        order.accept()
+        orderLockManager.lock(orderId) {
+            order.accept()
+        }
         orderRepository.save(order)
+
+        eventPublisher.publishEvent(OrderDetailStatusEvent(orderId, order.status))
     }
 
     fun refuseOrder(orderId: String, ownerId: Long) {
@@ -88,8 +97,12 @@ class OrderService(
         if (ownerId.toString() != store.ownerId) {
             throw OrderException.OrderCanNotRefuse(orderId)
         }
-        order.refuse()
+        orderLockManager.lock(orderId) {
+            order.refuse()
+        }
         orderRepository.save(order)
+
+        eventPublisher.publishEvent(OrderDetailStatusEvent(orderId, order.status))
     }
 
     fun completeOrder(orderId: String, ownerId: Long) {
@@ -101,6 +114,8 @@ class OrderService(
         }
         order.complete()
         orderRepository.save(order)
+
+        eventPublisher.publishEvent(OrderDetailStatusEvent(orderId, order.status))
     }
 
     private fun convertIntoOrderInquiryResponse(order: Order): OrderInquiryResponse {

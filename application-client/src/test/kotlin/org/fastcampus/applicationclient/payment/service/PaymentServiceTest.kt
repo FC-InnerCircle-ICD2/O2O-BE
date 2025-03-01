@@ -7,13 +7,18 @@ import org.fastcampus.order.entity.Order
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.payment.entity.Payment
 import org.fastcampus.payment.exception.PaymentException
+import org.fastcampus.payment.gateway.PaymentGateway
+import org.fastcampus.payment.gateway.PaymentGatewayResponse
 import org.fastcampus.payment.repository.PaymentRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
+import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.core.env.Environment
 import strikt.api.expectThrows
 import java.time.LocalDateTime
 
@@ -23,6 +28,8 @@ class PaymentServiceTest {
     private lateinit var orderRepository: OrderRepository
     private lateinit var cartRepository: CartRepository
     private lateinit var eventPublisher: ApplicationEventPublisher
+    private lateinit var paymentGateway: PaymentGateway
+    private lateinit var paymentGatewayFactory: PaymentGatewayFactory
 
     @BeforeEach
     fun init() {
@@ -30,11 +37,17 @@ class PaymentServiceTest {
         orderRepository = mock(OrderRepository::class.java)
         cartRepository = mock(CartRepository::class.java)
         eventPublisher = mock(ApplicationEventPublisher::class.java)
+        paymentGatewayFactory = PaymentGatewayFactory(
+            applicationContext = mock(ApplicationContext::class.java),
+            environment = mock(Environment::class.java),
+        )
+        paymentGateway = mock(PaymentGateway::class.java)
         paymentService = PaymentService(
             paymentRepository = paymentRepository,
             orderRepository = orderRepository,
             cartRepository = cartRepository,
             eventPublisher = eventPublisher,
+            paymentGatewayFactory = paymentGatewayFactory,
         )
     }
 
@@ -44,18 +57,22 @@ class PaymentServiceTest {
         val order = createOrder()
         val payment = createPayment(order)
         val request = OrderPaymentApproveRequest(
-            paymentKey = "",
+            paymentKey = payment.pgKey ?: "123",
             orderId = order.id,
             amount = order.paymentPrice,
         )
 
         `when`(orderRepository.findById(request.orderId))
             .thenReturn(order)
+        `when`(orderRepository.save(any()))
+            .thenReturn(order)
         `when`(paymentRepository.findById(order.paymentId))
             .thenReturn(payment)
+        `when`(paymentGateway.approve(payment.pgKey ?: "", request.orderId, request.amount))
+            .thenReturn(PaymentGatewayResponse(status = PaymentGatewayResponse.Status.DONE))
 
         // when
-        paymentService.approveOrderPayment(order.userId!!, request)
+        paymentService.approveOrderPayment(order.userId!!, request.orderId, request.amount)
 
         // then
         Mockito.verify(orderRepository).findById(request.orderId)
@@ -77,7 +94,7 @@ class PaymentServiceTest {
             .thenReturn(null)
 
         // when, then
-        expectThrows<PaymentException.OrderNotFound> { paymentService.approveOrderPayment(1L, request) }
+        expectThrows<PaymentException.OrderNotFound> { paymentService.approveOrderPayment(1L, request.orderId, request.amount) }
     }
 
     @Test
@@ -94,7 +111,7 @@ class PaymentServiceTest {
             .thenReturn(order)
 
         // when, then
-        expectThrows<PaymentException.UserNotMatching> { paymentService.approveOrderPayment(-1L, request) }
+        expectThrows<PaymentException.UserNotMatching> { paymentService.approveOrderPayment(-1L, request.orderId, request.amount) }
     }
 
     @Test
@@ -111,7 +128,7 @@ class PaymentServiceTest {
             .thenReturn(order)
 
         // when, then
-        expectThrows<PaymentException.IncorrectAmount> { paymentService.approveOrderPayment(order.userId!!, request) }
+        expectThrows<PaymentException.IncorrectAmount> { paymentService.approveOrderPayment(order.userId!!, request.orderId, request.amount) }
     }
 
     @Test
@@ -131,7 +148,7 @@ class PaymentServiceTest {
             .thenReturn(null)
 
         // when, then
-        expectThrows<PaymentException.PaymentNotFound> { paymentService.approveOrderPayment(order.userId!!, request) }
+        expectThrows<PaymentException.PaymentNotFound> { paymentService.approveOrderPayment(order.userId!!, request.orderId, request.amount) }
     }
 
     private fun createPayment(order: Order): Payment {
@@ -139,6 +156,7 @@ class PaymentServiceTest {
             id = order.paymentId,
             type = Payment.Type.TOSS_PAY,
             paymentPrice = order.paymentPrice,
+            pgKey = "123",
         )
     }
 

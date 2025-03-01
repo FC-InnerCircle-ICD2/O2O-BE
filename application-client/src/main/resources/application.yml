@@ -9,6 +9,10 @@ server:
 spring:
   application:
     name: application-client
+  config:
+    import:
+      - application-pg-toss-payments.yml
+      - application-pg-pay200.yml
   profiles:
     active: local
     include:
@@ -19,6 +23,12 @@ spring:
       - store-mongo
       - store-redis
       - aws
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            logger-level: full
 
 logging:
   pattern:
@@ -27,6 +37,8 @@ logging:
     org.hibernate.SQL: trace
     org.hibernate.type.descriptor.sql.BasicBinder: trace
     org.fastcampus: debug
+    feign.Logger: debug
+
 
 management:
   server:

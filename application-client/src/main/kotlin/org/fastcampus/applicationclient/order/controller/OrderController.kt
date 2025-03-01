@@ -7,7 +7,9 @@ import org.fastcampus.applicationclient.order.controller.dto.request.OrderCreati
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderCreationResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderDetailResponse
 import org.fastcampus.applicationclient.order.controller.dto.response.OrderResponse
+import org.fastcampus.applicationclient.order.controller.dto.response.OrderStatusResponse
 import org.fastcampus.applicationclient.order.service.OrderCancellationService
+import org.fastcampus.applicationclient.order.service.OrderCreationService
 import org.fastcampus.applicationclient.order.service.OrderService
 import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController
 class OrderController(
     private val orderService: OrderService,
     private val orderCancellationService: OrderCancellationService,
+    private val orderCreationService: OrderCreationService,
 ) : OrderControllerDocs {
     @JwtAuthenticated
     @GetMapping
@@ -51,13 +54,22 @@ class OrderController(
             .ok(APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response))
     }
 
+    @GetMapping("/{orderId}/status")
+    fun getOrderStatus(
+        @PathVariable orderId: String,
+    ): ResponseEntity<APIResponseDTO<OrderStatusResponse>> {
+        val response = orderService.getOrderStatus(orderId)
+        return ResponseEntity
+            .ok(APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response))
+    }
+
     @JwtAuthenticated
     @PostMapping
     override fun createOrder(
         @RequestBody orderCreationRequest: OrderCreationRequest,
         @AuthenticationPrincipal authMember: AuthMember,
     ): APIResponseDTO<OrderCreationResponse> {
-        val response = orderService.createOrder(authMember.id, orderCreationRequest)
+        val response = orderCreationService.createOrder(authMember.id, orderCreationRequest)
         return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response)
     }
 

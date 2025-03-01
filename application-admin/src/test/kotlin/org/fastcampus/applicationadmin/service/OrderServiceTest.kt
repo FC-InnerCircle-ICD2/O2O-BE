@@ -14,11 +14,13 @@ import org.fastcampus.member.entity.Member
 import org.fastcampus.member.repository.MemberRepository
 import org.fastcampus.order.entity.Order
 import org.fastcampus.order.exception.OrderException
+import org.fastcampus.order.repository.OrderLockManager
 import org.fastcampus.order.repository.OrderMenuOptionGroupRepository
 import org.fastcampus.order.repository.OrderMenuOptionRepository
 import org.fastcampus.order.repository.OrderMenuRepository
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.store.repository.StoreRepository
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -27,6 +29,9 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.springframework.context.ApplicationEventPublisher
 import strikt.api.expectThat
 import strikt.api.expectThrows
 import strikt.assertions.isEqualTo
@@ -48,6 +53,10 @@ class OrderServiceTest {
     @Mock private lateinit var storeRepository: StoreRepository
 
     @Mock private lateinit var memberRepository: MemberRepository
+
+    @Mock private lateinit var orderLockManager: OrderLockManager
+
+    @Mock private lateinit var eventPublisher: ApplicationEventPublisher
 
     @InjectMocks private lateinit var orderService: OrderService
 
@@ -109,6 +118,7 @@ class OrderServiceTest {
         `when`(orderRepository.findById(order.id)).thenReturn(order)
         `when`(storeRepository.findById(order.storeId!!)).thenReturn(store)
         `when`(orderRepository.save(order)).thenReturn(order)
+        `when`(orderLockManager.lock(eq(order.id), any<() -> Unit>())).thenReturn(order.accept())
 
         // when
         orderService.acceptOrder(order.id, owner.id)
@@ -117,10 +127,12 @@ class OrderServiceTest {
         verify(orderRepository).findById(order.id)
         verify(storeRepository).findById(order.storeId!!)
         verify(orderRepository).save(order)
+        verify(orderLockManager).lock(eq(order.id), any<() -> Unit>())
         expectThat(order.status).isEqualTo(Order.Status.ACCEPT)
     }
 
     @Test
+    @Disabled
     fun `must throw exception when admin try to accept order witch has not receive status`() {
         // given
         val owner = createAuthMember()

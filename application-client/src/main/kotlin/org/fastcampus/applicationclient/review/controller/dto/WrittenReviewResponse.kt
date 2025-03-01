@@ -1,5 +1,6 @@
 package org.fastcampus.applicationclient.review.controller.dto
 
+import org.fastcampus.review.entity.Review.DeliveryQuality
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -13,6 +14,7 @@ data class WrittenReviewResponse(
     val totalScore: Int,
     val tasteScore: Int,
     val amountScore: Int,
+    var deliveryQuality: DeliveryQuality,
     val representativeImageUri: String?,
     val clientReviewContent: String,
     val editDeadline: Int,
@@ -28,6 +30,7 @@ data class WrittenReviewResponse(
             totalScore: Int,
             tasteScore: Int,
             amountScore: Int,
+            deliveryQuality: DeliveryQuality,
             representativeImageUri: String?,
             clientReviewContent: String,
         ): WrittenReviewResponse {
@@ -43,6 +46,7 @@ data class WrittenReviewResponse(
                 totalScore = totalScore,
                 tasteScore = tasteScore,
                 amountScore = amountScore,
+                deliveryQuality = deliveryQuality,
                 representativeImageUri = representativeImageUri,
                 clientReviewContent = clientReviewContent,
                 editDeadline = maxOf(0, 3 - daysPassed),
