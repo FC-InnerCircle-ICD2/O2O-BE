@@ -27,8 +27,9 @@ class PaymentService(
     fun savePaymentKey(userId: Long, orderId: String, paymentKey: String) {
         val order = findOrder(userId, orderId)
         val payment = findPayment(order.paymentId)
-        // PG 키가 없을때만 업데이트 - TODO 동시에 UPDATE 일어날 수 있지만,, 일단 구현
+        // PG 키가 없을때만 업데이트
         if (!StringUtils.hasText(payment.pgKey)) {
+            // TODO 동시에 UPDATE 일어날 수도 있다.
             paymentRepository.save(payment.copy(pgKey = paymentKey))
         }
     }
@@ -51,7 +52,7 @@ class PaymentService(
 
         val payment = findPayment(order.paymentId)
 
-        // PG 결제승인 요청
+        // PG 결제승인 요청 - TODO 현재 트랜잭션 내에서 결제승인 동기처리. 비동기 처리는 어떻게 해야할까 / 결제 승인후 커밋 실패시 취소 처리도 되어야 함.
         val paymentGateway = paymentGatewayFactory.getPaymentGateway(payment.type)
         val result = paymentGateway.approve(
             paymentKey = payment.pgKey ?: throw PaymentException.PgKeyNotExists(payment.id.toString()),
@@ -59,7 +60,7 @@ class PaymentService(
             amount = order.paymentPrice,
         )
 
-        // 결제승인이 실패시 예외 - TODO 결제 상태를 새로운 트랜잭션으로 FAILED(결제실패) 상태로 바꿔야 할지? 초기 WAIT(결제대기) 상태로 남길지?
+        // 결제승인이 실패시 예외
         if (result.status != PaymentGatewayResponse.Status.DONE) {
             throw PaymentException.PGFailed(payment.id.toString(), result.message)
         }
@@ -76,6 +77,7 @@ class PaymentService(
         // 점주에게 주문 알림 - 트랜잭션 커밋이후 비동기 전송
         eventPublisher.publishEvent(OrderNotificationEvent(updatedOrder))
 
+        // 주문 Document 주문상태 변경
         eventPublisher.publishEvent(OrderDetailStatusEvent(updatedOrder.id, updatedOrder.status))
     }
 
