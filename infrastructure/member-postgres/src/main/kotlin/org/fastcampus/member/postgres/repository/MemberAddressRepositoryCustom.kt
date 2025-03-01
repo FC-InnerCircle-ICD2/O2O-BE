@@ -15,18 +15,16 @@ class MemberAddressRepositoryCustom(
         return memberAddressJpaRepository.save(memberAddress.toJpaEntity()).toModel()
     }
 
-    override fun findByUserIdAndMemberAddressType(userId: Long, memberAddressType: MemberAddressType): MemberAddress? {
-        return memberAddressJpaRepository.findByUserIdAndMemberAddressType(userId, memberAddressType).filter {
-            !it.isDeleted
-        }.map { it.toModel() }.orElse(null)
-    }
-
-    override fun countByUserIdAndMemberAddressType(userId: Long, memberAddressType: MemberAddressType): Long {
-        return memberAddressJpaRepository.countByUserIdAndMemberAddressType(userId, memberAddressType)
+    override fun countByUserIdAndMemberAddressTypeAndIsDeleted(
+        userId: Long,
+        memberAddressType: MemberAddressType,
+        isDeleted: Boolean,
+    ): Long {
+        return memberAddressJpaRepository.countByUserIdAndMemberAddressTypeAndIsDeleted(userId, memberAddressType, isDeleted)
     }
 
     override fun findByUserId(userId: Long): List<MemberAddress> {
-        return memberAddressJpaRepository.findByUserId(userId).filter { !it.isDeleted }.map { it.toModel() }.toList()
+        return memberAddressJpaRepository.findByUserId(userId).filter { !it.isDeleted }.map { it.toModel() }.sortedByDescending { it.id }
     }
 
     override fun findByUserIdAndIsDefault(userId: Long, isDefault: Boolean): MemberAddress? {
