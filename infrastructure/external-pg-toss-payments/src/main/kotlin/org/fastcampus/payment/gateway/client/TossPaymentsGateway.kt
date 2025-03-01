@@ -1,5 +1,8 @@
-package org.fastcampus.payment.gateway
+package org.fastcampus.payment.gateway.client
 
+import org.fastcampus.payment.gateway.PaymentGateway
+import org.fastcampus.payment.gateway.PaymentGatewayResponse
+import org.fastcampus.payment.gateway.error.TossPaymentsException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
@@ -19,10 +22,7 @@ class TossPaymentsGateway(
         } catch (e: TossPaymentsException) {
             val errorResponse = e.error
             logger.error("TossPaymentsGateway-approve-error: {}", errorResponse)
-            return PaymentGatewayResponse(
-                status = PaymentGatewayResponse.Status.FAILED,
-                message = "결제 승인 요청에 실패하였습니다.",
-            )
+            return errorResponse!!.toPaymentGatewayResponse()
         }
     }
 

@@ -1,4 +1,4 @@
-package org.fastcampus.payment.gateway
+package org.fastcampus.payment.gateway.client
 
 data class TossPaymentsApproveRequest(
     val paymentKey: String,

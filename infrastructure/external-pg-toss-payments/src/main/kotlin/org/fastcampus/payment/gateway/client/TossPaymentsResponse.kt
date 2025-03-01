@@ -1,4 +1,6 @@
-package org.fastcampus.payment.gateway
+package org.fastcampus.payment.gateway.client
+
+import org.fastcampus.payment.gateway.PaymentGatewayResponse
 
 /**
  * https://docs.tosspayments.com/reference#payment-객체
@@ -23,17 +25,18 @@ data class TossPaymentsResponse(
     }
 
     fun toPaymentGatewayResponse(): PaymentGatewayResponse {
+        val status = when (this.status) {
+            Status.EXPIRED -> PaymentGatewayResponse.Status.EXPIRED
+            Status.DONE -> PaymentGatewayResponse.Status.DONE
+            Status.ABORTED -> PaymentGatewayResponse.Status.ABORTED
+            Status.CANCELED -> PaymentGatewayResponse.Status.CANCELED
+            Status.PARTIAL_CANCELED -> TODO()
+            Status.READY -> TODO()
+            Status.IN_PROGRESS -> TODO()
+            Status.WAITING_FOR_DEPOSIT -> TODO()
+        }
         return PaymentGatewayResponse(
-            status = when (this.status) {
-                Status.EXPIRED -> PaymentGatewayResponse.Status.EXPIRED
-                Status.DONE -> PaymentGatewayResponse.Status.DONE
-                Status.ABORTED -> PaymentGatewayResponse.Status.ABORTED
-                Status.CANCELED -> PaymentGatewayResponse.Status.CANCELED
-                Status.PARTIAL_CANCELED -> TODO()
-                Status.READY -> TODO()
-                Status.IN_PROGRESS -> TODO()
-                Status.WAITING_FOR_DEPOSIT -> TODO()
-            },
+            status = status,
             paymentKey = paymentKey,
             orderId = orderId,
             amount = totalAmount,

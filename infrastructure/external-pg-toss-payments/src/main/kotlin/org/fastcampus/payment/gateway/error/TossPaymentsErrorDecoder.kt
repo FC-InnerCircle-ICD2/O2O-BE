@@ -1,8 +1,9 @@
-package org.fastcampus.payment.gateway
+package org.fastcampus.payment.gateway.error
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Response
 import feign.codec.ErrorDecoder
+import org.fastcampus.payment.gateway.client.TossPaymentsApproveErrorResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import java.io.IOException
@@ -21,7 +22,7 @@ internal class TossPaymentsErrorDecoder(
         logger.debug("{}", response?.body())
         try {
             val body = response?.body()?.asInputStream()?.readAllBytes()?.let { String(it, StandardCharsets.UTF_8) }
-            val errorResponse = objectMapper.readValue(body, TossPaymentsErrorResponse::class.java)
+            val errorResponse = objectMapper.readValue(body, TossPaymentsApproveErrorResponse::class.java)
             return TossPaymentsException(errorResponse.message, errorResponse)
         } catch (e: IOException) {
             return TossPaymentsException(message = "에러 메세지 파싱 에러")

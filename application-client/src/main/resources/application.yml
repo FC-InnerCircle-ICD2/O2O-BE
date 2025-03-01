@@ -30,6 +30,8 @@ logging:
     org.hibernate.SQL: trace
     org.hibernate.type.descriptor.sql.BasicBinder: trace
     org.fastcampus: debug
+    feign.Logger: debug
+
 
 management:
   server:
