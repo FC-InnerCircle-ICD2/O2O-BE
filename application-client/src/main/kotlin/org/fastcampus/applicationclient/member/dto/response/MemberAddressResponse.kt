@@ -11,11 +11,12 @@ data class MemberAddressResponse(
 
 data class MemberAddressDto(
     val id: Long,
-    @get:JsonProperty("isDefault")
-    var isDefault: Boolean,
-    val roadAddress: String,
-    val jibunAddress: String,
-    val detailAddress: String,
+    val roadAddress: String?,
+    val jibunAddress: String?,
+    val detailAddress: String?,
     val latitude: Double,
     val longitude: Double,
+    val alias: String?,
+    @get:JsonProperty("isDefault")
+    var isDefault: Boolean,
 )

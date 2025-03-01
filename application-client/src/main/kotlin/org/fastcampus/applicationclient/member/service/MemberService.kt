@@ -18,6 +18,8 @@ import org.fastcampus.member.entity.MemberAddress
 import org.fastcampus.member.repository.MemberAddressRepository
 import org.fastcampus.member.repository.MemberRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 /**
  * Created by kms0902 on 25. 1. 19..
@@ -33,14 +35,27 @@ class MemberService(
         return MemberInfoResponse(findMember.signname, findMember.nickname)
     }
 
+    @Transactional
     fun createAddress(memberAddressCreateRequest: MemberAddressCreateRequest, authMember: AuthMember): MemberAddressCreateResponse {
+        val addressType = requireNotNull(memberAddressCreateRequest.memberAddressType)
+
+        val count = memberAddressRepository.countByUserIdAndMemberAddressTypeAndIsDeleted(authMember.id, addressType, false)
+        if (MemberAddressType.HOME == addressType || MemberAddressType.COMPANY == addressType) {
+            if (0 < count) {
+                throw MemberException(MemberExceptionResult.DUPLICATE_MEMBER_ADDRESS_TYPE)
+            }
+        } else {
+            if (4 < count) {
+                throw MemberException(MemberExceptionResult.EXCEEDED_REGISTRABLE_ADDRESS_TYPE)
+            }
+        }
+
         deleteDefaultAddressByMemberId(authMember.id)
 
-        val addressType = memberAddressCreateRequest.memberAddressType
         val createMemberAddress = MemberAddress(
             null,
             authMember.id,
-            requireNotNull(addressType),
+            addressType,
             requireNotNull(memberAddressCreateRequest.roadAddress),
             requireNotNull(memberAddressCreateRequest.jibunAddress),
             memberAddressCreateRequest.detailAddress,
@@ -49,22 +64,8 @@ class MemberService(
             requireNotNull(memberAddressCreateRequest.longitude),
             isDefault = true,
             isDeleted = false,
-            updatedAt = null,
+            updatedAt = LocalDateTime.now(),
         )
-
-        if (MemberAddressType.HOME == addressType || MemberAddressType.COMPANY == addressType) {
-            val findMemberAddress = memberAddressRepository.findByUserIdAndMemberAddressType(authMember.id, addressType)
-            if (findMemberAddress != null) {
-                throw MemberException(MemberExceptionResult.DUPLICATE_MEMBER_ADDRESS_TYPE)
-            }
-        }
-
-        if (MemberAddressType.OTHER == addressType) {
-            val count = memberAddressRepository.countByUserIdAndMemberAddressType(authMember.id, addressType)
-            if (4 < count) {
-                throw MemberException(MemberExceptionResult.EXCEEDED_REGISTRABLE_ADDRESS_TYPE)
-            }
-        }
 
         val savedMemberAddress = memberAddressRepository.save(createMemberAddress)
         return MemberAddressCreateResponse(requireNotNull(savedMemberAddress.id))
@@ -87,6 +88,7 @@ class MemberService(
                 detailAddress = address.detailAddress ?: "",
                 latitude = address.latitude,
                 longitude = address.longitude,
+                alias = address.alias,
                 isDefault = address.isDefault,
             )
 
@@ -118,13 +120,17 @@ class MemberService(
         val findMemberAddress = memberAddressRepository.findByIdAndUserId(addressId, authMember.id)
             ?: throw MemberException(MemberExceptionResult.NOT_FOUND_ADDRESS)
 
+        deleteDefaultAddressByMemberId(authMember.id)
+
         val updatedAddress = findMemberAddress.copy(
-            roadAddress = memberAddressUpdateRequest.roadAddress,
-            jibunAddress = memberAddressUpdateRequest.jibunAddress,
+            id = addressId,
+            roadAddress = requireNotNull(memberAddressUpdateRequest.roadAddress),
+            jibunAddress = requireNotNull(memberAddressUpdateRequest.jibunAddress),
             detailAddress = memberAddressUpdateRequest.detailAddress,
             alias = memberAddressUpdateRequest.alias,
-            latitude = memberAddressUpdateRequest.latitude,
-            longitude = memberAddressUpdateRequest.longitude,
+            latitude = requireNotNull(memberAddressUpdateRequest.latitude),
+            longitude = requireNotNull(memberAddressUpdateRequest.longitude),
+            isDefault = true,
         )
 
         memberAddressRepository.save(updatedAddress)
