@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 import org.springframework.context.ApplicationEventPublisher
 import strikt.api.expectThrows
 import java.time.LocalDateTime
@@ -55,6 +56,8 @@ class PaymentServiceTest {
         )
 
         `when`(orderRepository.findById(request.orderId))
+            .thenReturn(order)
+        `when`(orderRepository.save(any()))
             .thenReturn(order)
         `when`(paymentRepository.findById(order.paymentId))
             .thenReturn(payment)
