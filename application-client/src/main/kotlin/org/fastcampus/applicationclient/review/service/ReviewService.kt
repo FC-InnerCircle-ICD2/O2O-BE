@@ -6,6 +6,7 @@ import org.fastcampus.applicationclient.review.controller.dto.ReviewUpdateReques
 import org.fastcampus.applicationclient.review.controller.dto.WritableReviewResponse
 import org.fastcampus.applicationclient.review.controller.dto.WrittenReviewResponse
 import org.fastcampus.common.dto.CursorDTO
+import org.fastcampus.order.entity.Order
 import org.fastcampus.order.exception.OrderException
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.review.exception.ReviewException
@@ -50,13 +51,16 @@ class ReviewService(
         val reviewedOrderIds = reviewRepository.findByOrderIdIn(orderIds).map { it.orderId }.toSet()
         val reviewableOrders = orders
             .filter { it.id !in reviewedOrderIds }
+            .filter { it.status == Order.Status.COMPLETED }
             .sortedByDescending { it.orderTime }
 
-        val response = mutableListOf<WritableReviewResponse>()
+        val responses = mutableListOf<WritableReviewResponse>()
         for (reviewableOrder in reviewableOrders) {
-            val store = reviewableOrder.storeId?.let { storeRepository.findById(it) }
+            val store = reviewableOrder.storeId?.let {
+                storeRepository.findById(it)
+            }
             if (store == null) continue
-            response.add(
+            responses.add(
                 WritableReviewResponse.of(
                     store.id,
                     store.name,
@@ -68,7 +72,7 @@ class ReviewService(
             )
         }
 
-        return response
+        return responses
     }
 
     @Transactional(readOnly = true)
