@@ -79,7 +79,7 @@ class OrderController(
         @PathVariable("orderId") orderId: String,
         @AuthenticationPrincipal authMember: AuthMember,
     ): APIResponseDTO<Nothing?> {
-        orderCancellationService.cancelOrder(orderId)
+        orderCancellationService.cancelOrder(orderId, authMember.id)
         return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, null)
     }
 }

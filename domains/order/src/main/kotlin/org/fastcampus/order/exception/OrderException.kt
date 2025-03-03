@@ -29,6 +29,8 @@ open class OrderException(message: String) : RuntimeException(message) {
 
     data class OutOfOptionSelectionRange(val optionId: String) : OrderException("그룹 내 옵션 선택범위가 올바르지 않습니다.")
 
+    data class NotMatchedUser(val orderId: String, val userId: Long) : OrderException("주문자와 요청자가 다릅니다. 주문 ID: $orderId, 요청 ID: $userId")
+
     class MenuCategoryNotFound : OrderException("가게에 등록된 메뉴 카테고리 정보가 없습니다.")
 
     class MissingOrderMenu : OrderException("주문 요청에 메뉴정보가 없습니다.")
