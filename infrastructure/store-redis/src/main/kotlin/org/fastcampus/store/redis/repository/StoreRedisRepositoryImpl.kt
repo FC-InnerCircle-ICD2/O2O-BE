@@ -75,7 +75,7 @@ class StoreRedisRepositoryImpl(
         return keywords.associateWith { getRecentSearchCount(it.removePrefix("search:")) }
             .filterValues { it > 0 }
             .entries.sortedByDescending { it.value }
-            .take(10)
+            .take(6)
             .associate { it.key.removePrefix("search:") to it.value }
     }
 
