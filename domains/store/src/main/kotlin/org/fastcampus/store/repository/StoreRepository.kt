@@ -36,4 +36,6 @@ interface StoreRepository {
         cursorStoreId: String?,
         size: Int,
     ): Pair<List<StoreWithDistance>, String?>
+
+    fun existsStoreNearBy(storeId: String, latitude: Double, longitude: Double, distanceKM: Double): Boolean
 }

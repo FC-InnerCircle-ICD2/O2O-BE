@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -66,10 +67,12 @@ class OrderController(
     @JwtAuthenticated
     @PostMapping
     override fun createOrder(
+        @RequestHeader("X-User-Lat") userLat: Double,
+        @RequestHeader("X-User-Lng") userLng: Double,
         @RequestBody orderCreationRequest: OrderCreationRequest,
         @AuthenticationPrincipal authMember: AuthMember,
     ): APIResponseDTO<OrderCreationResponse> {
-        val response = orderCreationService.createOrder(authMember.id, orderCreationRequest)
+        val response = orderCreationService.createOrder(authMember.id, orderCreationRequest, Pair(userLat, userLng))
         return APIResponseDTO(HttpStatus.OK.value(), HttpStatus.OK.reasonPhrase, response)
     }
 
