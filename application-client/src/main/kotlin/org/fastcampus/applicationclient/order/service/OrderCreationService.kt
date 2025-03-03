@@ -42,13 +42,18 @@ class OrderCreationService(
 ) {
     @Transactional
     @OrderMetered
-    fun createOrder(userId: Long, orderCreationRequest: OrderCreationRequest): OrderCreationResponse {
+    fun createOrder(userId: Long, orderCreationRequest: OrderCreationRequest, userLatAndLng: Pair<Double, Double>): OrderCreationResponse {
         // 사용자 정보 조회
         val loginMember = memberRepository.findById(userId)
 
         // 스토어 검색
         val storeEntity = (storeRepository.findById(orderCreationRequest.storeId))
             ?: throw OrderException.StoreNotFound(orderCreationRequest.storeId)
+
+        // 거리 체크
+        if (!storeRepository.existsStoreNearBy(storeEntity.id!!, userLatAndLng.first, userLatAndLng.second, 200.0)) {
+            throw OrderException.StoreIsTooFar(storeEntity.id!!)
+        }
 
         // 주문내역 검사, 메뉴정보 반환받기
         val targetMenuEntities = OrderValidator.checkOrderCreation(storeEntity, orderCreationRequest)

@@ -31,6 +31,23 @@ class TossPaymentsGateway(
         }
     }
 
+    override fun cancel(paymentKey: String, orderId: String, amount: Long): PaymentGatewayResponse {
+        try {
+            val request = TossPaymentsCancelRequest("주문취소")
+            val response = tossPaymentsClient.cancel(paymentKey, request)
+            return response.toPaymentGatewayResponse()
+        } catch (e: TossPaymentsException) {
+            val errorResponse = e.error
+            logger.error("TossPaymentsGateway-cancel-error: {}", errorResponse)
+
+            return errorResponse?.toPaymentGatewayResponse()
+                ?: PaymentGatewayResponse(
+                    status = PaymentGatewayResponse.Status.FAILED,
+                    message = "결제 취소 처리에 실패하였습니다.",
+                )
+        }
+    }
+
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
     }

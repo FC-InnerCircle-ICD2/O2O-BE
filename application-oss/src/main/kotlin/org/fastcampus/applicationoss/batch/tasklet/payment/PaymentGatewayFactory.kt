@@ -1,6 +1,5 @@
-package org.fastcampus.applicationclient.payment.service
+package org.fastcampus.applicationoss.batch.tasklet.payment
 
-import org.apache.commons.lang3.ArrayUtils
 import org.fastcampus.payment.entity.Payment
 import org.fastcampus.payment.exception.PaymentException
 import org.fastcampus.payment.gateway.PaymentGateway
@@ -17,7 +16,7 @@ class PaymentGatewayFactory(
     fun getPaymentGateway(paymentType: Payment.Type): PaymentGateway {
         val activeProfiles: Array<String>? = environment.activeProfiles
 
-        if (ArrayUtils.isEmpty(activeProfiles) || activeProfiles!!.contains("local") || activeProfiles.contains("test")) {
+        if (activeProfiles == null || activeProfiles.contains("local") || activeProfiles.contains("test")) {
             return LocalPaymentGateway()
         }
 

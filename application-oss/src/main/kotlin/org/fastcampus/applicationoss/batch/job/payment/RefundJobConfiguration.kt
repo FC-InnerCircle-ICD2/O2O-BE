@@ -1,6 +1,8 @@
 package org.fastcampus.applicationoss.batch.job.payment
 
+import org.fastcampus.applicationoss.batch.tasklet.payment.PaymentGatewayFactory
 import org.fastcampus.applicationoss.batch.tasklet.payment.RefundTasklet
+import org.fastcampus.payment.repository.PaymentRepository
 import org.fastcampus.payment.repository.RefundRepository
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -15,6 +17,8 @@ import org.springframework.transaction.PlatformTransactionManager
 @Configuration
 class RefundJobConfiguration(
     private val refundRepository: RefundRepository,
+    private val paymentGatewayFactory: PaymentGatewayFactory,
+    private val paymentRepository: PaymentRepository,
 ) {
     @Bean
     @Throws(Exception::class)
@@ -29,7 +33,7 @@ class RefundJobConfiguration(
     fun refundStep(jobRepository: JobRepository, transactionManager: PlatformTransactionManager): Step {
         return StepBuilder("refundStep", jobRepository)
             .allowStartIfComplete(true)
-            .tasklet(RefundTasklet(refundRepository), transactionManager)
+            .tasklet(RefundTasklet(refundRepository, paymentGatewayFactory, paymentRepository), transactionManager)
             .build()
     }
 }

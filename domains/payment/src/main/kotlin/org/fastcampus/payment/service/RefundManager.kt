@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component
 class RefundManager(
     private val refundRepository: RefundRepository,
 ) {
-    fun refundOrder(orderId: String) {
-        val refund = Refund(status = Refund.Status.WAIT, orderId = orderId)
+    fun refundOrder(orderId: String, orderPrice: Long, paymentId: Long) {
+        val refund = Refund(status = Refund.Status.WAIT, orderId = orderId, orderPrice = orderPrice, paymentId = paymentId)
         refundRepository.save(refund)
     }
 }
