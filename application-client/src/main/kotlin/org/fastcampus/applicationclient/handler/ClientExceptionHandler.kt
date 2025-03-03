@@ -97,6 +97,9 @@ class ClientExceptionHandler {
     @ExceptionHandler(OrderException::class)
     fun handleOrderException(exception: OrderException): ResponseEntity<APIResponseDTO<*>> {
         logger.error("handleOrderException: {}", exception.toString(), exception)
+        if (exception::class == OrderException.StoreIsTooFar::class) {
+            return ResponseEntity.status(412).body(APIResponseDTO(412, exception.message, null))
+        }
         return ResponseEntity.status(400).body(APIResponseDTO(400, exception.message, null))
     }
 
