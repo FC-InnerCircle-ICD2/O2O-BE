@@ -4,16 +4,18 @@ data class Refund(
     val id: Long? = null,
     val status: Status,
     val orderId: String,
+    val orderPrice: Long,
+    val paymentId: Long,
 ) {
     fun fail(): Refund {
         if (this.status == Status.COMPLETE) {
             throw IllegalStateException("이미 환불 완료된 거래입니다.")
         }
-        return Refund(id, Status.FAIL, orderId)
+        return Refund(id, Status.FAIL, orderId, orderPrice, paymentId)
     }
 
     fun complete(): Refund {
-        return Refund(id, Status.COMPLETE, orderId)
+        return Refund(id, Status.COMPLETE, orderId, orderPrice, paymentId)
     }
 
     enum class Status(

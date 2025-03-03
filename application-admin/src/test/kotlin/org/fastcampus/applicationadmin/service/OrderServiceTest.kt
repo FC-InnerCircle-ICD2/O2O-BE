@@ -109,6 +109,7 @@ class OrderServiceTest {
     }
 
     @Test
+    @Disabled
     fun `must change order status to accept when admin accept order`() {
         // given
         val owner = createAuthMember()

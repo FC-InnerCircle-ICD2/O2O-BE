@@ -76,32 +76,29 @@ class OrderService(
     }
 
     fun acceptOrder(orderId: String, ownerId: Long) {
-        val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
-        val store = order.storeId?.let { storeRepository.findById(it) } ?: throw OrderException.StoreNotFound(order.storeId.toString())
-
-        if (ownerId.toString() != store.ownerId) {
-            throw OrderException.OrderCanNotAccept(orderId)
-        }
-        orderLockManager.lock(orderId) {
+        val order = orderLockManager.lock(orderId) {
+            val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
+            val store = order.storeId?.let { storeRepository.findById(it) } ?: throw OrderException.StoreNotFound(order.storeId.toString())
+            if (ownerId.toString() != store.ownerId) {
+                throw OrderException.OrderCanNotAccept(orderId)
+            }
             order.accept()
+            orderRepository.save(order)
         }
-        orderRepository.save(order)
-
         eventPublisher.publishEvent(OrderDetailStatusEvent(orderId, order.status))
     }
 
     fun refuseOrder(orderId: String, ownerId: Long) {
-        val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
-        val store = order.storeId?.let { storeRepository.findById(it) } ?: throw OrderException.StoreNotFound(order.storeId.toString())
+        val order = orderLockManager.lock(orderId) {
+            val order = orderRepository.findById(orderId) ?: throw OrderException.OrderNotFound(orderId)
+            val store = order.storeId?.let { storeRepository.findById(it) } ?: throw OrderException.StoreNotFound(order.storeId.toString())
 
-        if (ownerId.toString() != store.ownerId) {
-            throw OrderException.OrderCanNotRefuse(orderId)
-        }
-        orderLockManager.lock(orderId) {
+            if (ownerId.toString() != store.ownerId) {
+                throw OrderException.OrderCanNotRefuse(orderId)
+            }
             order.refuse()
+            orderRepository.save(order)
         }
-        orderRepository.save(order)
-
         eventPublisher.publishEvent(OrderDetailStatusEvent(orderId, order.status))
     }
 
@@ -114,7 +111,6 @@ class OrderService(
         }
         order.complete()
         orderRepository.save(order)
-
         eventPublisher.publishEvent(OrderDetailStatusEvent(orderId, order.status))
     }
 

@@ -22,6 +22,10 @@ class RefundJpaEntity(
     val status: Refund.Status,
     @Column(name = "ORDER_ID")
     val orderId: String,
+    @Column(name = "ORDER_PRICE")
+    val orderPrice: Long,
+    @Column(name = "PAYMENT_ID")
+    val paymentId: Long,
 ) : BaseEntity()
 
 fun Refund.toJpaEntity() =
@@ -29,6 +33,8 @@ fun Refund.toJpaEntity() =
         id,
         status,
         orderId,
+        orderPrice,
+        paymentId,
     )
 
 fun RefundJpaEntity.toModel() =
@@ -36,4 +42,6 @@ fun RefundJpaEntity.toModel() =
         id,
         status,
         orderId,
+        orderPrice,
+        paymentId,
     )
