@@ -19,6 +19,8 @@ open class OrderException(message: String) : RuntimeException(message) {
 
     data class StoreClosed(val storeId: String) : OrderException("가게의 영업이 종료되어 주문이 불가능합니다.")
 
+    data class StoreIsTooFar(val storeId: String) : OrderException("가게가 주문지와 너무 멀리 떨어져 있습니다.")
+
     data class MissingRequiredOptionGroup(val optionGroupId: String) : OrderException("필수 옵션그룹이 누락되었습니다.")
 
     data class OptionGroupNotFound(val optionGroupId: String) : OrderException("옵션그룹 정보를 찾을 수 없습니다.")

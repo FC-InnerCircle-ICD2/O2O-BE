@@ -90,6 +90,8 @@ Authorization: {{accessToken}}
 
 ### 주문생성
 POST http://localhost:8081/api/v1/orders
+X-User-Lat: 37.71936226550588
+X-User-Lng: 126.69319553943058
 Content-Type: application/json
 Authorization: {{accessToken}}
 

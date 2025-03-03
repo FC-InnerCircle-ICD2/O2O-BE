@@ -17,6 +17,7 @@ interface OrderCreation {
         description = """
             주문 항목들을 검증하고, 주문과 주문에 대한 결제 정보를 생성합니다.
             PG 결제 전 호출하여 주문 번호와 주문 이름, 결제 총액 정보를 얻습니다.
+            사용자 위경도 정보를 받아 가게와 주문지 거리가 너무나 멀다면 생성하지 않습니다.
 
             storeId (필수)
               - 가게 ID
@@ -156,5 +157,10 @@ interface OrderCreation {
             ),
         ],
     )
-    fun createOrder(orderCreationRequest: OrderCreationRequest, authMember: AuthMember): APIResponseDTO<OrderCreationResponse>
+    fun createOrder(
+        userLat: Double,
+        userLng: Double,
+        orderCreationRequest: OrderCreationRequest,
+        authMember: AuthMember,
+    ): APIResponseDTO<OrderCreationResponse>
 }

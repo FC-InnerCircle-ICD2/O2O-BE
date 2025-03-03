@@ -23,9 +23,9 @@ import org.fastcampus.store.entity.StoreMenuCategory
 import org.fastcampus.store.repository.StoreRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 import org.springframework.context.ApplicationEventPublisher
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -92,6 +92,8 @@ class OrderCreationServiceTest {
             .thenReturn(member)
         `when`(storeRepository.findById(storeId))
             .thenReturn(store)
+        `when`(storeRepository.existsStoreNearBy(any(), any(), any(), any()))
+            .thenReturn(true)
         `when`(paymentRepository.save(any()))
             .thenAnswer { (it.arguments[0] as Payment).copy(id = member.id) }
         `when`(orderRepository.save(any()))
@@ -104,7 +106,7 @@ class OrderCreationServiceTest {
             .thenAnswer { (it.arguments[0] as OrderMenuOption).copy(id = 1) }
 
         // when
-        val result = orderCreationService.createOrder(1, request)
+        val result = orderCreationService.createOrder(1, request, Pair(0.0, 0.0))
 
         // then
         expectThat(result) {
@@ -311,11 +313,5 @@ class OrderCreationServiceTest {
             ),
             minimumOrderAmount = 1000,
         )
-    }
-
-    private fun <T> any(): T {
-        Mockito.any<T>()
-        @Suppress("UNCHECKED_CAST")
-        return null as T
     }
 }
