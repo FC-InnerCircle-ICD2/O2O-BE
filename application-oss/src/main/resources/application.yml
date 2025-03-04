@@ -8,6 +8,7 @@ spring:
     active: local
     include:
       - order-postgres
+      - store-mongo
 
 logging:
   pattern:

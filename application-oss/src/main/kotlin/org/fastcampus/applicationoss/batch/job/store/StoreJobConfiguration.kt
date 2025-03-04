@@ -1,6 +1,6 @@
 package org.fastcampus.applicationoss.batch.job.store
 
-import org.fastcampus.applicationoss.batch.tasklet.payment.StoreTasklet
+import org.fastcampus.applicationoss.batch.tasklet.store.StoreTasklet
 import org.fastcampus.order.repository.OrderRepository
 import org.fastcampus.store.repository.StoreRepository
 import org.springframework.batch.core.Job

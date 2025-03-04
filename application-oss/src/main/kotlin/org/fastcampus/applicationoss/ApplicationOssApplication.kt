@@ -10,6 +10,7 @@ import org.springframework.boot.runApplication
         "org.fastcampus.applicationoss",
         "org.fastcampus.order",
         "org.fastcampus.payment",
+        "org.fastcampus.store",
     ],
 )
 class ApplicationOssApplication
