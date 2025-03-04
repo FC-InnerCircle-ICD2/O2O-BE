@@ -31,7 +31,20 @@ class Pay200Gateway(
     }
 
     override fun cancel(paymentKey: String, orderId: String, amount: Long): PaymentGatewayResponse {
-        TODO("Not yet implemented")
+        try {
+            val request = Pay200CancelRequest(amount)
+            val response = pay200Client.cancel(paymentKey, request)
+            return response.toPaymentGatewayResponse()
+        } catch (e: Pay200Exception) {
+            val errorResponse = e.error
+            logger.error("Pay200Gateway-cancel-error: {}", errorResponse)
+
+            return errorResponse?.toPaymentGatewayResponse()
+                ?: PaymentGatewayResponse(
+                    status = PaymentGatewayResponse.Status.FAILED,
+                    message = "결제 취소 처리에 실패하였습니다.",
+                )
+        }
     }
 
     companion object {
