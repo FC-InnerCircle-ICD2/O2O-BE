@@ -1,10 +1,8 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://root:root@13.124.27.138:27017/o2o?authSource=admin
-#      host: localhost
-#      port: 27017
-#      database: o2o
-#      username: root
-#      password: root
-
+      host: localhost
+      port: 27017
+      database: o2o
+      username: root
+      password: root
