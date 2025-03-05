@@ -312,6 +312,9 @@ class OrderCreationServiceTest {
                 ),
             ),
             minimumOrderAmount = 1000,
+            orderCount = 0,
+            rating = 0F,
+            reviewCount = 0,
         )
     }
 }
