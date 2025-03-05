@@ -6,4 +6,5 @@ enum class OrderType {
     DISTANCE,
     RATING,
     REVIEW,
+    ORDER_COUNT,
 }
