@@ -10,6 +10,7 @@ import org.fastcampus.common.dto.APIResponseDTO
 import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.common.dto.CursorDTOString
 import org.fastcampus.store.entity.Store
+import org.fastcampus.store.enums.OrderType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -127,8 +128,8 @@ class StoreController(
         @RequestParam(defaultValue = "5") size: Int,
         @RequestParam(required = false) category: Store.Category?,
         @RequestParam(required = false) keyword: String?,
-        @RequestParam(required = false) cursor: String?, // "distance_storeId"
-//        @RequestParam(required = false) order: OrderType?, // "distance_storeId"
+        @RequestParam(required = false) cursor: String?,
+        @RequestParam(required = false) orderType: OrderType?,
     ): ResponseEntity<APIResponseDTO<CursorDTOString<StoreInfo>>> {
         logger.info("category: $category, searchCondition: $keyword")
         val result = storeService.getStoresByNearByAndConditionCursor(
@@ -138,6 +139,7 @@ class StoreController(
             category = category,
             keyword = keyword,
             cursor = cursor,
+            orderType = orderType,
         )
         return ResponseEntity.ok(
             APIResponseDTO(
