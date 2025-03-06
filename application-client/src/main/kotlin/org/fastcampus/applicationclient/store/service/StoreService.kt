@@ -44,12 +44,8 @@ class StoreService(
     @StoreMetered
     fun getStoreInfo(storeId: String, userLat: Double, userLng: Double): StoreInfo {
         val findStoreNearByAndCondition = storeRepository.findStoreNearByAndCondition(storeId, userLat, userLng)
-        val countReviewCountByStoreId = reviewRepository.countReviewCountByStoreId(storeId)
-        val totalAverageScoreByStoreId = reviewRepository.getTotalAverageScoreByStoreId(storeId)
         return findStoreNearByAndCondition.store.toStoreInfo(
             findStoreNearByAndCondition.distance.toDoubleOrNull() ?: 0.0,
-            rating = totalAverageScoreByStoreId,
-            reviewCount = countReviewCountByStoreId.toInt(),
         )
     }
 
