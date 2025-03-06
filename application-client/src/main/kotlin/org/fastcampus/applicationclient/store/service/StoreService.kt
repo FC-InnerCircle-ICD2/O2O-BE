@@ -44,12 +44,8 @@ class StoreService(
     @StoreMetered
     fun getStoreInfo(storeId: String, userLat: Double, userLng: Double): StoreInfo {
         val findStoreNearByAndCondition = storeRepository.findStoreNearByAndCondition(storeId, userLat, userLng)
-        val countReviewCountByStoreId = reviewRepository.countReviewCountByStoreId(storeId)
-        val totalAverageScoreByStoreId = reviewRepository.getTotalAverageScoreByStoreId(storeId)
         return findStoreNearByAndCondition.store.toStoreInfo(
             findStoreNearByAndCondition.distance.toDoubleOrNull() ?: 0.0,
-            rating = totalAverageScoreByStoreId,
-            reviewCount = countReviewCountByStoreId.toInt(),
         )
     }
 
@@ -207,9 +203,7 @@ class StoreService(
         // 3) 결과를 StoreInfo로 변환
         val content = storeList.map {
             val dist = it.distance.toDoubleOrNull() ?: 0.0
-            val rating = reviewRepository.getTotalAverageScoreByStoreId(it.store.id ?: "")
-            val reviewCount = reviewRepository.countReviewCountByStoreId(it.store.id ?: "").toInt()
-            it.store.toStoreInfo(dist, rating, reviewCount)
+            it.store.toStoreInfo(dist)
         }
 
         return CursorDTOString(

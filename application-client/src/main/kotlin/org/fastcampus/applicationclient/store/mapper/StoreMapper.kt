@@ -50,6 +50,30 @@ object StoreMapper {
             minimumOrderAmount = minimumOrderAmount,
         )
 
+    fun Store.toStoreInfo(distance: Double): StoreInfo =
+        StoreInfo(
+            id = id ?: "unknown",
+            name = name ?: "unknown",
+            imageMain = imageMain ?: "unknown",
+            rating = roundedRating(rating), // null이면 0.0 반환
+            reviewCount = reviewCount ?: 0,
+            deliveryTime = distance.calculateDeliveryTime().toString(),
+            deliveryDistance = distance,
+            freeDelivery = true,
+            address = address ?: "unknown",
+            latitude = latitude ?: 0.0,
+            longitude = longitude ?: 0.0,
+            phone = tel ?: "unknown",
+            minimumOrderAmount = minimumOrderAmount,
+        )
+
+    private fun roundedRating(rating: Float?): Double {
+        val rawRating = rating?.toDouble() ?: 0.0
+        // 소수점 한 자리까지 반올림
+        val roundedRating = Math.round(rawRating * 10) / 10.0
+        return roundedRating
+    }
+
     private fun Menu.toMenuResponse(): MenuOptionInfo {
         return MenuOptionInfo(
             id = this.id ?: "unknown",
