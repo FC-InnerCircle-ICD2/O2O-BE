@@ -3,6 +3,7 @@ package org.fastcampus.store.mongo.repository
 import org.bson.Document
 import org.fastcampus.store.entity.Store
 import org.fastcampus.store.entity.StoreWithDistance
+import org.fastcampus.store.enums.OrderType
 import org.fastcampus.store.exception.StoreException
 import org.fastcampus.store.mongo.document.StoreDocument
 import org.fastcampus.store.mongo.document.toModel
@@ -129,6 +130,7 @@ internal class StoreMongoRepositoryCustom(
         cursorDistance: Double?,
         cursorStoreId: String?,
         size: Int,
+        orderType: OrderType?,
     ): Pair<List<StoreWithDistance>, String?> {
         val pipeline = mutableListOf<AggregationOperation>()
 
@@ -162,14 +164,7 @@ internal class StoreMongoRepositoryCustom(
             pipeline.add(Aggregation.match(Criteria().orOperator(c1, c2)))
         }
 
-        pipeline.add(
-            Aggregation.sort(
-                Sort.by(
-                    Sort.Order.asc("distance"),
-                    Sort.Order.asc("id"),
-                ),
-            ),
-        )
+        addOrderCondition(pipeline, orderType)
 
         pipeline.add(Aggregation.limit(size.toLong() + 1))
 
@@ -262,6 +257,33 @@ internal class StoreMongoRepositoryCustom(
             Store.Category.ETC -> "ETC"
         }
         return dbCategoryString
+    }
+
+    private fun addOrderCondition(pipeline: MutableList<AggregationOperation>, orderType: OrderType?): List<AggregationOperation> {
+        // orderType이 null이면 distance로 기본 정렬
+        if (orderType == null) {
+            pipeline.add(Aggregation.sort(Sort.by(Sort.Order.asc("distance"))))
+        } else {
+            // orderType에 따라 다른 정렬 추가
+            when (orderType) {
+                OrderType.DISTANCE -> {
+                    pipeline.add(Aggregation.sort(Sort.by(Sort.Order.asc("distance"))))
+                }
+
+                OrderType.REVIEW -> {
+                    pipeline.add(Aggregation.sort(Sort.by(Sort.Order.desc("reviewCount"))))
+                }
+
+                OrderType.RATING -> {
+                    pipeline.add(Aggregation.sort(Sort.by(Sort.Order.desc("rating"))))
+                }
+
+                OrderType.ORDER_COUNT -> {
+                    pipeline.add(Aggregation.sort(Sort.by(Sort.Order.desc("orderCount"))))
+                }
+            }
+        }
+        return pipeline
     }
 }
 

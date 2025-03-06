@@ -142,6 +142,9 @@ class StoreServiceTest {
                 ),
             ),
             minimumOrderAmount = 13000,
+            0,
+            0F,
+            0,
         )
 
         `when`(storeRepository.findById(storeId)).thenReturn(testStore)
@@ -279,6 +282,9 @@ class StoreServiceTest {
             imageThumbnail = null,
             roadAddress = null,
             minimumOrderAmount = 14000,
+            orderCount = 0,
+            rating = 0F,
+            reviewCount = 0,
         )
 
     private fun createTestStoreWithCategories(storeId: String) =
@@ -316,5 +322,8 @@ class StoreServiceTest {
             roadAddress = null,
             _id = null,
             minimumOrderAmount = 0,
+            orderCount = 0,
+            rating = 0F,
+            reviewCount = 0,
         )
 }

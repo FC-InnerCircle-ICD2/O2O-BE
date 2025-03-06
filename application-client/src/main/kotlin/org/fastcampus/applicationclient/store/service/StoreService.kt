@@ -17,6 +17,7 @@ import org.fastcampus.common.dto.CursorDTO
 import org.fastcampus.common.dto.CursorDTOString
 import org.fastcampus.review.repository.ReviewRepository
 import org.fastcampus.store.entity.Store
+import org.fastcampus.store.enums.OrderType
 import org.fastcampus.store.exception.StoreException
 import org.fastcampus.store.redis.Coordinates
 import org.fastcampus.store.redis.StoreRedisRepository
@@ -186,7 +187,8 @@ class StoreService(
         size: Int,
         category: Store.Category?,
         keyword: String?,
-        cursor: String?, // "distance_storeId" 형태
+        cursor: String?,
+        orderType: OrderType?,
     ): CursorDTOString<StoreInfo>? {
         // 1) cursor 파싱 (ex: "13.23_STORE1234")
         val (cursorDistance, cursorStoreId) = parseCursor(cursor)
@@ -199,6 +201,7 @@ class StoreService(
             cursorDistance = cursorDistance,
             cursorStoreId = cursorStoreId,
             size = size,
+            orderType = orderType,
         )
 
         // 3) 결과를 StoreInfo로 변환
