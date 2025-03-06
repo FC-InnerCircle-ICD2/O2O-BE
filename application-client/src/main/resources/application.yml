@@ -29,6 +29,10 @@ spring:
         config:
           default:
             logger-level: full
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
 
 logging:
   pattern:

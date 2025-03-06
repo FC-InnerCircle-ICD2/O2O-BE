@@ -10,6 +10,10 @@ spring:
       - payment-postgres
       - store-mongo
       - store-redis
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
 
 logging:
   level:

@@ -2,6 +2,7 @@ package org.fastcampus.store.repository
 
 import org.fastcampus.store.entity.Store
 import org.fastcampus.store.entity.StoreWithDistance
+import org.fastcampus.store.enums.OrderType
 
 /**
  * Created by brinst07 on 25. 1. 11..
@@ -35,6 +36,7 @@ interface StoreRepository {
         cursorDistance: Double?,
         cursorStoreId: String?,
         size: Int,
+        orderType: OrderType?,
     ): Pair<List<StoreWithDistance>, String?>
 
     fun existsStoreNearBy(storeId: String, latitude: Double, longitude: Double, distanceKM: Double): Boolean
