@@ -38,4 +38,6 @@ interface StoreRepository {
     ): Pair<List<StoreWithDistance>, String?>
 
     fun updateOrderCnt(storeId: String, orderCnt: Int)
+
+    fun existsStoreNearBy(storeId: String, latitude: Double, longitude: Double, distanceKM: Double): Boolean
 }

@@ -16,7 +16,7 @@
 
     <springProfile name="!local &amp; !default">
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOG_PATH}/${LOG_FILE_NAME}_${TODAY}.log</file>
+            <file>${LOG_PATH}/${LOG_FILE_NAME}.log</file>
 
             <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
                 <pattern>${LOG_FILE_PATTERN}</pattern>

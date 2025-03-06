@@ -6,9 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
 interface MemberAddressJpaRepository : JpaRepository<MemberAddressJpaEntity, Long> {
-    fun findByUserIdAndMemberAddressType(userId: Long, memberAddressType: MemberAddressType): Optional<MemberAddressJpaEntity>
-
-    fun countByUserIdAndMemberAddressType(userId: Long, memberAddressType: MemberAddressType): Long
+    fun countByUserIdAndMemberAddressTypeAndIsDeleted(userId: Long, memberAddressType: MemberAddressType, isDeleted: Boolean): Long
 
     fun findByUserId(userId: Long): List<MemberAddressJpaEntity>
 

@@ -36,7 +36,7 @@ class ReviewServiceTest {
     fun `should find writable reviews`() {
         val authMember = createAuthMember()
         val store = createStore(id = "store_001")
-        val reviewableOrder = createOrderFixture(id = "order_3", storeId = store.id)
+        val reviewableOrder = createOrderFixture(id = "order_3", storeId = store.id, status = Order.Status.COMPLETED)
         val orders: List<Order> = listOf(
             createOrderFixture(id = "order_1", storeId = store.id),
             createOrderFixture(id = "order_2", storeId = store.id),

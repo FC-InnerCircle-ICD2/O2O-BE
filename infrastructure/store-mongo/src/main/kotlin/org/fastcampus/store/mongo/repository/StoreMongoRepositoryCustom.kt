@@ -214,6 +214,40 @@ internal class StoreMongoRepositoryCustom(
         mongoTemplate.updateFirst(query, update, StoreDocument::class.java)
     }
 
+    override fun existsStoreNearBy(storeId: String, latitude: Double, longitude: Double, distanceKM: Double): Boolean {
+        val pipeline = mutableListOf<AggregationOperation>()
+
+        // 1. GeoNear 단계: 사용자의 좌표를 기준으로 스토어와의 거리를 계산합니다.
+        val geoNearOp = buildGeoNearOperation(
+            longitude = longitude,
+            latitude = latitude,
+            maxDistance = distanceKM,
+            distanceField = "distance",
+            locationField = "location",
+        )
+        pipeline.add(geoNearOp)
+
+        // 2. 스토어 아이디 기준 필터링: 특정 스토어만 조회합니다.
+        pipeline.add(Aggregation.match(Criteria("id").`is`(storeId)))
+
+        // 3. 1개의 결과만 가져옵니다.
+        pipeline.add(Aggregation.limit(1))
+
+        // 4. 개수 확인
+        val countOperation = Aggregation.count().`as`("count")
+        pipeline.add(countOperation)
+
+        // 5. Aggregation 실행
+        val aggregation = Aggregation.newAggregation(pipeline)
+        val result = mongoTemplate.aggregate(
+            aggregation,
+            "stores",
+            Document::class.java,
+        ).mappedResults.firstOrNull()
+
+        return (result != null && result.getInteger("count") > 0)
+    }
+
     private fun convertToCategory(category: Store.Category): String {
         val dbCategoryString = when (category) {
             Store.Category.CAFE -> "CAFE"

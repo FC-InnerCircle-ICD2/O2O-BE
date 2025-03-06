@@ -24,8 +24,21 @@ class PaymentController(
         @RequestBody orderPaymentApproveRequest: OrderPaymentApproveRequest,
         @AuthenticationPrincipal authMember: AuthMember,
     ): APIResponseDTO<Void> {
+        // TODO 분산락으로 먼저 결제처리가 진행중이라면 튕겨야 함.
+
+        // 결제키를 먼저 저장
+        paymentService.savePaymentKey(
+            userId = authMember.id,
+            orderId = orderPaymentApproveRequest.orderId,
+            paymentKey = orderPaymentApproveRequest.paymentKey,
+        )
+
         // 승인요청
-        paymentService.approveOrderPayment(authMember.id, orderPaymentApproveRequest)
+        paymentService.approveOrderPayment(
+            userId = authMember.id,
+            orderId = orderPaymentApproveRequest.orderId,
+            amount = orderPaymentApproveRequest.amount,
+        )
         return APIResponseDTO(HttpStatus.OK.value(), "OK", null)
     }
 }

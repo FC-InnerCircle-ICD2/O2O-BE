@@ -6,7 +6,6 @@ import org.springframework.data.geo.Point
 import org.springframework.data.redis.connection.RedisGeoCommands
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
-import java.util.concurrent.TimeUnit
 
 @Component
 class StoreRedisRepositoryImpl(
@@ -68,7 +67,7 @@ class StoreRedisRepositoryImpl(
     override fun addSearch(keyword: String) {
         val currentTime = System.currentTimeMillis() / 1000
         redisTemplate.opsForZSet().add("search:$keyword", currentTime.toString(), currentTime.toDouble())
-        redisTemplate.expire("search:$keyword", WINDOWDURATION.toLong(), TimeUnit.SECONDS)
+//        redisTemplate.expire("search:$keyword", WINDOWDURATION.toLong(), TimeUnit.SECONDS)
     }
 
     override fun getTrendKeywords(): Map<String, Long>? {
@@ -76,7 +75,7 @@ class StoreRedisRepositoryImpl(
         return keywords.associateWith { getRecentSearchCount(it.removePrefix("search:")) }
             .filterValues { it > 0 }
             .entries.sortedByDescending { it.value }
-            .take(10)
+            .take(6)
             .associate { it.key.removePrefix("search:") to it.value }
     }
 
